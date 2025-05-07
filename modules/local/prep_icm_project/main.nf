@@ -26,7 +26,7 @@ process prepIcmProject {
     cache true
 
     maxForks 20
-    publishDir "${params.output_folder}/stage4_docking_projects", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/stage4_docking_projects/${code}/", mode: 'copy', overwrite: true
     // debug true
 
 
