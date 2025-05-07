@@ -34,12 +34,13 @@ process prepIcmProject {
 
 
     output:
-        tuple val(dataset_name), val(code), val(folder), val("p${code}"), path("p${code}/*")
+        tuple val(dataset_name), val(code), val(folder), path("${code}_protein.pdb"), path("${code}_ligand.sdf"), val("p${code}"), path("p${code}/*")
 
 
     script:
     """
     trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+    cp ${folder}/ .
     ${params.icm_exec ?: "${params.icm_home}/icm64"} \
         ${projectDir}/bin/dockScan_prep_dock_project.icm \
             -i=${code}_protein.pdb \
