@@ -1,0 +1,58 @@
+#############################
+## Runtime MPI CUDA 12.0.1 ##
+#############################
+
+# Runtime image is smaller than the devel/build image
+FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04 AS mpi-cuda-12.0.1
+LABEL authors="Hovakim Grabski" \
+        description="Docker image containing all software requirements for the nf-core/dockbench pipeline"
+
+
+# Set up environment variables
+ENV MAMBA_ROOT_PREFIX="/opt/micromamba/"
+ENV MAMBA="${MAMBA_ROOT_PREFIX}/bin/micromamba"
+ENV ENV_NAME="dockbench"
+ENV LC_ALL="C"
+ENV PATH="/opt/micromamba/envs/dockbench/bin:${PATH}"
+ENV LC_ALL="C"
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt-get update -y \
+    && apt-get install -y \
+    openmpi-bin \
+    openmpi-common \
+    libopenmpi-dev \
+    graphviz \
+    curl \
+    bzip2 \
+    mlocate \
+    locate \
+    bash \
+    gawk \
+    sed
+
+
+#-- * Install mamba
+RUN mkdir -p ${MAMBA_ROOT_PREFIX}
+WORKDIR ${MAMBA_ROOT_PREFIX}
+
+RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest  | tar -xvj bin/micromamba
+# RUN source ${HOME}/.bashrc
+
+RUN $MAMBA create -n $ENV_NAME -c conda-forge --yes \
+    'python==3.11' \
+    'pip' \
+    'uv'   && \
+    "${MAMBA}" clean --all -f -y
+
+RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core posebusters tqdm loguru seaborn pandas
+
+
+
+# -- * activate mamba environment
+RUN updatedb
+# RUN /bin/bash -c "source /opt/micromamba/etc/profile.d/mamba.sh && micromamba activate ${ENV_NAME}"
+# RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
+
+# -- * Manually run steps from dockbench.rc
+
