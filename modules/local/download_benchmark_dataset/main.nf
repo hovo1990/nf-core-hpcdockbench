@@ -1,5 +1,5 @@
 
-process generateSettings{
+process downloadBenchmarkDataset{
 
     label 'low_cpu'
 
@@ -33,7 +33,7 @@ process generateSettings{
 
     script:
         def i_version=2
-    """
-        wget ${params.params.benchmark_dataset}
-    """
+        """
+            wget ${params.benchmark_dataset}
+        """
 }
