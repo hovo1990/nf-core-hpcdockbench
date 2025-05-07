@@ -34,7 +34,7 @@ process prepIcmProject {
 
 
     output:
-        tuple val(dataset_name), val(code), val(folder), path("${code}_protein.pdb"), path("${code}_ligand.sdf"), val("p${code}"), path("p${code}/*")
+        tuple val(dataset_name), val(code), val(folder), path("${code}_protein.pdb"), path("${code}_ligand.sdf"), path("p${code}_2D_ligand.sdf"), val("p${code}"), path("p${code}/*")
 
 
     script:
