@@ -6,17 +6,17 @@ process prepIcmProject {
     tag "prepare docking Project"
 
 
-    label 'low_cpu'
+    label 'low_cpu_debug'
 
-
-    maxRetries 4
-    errorStrategy {
-        if (task.exitStatus >= 100){
-            'retry'
-        } else {
-            'terminate'
-        }
-    }
+    // -- * For debug purposes comment it
+    // maxRetries 1
+    // errorStrategy {
+    //     if (task.exitStatus >= 100){
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
 
 
     beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
@@ -29,6 +29,12 @@ process prepIcmProject {
     publishDir "${params.output_folder}/stage4_docking_projects", mode: 'copy', overwrite: true
     // debug true
 
+
+    if (params.mount_options) {
+        containerOptions '--volume ${params.mount_options}'
+    }
+
+
     input:
         tuple val(dataset_name), val(code), path(folder)
 
@@ -40,7 +46,7 @@ process prepIcmProject {
     script:
     """
     trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-    cp ${folder}/ .
+    cp  -r ${folder}/* .
     ${params.icm_exec ?: "${params.icm_home}/icm64"} \
         ${projectDir}/bin/dockScan_prep_dock_project.icm \
             -i=${code}_protein.pdb \
