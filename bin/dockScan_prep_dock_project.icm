@@ -28,22 +28,22 @@ call _startup
 # call _dockScan
 
 
-quit 1
+# quit 1
+# exit
 
 
-#-- * Start of the project
+# -- * Start of the project
 CovDocName = s_projID
 
-delete  icb_session
 
-
-input_arg = icb_session
 
 Doc_Proj_Name = CovDocName
 NameGene = s_projID
 
 #-- * read pocketome session file
-openFile input_arg 0 yes no no no " append"
+# openFile input_protein_arg 0 yes no no no " append"
+
+read pdb  input_protein_arg  sstructure
 
 
 
@@ -59,7 +59,37 @@ objName = Name(objToWork)[1]
 # -- ? cKIT_HUMAN_1pkg_noncov
 Dirinp = NameGene
 
-pocketSel = objToWork  & Select(a_*./ pocketIDtoUse )
+
+
+# -- ! Read ligand here
+
+read table mol input_ligand_arg name="dataChem"
+
+
+# -- ? Convert to 3d molecule
+
+if( Type( dataChem.crysym ) == "sarray" ) then
+    read mol input = Sum( Sarray( dataChem.mol [1] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( dataChem.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+    parrayToMol dataChem.mol [ 1 ]
+endif
+
+ligObj = a_2.m
+
+# -- * Extract as 2D drawing
+extractLigand ligObj  "2D" no "" no
+
+
+# -- * save ligand 2D drawing as sdf
+lig_save_name =  s_projID + "_2D_ligand.sdf"
+write table mol chem  lig_save_name
+
+
+
+
+# -- * Now select pocket
+Dirinp = NameGene
+pocketSel = Sphere(ligObj a_1.A 5. )   # objToWork  & Select(a_*./ pocketIDtoUse )
 bindpock = String(pocketSel name)
 
 
@@ -95,28 +125,6 @@ set field name="dockProjectName" objToWork Dirinp
 
 #-- ! Preparation part 2:
 
-
-#-- todo To move a ligand from the object.
-#-- TODO what if i need to keep the molecules and metals
-#-- * Maybe move out ligand mols from RL_LO_1 for example just selection not everything.
-#-- * find by key field and perform appropriate selection
-fieldKey = pocketIDtoUse
-print " Info> fieldKey is ", fieldKey
-
-currSelLev = Field(fieldKey, 1,"_")
-setType = Field(fieldKey, 2,"_")
-pocketNum = Field(fieldKey, 3,"_")
-
-
-
-selectionLigObjects = Select( a_*./*   'RL_LO_' + String(pocketNum) )
-
-
-#-- ! Old code needs to be improved
-# moveMol Mol( a_$objName.H ) ""
-# moveMol Mol( a_$objName.M ) ""
-
-moveMol selectionLigObjects ""
 
 
 # -- ? To convert to icm object and assign secondary structure:
