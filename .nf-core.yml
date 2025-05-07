@@ -19,7 +19,7 @@ lint:
 
 template:
   org: nf-core
-  name: dockbench
+  name: hpcdockbench
   description: Docking benchmark that employs PoseBuster set to test software
   author: Hovakim Grabski,Siranuysh Grabska,Ruben Abagyan
   version: 1.0.0dev
