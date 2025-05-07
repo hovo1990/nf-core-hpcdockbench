@@ -16,6 +16,8 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_dock
 include { downloadBenchmarkDataset} from '../modules/local/download_benchmark_dataset'
 
 
+include { unzipDataset} from '../modules/local/unzip_dataset'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -35,7 +37,14 @@ workflow HPCDOCKBENCH {
     // -- * Stage 1: Download Posebusters paper dataset https://zenodo.org/records/8278563/files/posebusters_paper_data.zip?download=1
     download_benchmark_dataset =  downloadBenchmarkDataset()
 
+    // -- * Stage 2: Unzip the benchmark dataset
+    unpacked_folders = unzipDataset(download_benchmark_dataset)
+    // unpacked_folders.view()
 
+    // -- * Stage 3: Separate folders into separate channels
+    collectedFile =    unpacked_folders.map { row -> row.join('\n') }  // Convert tuple to CSV format
+                .collectFile { it.toString() + "\n" }
+    collectedFile.view()
 
 
     //

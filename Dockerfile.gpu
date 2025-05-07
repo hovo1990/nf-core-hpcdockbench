@@ -70,7 +70,7 @@ RUN $MAMBA create -n $ENV_NAME -c conda-forge --yes \
     'uv'   && \
     "${MAMBA}" clean --all -f -y
 
-RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core posebusters tqdm loguru seaborn pandas
+RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core posebusters tqdm loguru seaborn pandas fs
 
 
 
