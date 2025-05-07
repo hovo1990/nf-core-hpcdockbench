@@ -177,9 +177,9 @@
                     "hidden": false
                 },
                 "effort": {
-                    "type": "integer",
-                    "description": "ICM effort to perform docking. Default: 4",
-                    "default": 4,
+                    "type": "number",
+                    "description": "ICM effort to perform docking. Default: 4.0",
+                    "default": 4.0,
                     "hidden": false
                 },
                 "conformations": {
