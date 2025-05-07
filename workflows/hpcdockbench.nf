@@ -21,6 +21,10 @@ include { unzipDataset} from '../modules/local/unzip_dataset'
 
 include { filterFolders} from '../modules/local/filter_folders'
 
+
+include { prepIcmProject } from '../modules/local/prep_icm_project '
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -55,15 +59,27 @@ workflow HPCDOCKBENCH {
     // filtered_files.view()
 
     filtered_flatten = filtered_files.flatten()
-    filtered_flatten.view()
+    // filtered_flatten.view()
 
     // -- * Subworkflow 0: think about having a subworkflow to prepare ICM compatible docking projects
+    tasks_todo =  filtered_flatten | splitCsv(header:true) \
+        | map { row-> tuple(row.SET, row.CODE, file(row.PATH)) }
+    // tasks_todo.view()
 
+
+
+    tasks_todo_debug = tasks_todo.take(10)
+    tasks_todo_debug.view()
+
+
+    // -- * Stage 5: Prepare docking projects
 
 
 
 
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
+
+
 
 
 

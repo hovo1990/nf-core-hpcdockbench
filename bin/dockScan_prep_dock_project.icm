@@ -1,0 +1,150 @@
+#!/pro/icm/icms/icm64 -s
+HELP = """
+  Usage> $P -i=<.icb>  -o=<outputfile.icb>
+   This prepares a docking project compatible with icm
+"""
+
+
+if (Getarg(help)) quit HELP
+l_commands = Getarg("-v",no,delete)
+
+
+
+input_arg = Getarg("-i","UNDEFINED",delete)
+s_projID = Getarg("-projID","UNDEFINED",delete) # don't use "-GeneName", it makes some conflict and the icm session is not closing
+pocketIDtoUse = Getarg("-pocketID","UNDEFINED",delete)
+
+
+
+# check if file exists
+if(!Exist(input_arg read)) quit " Error_$P: file '" input_arg "' not found or not readable."
+if(s_projID== "UNDEFINED") quit " Error> Nothing to do, specify uniprot code" + HELP
+if(pocketIDtoUse== "UNDEFINED") quit " Error> Nothing to do, specify uniprot code" + HELP
+
+
+
+read library
+call _macro
+call _startup
+# call _dockScan
+
+
+#-- * Start of the project
+CovDocName = s_projID
+
+delete  icb_session
+
+
+input_arg = icb_session
+
+Doc_Proj_Name = CovDocName
+NameGene = s_projID
+
+#-- * read pocketome session file
+openFile input_arg 0 yes no no no " append"
+
+
+
+#-- * Get object to work with
+
+objToWork  = a_1.
+objName = Name(objToWork)[1]
+
+
+
+
+
+# -- ? cKIT_HUMAN_1pkg_noncov
+Dirinp = NameGene
+
+pocketSel = objToWork  & Select(a_*./ pocketIDtoUse )
+bindpock = String(pocketSel name)
+
+
+
+#-- * Create Unix dir for project prep
+
+print "------------------------------------------------"
+print "Dirinp ->" Dirinp
+print "------------------------------------------------"
+print "Type of Dirinp ->"
+Type(Dirinp)
+print "------------------------------------------------"
+
+##-- * Create dir
+unix mkdir $Dirinp
+
+##-- * Set directory to the individual project
+set directory "./" + Dirinp
+
+
+
+
+
+#-- * Add fields to object
+set field name='pdb' objToWork Name(objToWork)[1]
+set field name='resolution' objToWork Resolution(objToWork)[1]
+set field name='projectFolder' objToWork Dirinp
+set field name="bindingPock" objToWork bindpock
+set field name="geneName" objToWork NameGene
+set field name="dockProjectName" objToWork Dirinp
+
+#exit
+
+#-- ! Preparation part 2:
+
+
+#-- todo To move a ligand from the object.
+#-- TODO what if i need to keep the molecules and metals
+#-- * Maybe move out ligand mols from RL_LO_1 for example just selection not everything.
+#-- * find by key field and perform appropriate selection
+fieldKey = pocketIDtoUse
+print " Info> fieldKey is ", fieldKey
+
+currSelLev = Field(fieldKey, 1,"_")
+setType = Field(fieldKey, 2,"_")
+pocketNum = Field(fieldKey, 3,"_")
+
+
+
+selectionLigObjects = Select( a_*./*   'RL_LO_' + String(pocketNum) )
+
+
+#-- ! Old code needs to be improved
+# moveMol Mol( a_$objName.H ) ""
+# moveMol Mol( a_$objName.M ) ""
+
+moveMol selectionLigObjects ""
+
+
+# -- ? To convert to icm object and assign secondary structure:
+
+convertObject a_$objName. no yes yes no yes yes no "water=tight "
+assign sstructure a_A
+
+
+# -- ? Open ligand and reaction files (need to be automate) - Done:
+
+
+#-- ! 5 - Too big pocket
+SelecForDock = pocketSel
+
+#-- ! Prepare docking project
+currentDockProj.data[8] = "yes"  # ????
+tempsel = SelecForDock & a_$objName. ## old version -> tempsel = PocketSelection & a_$InputPdb. ##
+
+CovDocName = Dirinp
+dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
+if( currentDockProj.l_readyReceptor ) dock5CalcMaps CovDocName 0.5 4.0 no # оменять тут чуток  have changed
+currentDockProj.data[1] = CovDocName
+
+
+if (Error()) then
+  printf error " Error> Could not prepare for docking\n"
+  quit 1
+endif
+
+print " Info> System for docking has been prepared\n"
+quit 0
+
+
