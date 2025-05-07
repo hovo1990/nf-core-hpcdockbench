@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/dockbench pipeline
+// Subworkflow with functionality specific to the nf-core/hpcdockbench pipeline
 //
 
 /*

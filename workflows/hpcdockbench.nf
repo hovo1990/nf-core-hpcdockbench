@@ -18,6 +18,9 @@ include { downloadBenchmarkDataset} from '../modules/local/download_benchmark_da
 
 include { unzipDataset} from '../modules/local/unzip_dataset'
 
+
+include { filterFolders} from '../modules/local/filter_folders'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -44,8 +47,31 @@ workflow HPCDOCKBENCH {
     // -- * Stage 3: Separate folders into separate channels
     collectedFile =    unpacked_folders.map { row -> row.join('\n') }  // Convert tuple to CSV format
                 .collectFile { it.toString() + "\n" }
-    collectedFile.view()
+    // collectedFile.view()
 
+
+    // -- * Stage 4: Use python to filter astex and posebuster folders
+    filtered_files = filterFolders(collectedFile)
+    // filtered_files.view()
+
+    filtered_flatten = filtered_files.flatten()
+    filtered_flatten.view()
+
+    // -- * Subworkflow 0: think about having a subworkflow to prepare ICM compatible docking projects
+
+
+
+
+
+    // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
+
+
+
+    // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
+
+
+
+    // -- * Subworkflow 3: make a plot for astex and posebuster benchmark set
 
     //
     // Collate and save software versions

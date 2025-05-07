@@ -1,6 +1,6 @@
 {
-    "name": "nf-core/dockbench",
-    "homePage": "https://github.com/nf-core/dockbench",
+    "name": "nf-core/hpcdockbench",
+    "homePage": "https://github.com/nf-core/hpcdockbench",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {

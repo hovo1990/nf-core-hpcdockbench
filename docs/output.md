@@ -1,4 +1,4 @@
-# nf-core/dockbench: Output
+# nf-core/hpcdockbench: Output
 
 ## Introduction
 

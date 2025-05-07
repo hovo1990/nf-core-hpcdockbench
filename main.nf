@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/dockbench
+    nf-core/hpcdockbench
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/dockbench
-    Website: https://nf-co.re/dockbench
-    Slack  : https://nfcore.slack.com/channels/dockbench
+    Github : https://github.com/nf-core/hpcdockbench
+    Website: https://nf-co.re/hpcdockbench
+    Slack  : https://nfcore.slack.com/channels/hpcdockbench
 ----------------------------------------------------------------------------------------
 */
 

@@ -5,15 +5,15 @@
 # Runtime image is smaller than the devel/build image
 FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04 AS mpi-cuda-12.0.1
 LABEL authors="Hovakim Grabski" \
-        description="Docker image containing all software requirements for the nf-core/dockbench pipeline"
+        description="Docker image containing all software requirements for the nf-core/hpcdockbench pipeline"
 
 
 # Set up environment variables
 ENV MAMBA_ROOT_PREFIX="/opt/micromamba/"
 ENV MAMBA="${MAMBA_ROOT_PREFIX}/bin/micromamba"
-ENV ENV_NAME="dockbench"
+ENV ENV_NAME="hpcdockbench"
 ENV LC_ALL="C"
-ENV PATH="/opt/micromamba/envs/dockbench/bin:${PATH}"
+ENV PATH="/opt/micromamba/envs/hpcdockbench/bin:${PATH}"
 ENV LC_ALL="C"
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -79,5 +79,5 @@ RUN updatedb
 # RUN /bin/bash -c "source /opt/micromamba/etc/profile.d/mamba.sh && micromamba activate ${ENV_NAME}"
 # RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
 
-# -- * Manually run steps from dockbench.rc
+# -- * Manually run steps from hpcdockbench.rc
 

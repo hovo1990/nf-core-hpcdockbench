@@ -1,5 +1,5 @@
 {
-    "name": "nf-core-dockbench-dev",
+    "name": "nf-core-hpcdockbench-dev",
 
     "build": {
         "dockerfile": "Dockerfile"
