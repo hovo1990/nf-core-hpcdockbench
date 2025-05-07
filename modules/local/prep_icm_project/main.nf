@@ -30,20 +30,20 @@ process prepIcmProject {
     // debug true
 
     input:
-        tuple val(pocket_id), val(proj_id), path(icb_input)
+        tuple val(dataset_name), val(code), path(folder)
 
 
     output:
-        tuple val(pocket_id), val("p${proj_id}"), path("p${proj_id}/*")
+        tuple val(dataset_name), val(code), val(folder), val("p${code}"), path("p${code}/*")
 
 
     script:
     """
     trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-    ${params.icm_exec ?: "${params.icmhome_default}/icm64"} \
+    ${params.icm_exec ?: "${params.icm_home}/icm64"} \
         ${projectDir}/bin/dockScan_prep_dock_project.icm \
-            -i=${pdb_input}  \
-            -il=${ligand_input}  \
+            -i=${code}_protein.pdb \
+            -il=${code}_ligand.sdf  \
             -projID="p${code}"
     """
 }
