@@ -29,7 +29,29 @@ RUN apt-get update -y \
     locate \
     bash \
     gawk \
-    sed
+    sed \
+    graphviz texlive-xetex pymol firefox bash \
+    libgl1 \
+    libtiff-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libglib2.0-0 \
+    libxext6 \
+    libsm6 \
+    libxext-dev \
+    libxrender1 \
+    libzmq3-dev \
+    libc6 \
+    libxmu6 \
+    libasound2 \
+    libxrender-dev \
+    libfontconfig \
+    libgomp1 \
+    locate \
+    libxmu6 \
+    ncdu \
+    wget \
+    curl
 
 
 #-- * Install mamba
