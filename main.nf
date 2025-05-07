@@ -15,7 +15,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { DOCKBENCH  } from './workflows/dockbench'
+include { HPCDOCKBENCH  } from './workflows/hpcdockbench'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_dockbench_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_dockbench_pipeline'
 /*
@@ -27,18 +27,18 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_dock
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFCORE_DOCKBENCH {
+workflow NFCORE_HPCDOCKBENCH {
 
-    take:
-    samplesheet // channel: samplesheet read in from --input
+    // take:
+    // samplesheet // channel: samplesheet read in from --input
 
     main:
 
     //
     // WORKFLOW: Run pipeline
     //
-    DOCKBENCH (
-        samplesheet
+    HPCDOCKBENCH (
+        // samplesheet
     )
 }
 /*

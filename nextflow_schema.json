@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/dockbench/master/nextflow_schema.json",
-    "title": "nf-core/dockbench pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/nf-core/hpcdockbench/master/nextflow_schema.json",
+    "title": "nf-core/hpcdockbench pipeline parameters",
     "description": "Docking benchmark that employs PoseBuster set to test software",
     "type": "object",
     "$defs": {
@@ -10,19 +10,8 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["outdir"],
             "properties": {
-                "input": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/dockbench/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
-                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
@@ -35,6 +24,20 @@
                     "fa_icon": "fas fa-envelope",
                     "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                },
+                "workDir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The working directory of the nextflow pipeline. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "singularity_local_container": {
+                    "type": "string",
+                    "description": "Using Singularity SIF file from the local storage",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.sif$",
+                    "errorMessage": "Singularity Container path"
                 }
             }
         },
@@ -154,7 +157,37 @@
                     "fa_icon": "far calendar",
                     "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
-                }
+                },
+                "useGPU": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use NVIDIA GPUs for calculation",
+                    "hidden": false
+                },
+                "singularity_pull_docker_container": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Pull Singularity container from Docker or not",
+                    "hidden": false
+                },
+                "singularity_use_local_file": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use SIF image from the file storage",
+                    "hidden": false
+                },
+                "effort": {
+                    "type": "integer",
+                    "description": "ICM effort to perform docking. Default: 4",
+                    "default": 4,
+                    "hidden": false
+                },
+                "conformations": {
+                    "type": "integer",
+                    "description": "Number of conformations to generate. Default: 10",
+                    "default": 10,
+                    "hidden": false
+                },
             }
         }
     },
