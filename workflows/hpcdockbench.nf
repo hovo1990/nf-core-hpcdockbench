@@ -5,11 +5,16 @@
 */
 
 params.container_link = "docker.io/hgrabski/hpcdockbench:latest"
-
+params.benchmark_dataset = "https://zenodo.org/records/8278563/files/posebusters_paper_data.zip"
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_dockbench_pipeline'
+
+
+// -- * Custom modules
+include { downloadBenchmarkDataset} from '../modules/local/download_benchmark_dataset'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,7 +33,7 @@ workflow HPCDOCKBENCH {
     ch_versions = Channel.empty()
 
     // -- * Stage 1: Download Posebusters paper dataset https://zenodo.org/records/8278563/files/posebusters_paper_data.zip?download=1
-
+    download_benchmark_dataset =  downloadBenchmarkDataset()
 
 
 
