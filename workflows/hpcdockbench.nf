@@ -69,12 +69,12 @@ workflow HPCDOCKBENCH {
 
 
     tasks_todo_debug = tasks_todo.take(10)
-    tasks_todo_debug.view()
+    // tasks_todo_debug.view()
 
 
     // -- * Stage 5: Prepare docking projects
     icm_docking_projects = prepIcmProject(tasks_todo_debug)
-
+    icm_docking_projects.view()
 
 
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU

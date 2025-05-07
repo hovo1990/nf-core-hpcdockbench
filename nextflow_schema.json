@@ -46,6 +46,14 @@
                     "exists": true,
                     "pattern": "^\\S+\\$",
                     "errorMessage": "ICM installation folder missing"
+                },
+                "mount_options": {
+                    "type": "string",
+                    "description": "Mount options",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\$",
+                    "errorMessage": "Mount options, especially useful for containers"
                 }
             }
         },
