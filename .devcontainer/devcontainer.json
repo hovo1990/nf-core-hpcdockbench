@@ -1,20 +1,29 @@
 {
-    "name": "nfcore",
-    "image": "nfcore/gitpod:latest",
-    "remoteUser": "gitpod",
+    "name": "nf-core-dockbench-dev",
+
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+
+    "remoteUser": "vscode",
     "runArgs": ["--privileged"],
 
     // Configure tool-specific properties.
     "customizations": {
         // Configure properties specific to VS Code.
         "vscode": {
-            // Set *default* container specific settings.json values on container create.
-            "settings": {
-                "python.defaultInterpreterPath": "/opt/conda/bin/python"
-            },
-
             // Add the IDs of extensions you want installed when the container is created.
-            "extensions": ["ms-python.python", "ms-python.vscode-pylance", "nf-core.nf-core-extensionpack"]
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "nf-core.nf-core-extensionpack",
+                "ms-vscode.cpptools",
+                "nextflow.nextflow",
+                "asciidoctor.asciidoctor-vscode",
+                "edwinhuish.better-comments-next",
+                "IBM.output-colorizer",
+                "naumovs.color-highlight"
+            ]
         }
     }
 }
