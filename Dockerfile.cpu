@@ -53,7 +53,7 @@ RUN apt-get update -y \
     curl
 
 
-#-- * Install mamba
+# -- * Install mamba
 RUN mkdir -p ${MAMBA_ROOT_PREFIX}
 WORKDIR ${MAMBA_ROOT_PREFIX}
 

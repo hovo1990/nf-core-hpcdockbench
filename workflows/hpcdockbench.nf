@@ -74,7 +74,7 @@ workflow HPCDOCKBENCH {
 
     // -- * Stage 5: Prepare docking projects
     icm_docking_projects = prepIcmProject(tasks_todo_debug)
-    icm_docking_projects.view()
+    // icm_docking_projects.view()
 
 
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
