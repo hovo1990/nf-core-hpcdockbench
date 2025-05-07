@@ -38,6 +38,14 @@
                     "exists": true,
                     "pattern": "^\\S+\\.sif$",
                     "errorMessage": "Singularity Container path"
+                },
+                "icm_home": {
+                    "type": "string",
+                    "description": "ICM home directory",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\$",
+                    "errorMessage": "ICM installation folder missing"
                 }
             }
         },

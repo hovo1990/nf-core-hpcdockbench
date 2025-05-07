@@ -22,7 +22,7 @@ include { unzipDataset} from '../modules/local/unzip_dataset'
 include { filterFolders} from '../modules/local/filter_folders'
 
 
-include { prepIcmProject } from '../modules/local/prep_icm_project '
+include { prepIcmProject } from '../modules/local/prep_icm_project'
 
 
 /*
@@ -73,7 +73,7 @@ workflow HPCDOCKBENCH {
 
 
     // -- * Stage 5: Prepare docking projects
-
+    icm_docking_projects = prepIcmProject(tasks_todo_debug)
 
 
 
