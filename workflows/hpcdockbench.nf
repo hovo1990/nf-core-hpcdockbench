@@ -25,6 +25,9 @@ include { filterFolders} from '../modules/local/filter_folders'
 include { prepIcmProject } from '../modules/local/prep_icm_project'
 
 
+
+include { dockScanTask  } from '../modules/local/dockscan_task'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -80,8 +83,8 @@ workflow HPCDOCKBENCH {
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
 
     // -- * Perform dockscan
-
-
+    dockScan_tasks = dockScanTask( icm_docking_projects)
+    dockScan_tasks.view()
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
