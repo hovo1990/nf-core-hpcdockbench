@@ -201,6 +201,12 @@
                     "default": 10,
                     "hidden": false
                 },
+                "random_seed": {
+                    "type": "integer",
+                    "description": "Number for the random seed. Default: 25051990",
+                    "default": 25051990,
+                    "hidden": false
+                },
             }
         }
     },

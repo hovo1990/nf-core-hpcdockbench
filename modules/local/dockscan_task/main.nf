@@ -19,11 +19,11 @@ process dockScanTask {
 
 
 
-    label 'process_full'
+    label 'low_cpu_debug'
 
     cache true
     // debug true
-    publishDir "${params.outdir}/stage4_docking_projects/${code}/", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/stage5_docking/${code}/", mode: 'copy', overwrite: true
     // debug true
 
 
@@ -36,30 +36,29 @@ process dockScanTask {
     input:
         tuple val(dataset_name), val(code), val(folder), path(protein_struct), path(ligand_struct), path(ligand_struct_2D), val(proj_id), path(proj_files)
     output:
-         tuple val(dataset_name), val(code), val(folder), path(protein_struct), path(ligand_struct), path(ligand_struct), val(proj_id), path(proj_files), file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
+        //  tuple val(dataset_name), val(code), val(folder), val(protein_struct), val(ligand_struct), val(ligand_struct), val(proj_id), val(proj_files), file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
+        tuple val(dataset_name), val(code)
 
     script:
-        def input_str = proj_files instanceof List ? proj_files.join(" ") : proj_files
         def r_effort= params.effort ?: 4.0
-        def i_confs =  params.confs ?: 10
-        def i_cpus = params.cpus ?: task.cpus
+        def i_confs =  params.conformations ?: 10
+        def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
         # -- * No need to copy nextflow will create symlinks to the docking project files
-        #-- * Copy docking project to scratch generated folder
-        #cp -a ${input_str} .
-
 
         #-- * this works
         # ls -l .
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_dockScan" } \
-                proc=${i_cpus} \
-                -s  -a  -S \
-                confs=${i_confs} \
-                effort=${r_effort} \
-                seed=${i_random_seed} \
-                input=${ligand_struct_2D} \
-                ${proj_id}
+        echo ${dataset_name}
 
         """
 }
+
+        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_dockScan" } \
+        //         proc=${i_cpus} \
+        //         -s  -a  -S \
+        //         confs=${i_confs} \
+        //         effort=${r_effort} \
+        //         seed=${i_random_seed} \
+        //         input=${ligand_struct_2D} \
+        //         ${proj_id}
