@@ -9,15 +9,8 @@ l_commands = Getarg("-v",no,delete)
 
 
 
-project_folder_path_arg = Getarg("-pf","UNDEFINED",delete)
-project_name_arg = Getarg("-pn","UNDEFINED",delete)
-ob_path_arg= Getarg("-ob","UNDEFINED",delete)
-
-
-score_threshold_arg = Getarg("-score",-20,delete)
-rtcnn_score_threshold_arg = Getarg("-rtcnn",-20,delete)
-
-s_output_arg = Getarg("-o","UNDEFINED",delete)
+s_project_name = Getarg("-p","UNDEFINED",delete)
+s_icb_session = Getarg("-i","UNDEFINED",delete)
 
 n_proc = Getarg("-nproc",4,delete)
 
@@ -32,12 +25,12 @@ r_coefficient = Getarg("-coeff",0.1,delete)
 #output_to_save_arg = Getarg("-o","UNDEFINED",delete)
 
 # check if file exists
-if(!Exist(ob_path_arg read)) quit " Error_$P: file '" ob_path_arg "' not found or not readable."
+if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not found or not readable."
 
 
 
-
-
+# -- * start debug part
+quit 1
 
 
 
