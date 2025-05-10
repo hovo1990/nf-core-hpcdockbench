@@ -31,6 +31,8 @@ include { dockScanTask  } from '../modules/local/dockscan_task'
 include { dockScanMakeHitList  } from '../modules/local/dockscan_makehitlist'
 
 
+include { exportSDF } from '../modules/local/export_sdf'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -92,9 +94,10 @@ workflow HPCDOCKBENCH {
 
     // -- * SStage 2: create hitlist
     dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
-    dockscan_hitlist.view()
+    // dockscan_hitlist.view()
 
     // -- * SStage 3: extract hit list as sdf files
+    exported_sdf_files = exportSDF(dockscan_hitlist)
 
 
 

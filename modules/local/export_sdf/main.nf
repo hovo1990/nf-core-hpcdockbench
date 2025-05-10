@@ -3,15 +3,15 @@ process exportSDF{
     label 'low_cpu_debug'
 
     beforeScript 'hostname;echo "Wait random 10 secs"; sleep $((RANDOM % 10))'
-    maxRetries 5
-    errorStrategy {
-        if (task.exitStatus >= 1){
-            sleep(Math.pow(2, task.attempt) * 15 as long);
-            'retry'
-        } else {
-            'terminate'
-        }
-    }
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 1){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
 
 
     cache true
