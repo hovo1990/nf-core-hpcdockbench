@@ -94,6 +94,8 @@ workflow HPCDOCKBENCH {
     dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
     dockscan_hitlist.view()
 
+    // -- *  SStage 3: extract hit list as sdf files
+
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
