@@ -1,6 +1,6 @@
 process dockScanMakeHitList{
 
-    label 'cpu_pretty_decent_mem'
+    label 'low_cpu_debug'
 
     beforeScript 'hostname;echo "Wait random 25 secs"; sleep $((RANDOM % 25))'
     maxRetries 5
