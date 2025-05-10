@@ -1,0 +1,287 @@
+#!/pro/icm/icms/icm64 -s
+HELP = """
+  Usage> $P -pf=<path> -pn=<proj_name> -ob=<.ob> -o=<outputfile.icb>
+    Enter to docking project, process hits using an .ob file for control docking cases like scenarios
+    Options:
+      -pf=<project_folder path>
+      -pn=<proj_name>
+      -ob=<ob file path>
+      -st=<score threshold>
+      -rtcnnt=<rtcnn threshold>
+      -o=<output to icb file>
+"""
+
+if (Getarg(help)) quit HELP
+l_commands = Getarg("-v",no,delete)
+
+
+
+project_folder_path_arg = Getarg("-pf","UNDEFINED",delete)
+project_name_arg = Getarg("-pn","UNDEFINED",delete)
+ob_path_arg= Getarg("-ob","UNDEFINED",delete)
+
+
+score_threshold_arg = Getarg("-score",-20,delete)
+rtcnn_score_threshold_arg = Getarg("-rtcnn",-20,delete)
+
+s_output_arg = Getarg("-o","UNDEFINED",delete)
+
+n_proc = Getarg("-nproc",4,delete)
+
+#-- ? very important arguments
+r_molweight_control =   Getarg("-molweight",520,delete)
+r_coefficient = Getarg("-coeff",0.1,delete)
+
+
+
+
+#-- ! mo need for that output will be in docking prokect folder
+#output_to_save_arg = Getarg("-o","UNDEFINED",delete)
+
+# check if file exists
+if(!Exist(ob_path_arg read)) quit " Error_$P: file '" ob_path_arg "' not found or not readable."
+
+
+
+
+
+
+
+
+#-- ? End of argument section
+call _startup
+
+if (Error()) then
+  printf error " Error> could not load necessary module\n"
+  quit 1
+endif
+
+
+# #-- * this can be buggy need to fix this
+# call s_icmhome + "_startup"
+
+
+
+
+
+#-- ? Setup variables
+proj_folder = project_folder_path_arg
+proj_name = project_name_arg
+score_threshold = score_threshold_arg
+rtcnn_score_threshold = rtcnn_score_threshold_arg
+ob_file = ob_path_arg
+nProcToUse = Integer(n_proc)
+nProc=nProcToUse
+
+
+
+S_out = Path() // (s_projectsDir + "icmdock/")
+S_out[1]= proj_folder
+currentDockProj.S_projects=Unique(Sort(Replace( Name(Sarray( S_out[1] + "/*_gc.map|*.dtb" directory sort simple )) "_gc*" "" )))
+
+
+#-- TODO this part is not friendly with relative paths later for scaneMakeHitList
+set directory proj_folder
+
+
+print " Info> reading docking project"
+dockUpdateGlobals proj_name  -1
+if( yes & currentDockProj.l_readyReceptor ) dockDisplayMol proj_name 0, -1
+
+currentDockProj.data[8] = "yes"
+#-- TODO
+
+#-- * Process dockScan output, which is in .ob format
+dock_table_name=Name(Name( ob_file ),simple)
+print " info> reading docked objects"
+scanMakeHitList proj_name  ob_file  dock_table_name 1 ==2 no 1 ==1 no ? 100 : 0
+
+
+#-- * Leave out elements that don't correspond to threshold
+print " Info> sort docking table by Score"
+sort $dock_table_name.Score
+curr_table_name_proc = "proc_novs_" + dock_table_name
+
+
+#-- * Leave threshold out, use it only for VS stuff
+
+# $curr_table_name_proc  = $dock_table_name.Score < score_threshold | $dock_table_name.RTCNNscore < rtcnn_score_threshold;
+$curr_table_name_proc  = $dock_table_name
+
+#-- * add average score column
+print " Info> add AverageScore and CombinedScore columns"
+add column $curr_table_name_proc ($curr_table_name_proc.Score+$curr_table_name_proc.RTCNNscore)/2 name='AverageScore'
+
+
+add column $curr_table_name_proc ($curr_table_name_proc.Score+$curr_table_name_proc.RTCNNscore) name='CombinedScore'
+
+#-- * Add corrected score based on Average Score
+#-- * Add corrected average score
+print " Info> calculating MolWeight(mol,'monoiso')"
+indexToAssign=4
+add column $curr_table_name_proc  function="MolWeight(mol,'monoiso')" index=indexToAssign name="molWeight" delete format="%.3f" comment="Monoisotopic or average isotopic molecular weight from .mol [Daltons]"   nProc=nProcToUse
+
+
+
+#-- * Function to calculate Corrected Score
+function corrScore( r_score  r_weight )  # returns strain for a given 3D chemical
+  deltaWtemp = (r_weight-r_molweight_control)
+  if deltaWtemp > 0 then
+    deltaW = deltaWtemp
+  else
+    deltaW = 0
+  endif
+  r_S = r_score + (r_coefficient * deltaW)
+  return r_S
+endfunction
+
+
+print " Info> calculate corrected score based on MolWeight"
+add column $curr_table_name_proc function="corrScore(AverageScore, molWeight)" name="corrScoreAverage" index=2   # strain for every row in the table
+
+
+
+
+
+
+if Nof( $curr_table_name_proc.corrScoreAverage) == 0 then
+  printf error " Error> corrScoreAverage table does not exist, that is not good, exiting \n"
+  quit 1
+endif
+
+
+
+
+
+#-- * Sort by average score
+print " Info> sort table by by Corrected score "
+#-- * sort table by corrected Score
+sort $curr_table_name_proc.corrScoreAverage
+
+#-- * Leave top percentage
+print " Info> Keep all compounds"
+
+
+#-- * Add logarithmics processing of the score
+# add column $curr_table_name_proc Log((1+ Exp($curr_table_name_proc.Score+$curr_table_name_proc.RTCNNscore)), 10) name='LogScore'
+
+
+#-- * Move column RTCNN score after Score
+print " Info> move columns to better places"
+move $curr_table_name_proc.RTCNNscore 6
+move $curr_table_name_proc.AverageScore 7
+move $curr_table_name_proc.CombinedScore 8
+# move $curr_table_name_proc.LogScore 8
+
+
+#-- * Assign toxScore and other parameters to the set
+
+print " Info> calculating predCovfunc"
+
+add column $curr_table_name_proc  function="predCovfunc(mol)" index=indexToAssign name="covalentProdrug_Groups" delete comment="Potential chemical groups that can be linked covalently or cleaved in prodrug " vector
+
+
+print " Info> calculating NephroTox(mol)"
+add column $curr_table_name_proc  function="NephroTox(mol)" index=indexToAssign name="nephrotox" delete comment="Predict Nephrotoxicity, Range: 0-1., NephroTox > 0.5 indicates compound would likely cause kidney toxicity or injury " vector
+
+
+print " Info> calculating LiverToxScore(mol)"
+add column $curr_table_name_proc  function="LiverToxScore(mol)" index=indexToAssign name="liverTox_Score" delete comment="Predict LiverTox, LiverToxPub, and Drug-Induced Liver Injury (DILI) Score, Range: 0-10., LiverToxScore/LiverToxPub/DILIScore >5. indicates compound would likely cause liver toxicity or injury " vector
+
+
+print " Info> calculating ToxScore(mol,yes,yes)"
+add column $curr_table_name_proc  function="ToxScore(mol,yes,yes)" index=indexToAssign name="tox_Score" delete comment="Chemical Alert collected from Chemical suppliers and other sources, Tox_Score >1. indicates substructure/substituent that is flagged as unfavorable, Tox_Class > 0.5 indicates toxic compound " vector
+
+
+print " Info> calculating MolPSA(mol)"
+add column $curr_table_name_proc  function="MolPSA(mol)" index=indexToAssign name="molPSA" delete format="%.2f" comment="Polar surface area in square angstroms from .mol"   nProc=nProcToUse
+
+print " Info> calculating MolLogP(mol)"
+add column $curr_table_name_proc  function="MolLogP(mol)" index=indexToAssign name="molLogP" delete format="%.2f" comment="Octanol water partition, Log10(C_oct/C_w) from .mol"   nProc=nProcToUse
+
+
+
+print " Info> setting up visuals for table"
+
+set format $curr_table_name_proc.nephrotox 80 "%.2f" color="rainbow='#FFFFFF/#FFFF00/#FF0000,0.5:0.75,linear/0.:0./0.3:0.3/0.7:0.7/1.:1.'" comment="Predicted Nephrotoxicity\nRange: 0-1.\nNephroTox >0.5 indicates compound would likely cause kidney toxicity or injury"
+
+set format $curr_table_name_proc.LiverToxScore 80 "%.2g" color="rainbow='#FFFFFF/#FFFF00/#FF0000,5.:7.5,linear/0.:0./3.:3./7.:7./10.:10.'" comment="Predicted LiverTox Score based mainly on raised AST/ALT level\nRange: 0-10.\nLiverToxScore >5. indicates compound would likely cause liver toxicity"
+
+set format $curr_table_name_proc.DILIScore 80 "%.2g" color="rainbow='#FFFFFF/#FFFF00/#FF0000,5.:7.5,linear/0.:0./3.:3./7.:7./10.:10.'" comment="Predicted Drug-Induced Liver Injury (DILI) Score based on DILI Severity and Concern\nRange: 0-10.\nDILIScore >5. indicates compound would likely cause liver injury"
+
+set format $curr_table_name_proc.LiverToxPub 80 "%.2g" color="rainbow='#FFFFFF/#FFFF00/#FF0000,5.:7.5,linear/0.:0./3.:3./7.:7./10.:10.'" comment="Predicted Liver Toxicity based on #References cited in various liver damages in PMID: 15646539\nRange: 0-10.\nLiverToxPub >5. indicates compound would likely cause liver damage"
+
+set format $curr_table_name_proc.Tox_Score color=" _ <= 0 ? '#00ff00' : _ >= 0 & _ <= 1.5 ? Color('#00ff00','#ffff00',0,1.5,_) : _ >= 1.5 & _ <= 3.5 ? Color('#ffff00','#ff6400',1.5,3.5,_) : _ >= 3.5 & _ <= 5 ? Color('#ff6400','#ff0000',3.5,5,_) : _ >= 5 ? '#ff0000' : ''" comment="Tox_Score > 1. indicates substructure/substituent that is flagged as unfavorable by Chemical suppliers"
+
+set format $curr_table_name_proc.Tox_Class color="rainbow='#00FF00/#FFFF00/#FF0000,0.:1.'" comment="Tox_Class > 0.5 indicates toxic compound, e.g. genotox, lethal, or hERG inhibitor"
+
+
+set format $curr_table_name_proc.molWeight color="_ >= 600 & _ <= 800 ? '#FFFF00' : _ >= 800 ? '#ff0000' : ''" comment="molWeight over 800 not great at all"
+set format $curr_table_name_proc.molPSA color="_ >= 140 & _ <= 160 ? '#FFFF00' : _ >= 160 ? '#ff0000' : ''" comment="molPSA over 160 not great at all"
+
+set format $curr_table_name_proc.molLogP color="_ >= 4.0 & _ <= 5.0 ? '#FFFF00' : _ >= 5.0 & _ <= 6.0 ? '#FFC0CB' : _ >= 6.0 ? '#ff0000' : ''" comment="logP over 6 not good at all"
+
+#-- * Add molSynth Calculation, this gives error on cxe-ablab machine,which is under almalinux 9
+add column $curr_table_name_proc function="MolSynth(mol)" index=indexToAssign name="molSynth" delete comment="Chemical Synthetic Accessibility [0-1]. 1-all fragments are very common, 0.-many unknown fragments" color="rainbow='#ff6666/#ffeeaa/#ffff66/#aaffaa/#aaffaa/#aaffaa,0.1:1.,pinwheel'"   nProc=nProcToUse
+
+
+
+#-- TODO add pdb code from field name
+#-- ! Not good design
+
+
+
+
+delete pdb_object_temp
+pdb_object_temp = Field(a_1. "pdb")[1]
+if pdb_object_temp == '' then
+  pdb_object_temp = Name(a_1.)[1]
+endif
+
+add column $curr_table_name_proc pdb_object_temp  name='pdb_object' index=16
+
+delete resolution_temp
+delete resolution_final_temp
+resolution_temp = Field(a_1. "resolution")[1]
+if (Type(resolution_temp) == 'string') then
+
+  resolution_final_temp = Resolution(a_1.)[1]
+else
+  resolution_final_temp = resolution_temp
+endif
+
+add column $curr_table_name_proc resolution_final_temp name='pdb_resolution' index=17
+add column $curr_table_name_proc ob_path_arg  index=18
+
+delete pdb_object_temp
+delete resolution_final_temp
+
+
+
+
+
+
+
+if (Error()) then
+  printf error " Error> Problems while processing table\n"
+  quit 1
+endif
+
+
+
+#-- * Debug purpses
+#writeProject curr_table_name_proc +".icb"  yes
+
+# writeProject curr_table_name_proc +".icb"  yes
+
+#-- TODO this also works
+write binary $curr_table_name_proc  s_output_arg delete
+# writeProject s_output_arg  yes
+#write binary a_*. t_score s_script  curr_table_name_proc +".icb" delete
+
+
+#-- * Do successful exit
+quit 0
+
+
+

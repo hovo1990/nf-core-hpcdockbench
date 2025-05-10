@@ -82,10 +82,15 @@ workflow HPCDOCKBENCH {
 
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
 
-    // -- * Perform dockscan
+    // -- * SStage 1: Perform dockscan
     dockScan_tasks = dockScanTask( icm_docking_projects)
 
-    dockScan_tasks.view()
+    // dockScan_tasks.view()
+
+    // -- * SStage 2: perform
+
+
+
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
