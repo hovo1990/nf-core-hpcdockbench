@@ -31,7 +31,7 @@ process exportSDF{
     }
 
     if (params.mount_options) {
-        containerOptions '--volume ${params.mount_options}'
+        containerOptions "--volume ${params.mount_options}"
     }
 
 

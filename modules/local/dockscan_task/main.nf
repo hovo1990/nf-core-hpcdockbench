@@ -39,15 +39,13 @@ process dockScanTask {
     }
 
     if (params.mount_options) {
-        containerOptions '--volume ${params.mount_options}'
+        containerOptions "--volume ${params.mount_options}"
     }
 
 
 
 
-    if (params.mount_options) {
-        containerOptions '--volume ${params.mount_options}'
-    }
+
 
 
     // --  * val(folder was creating issues)
