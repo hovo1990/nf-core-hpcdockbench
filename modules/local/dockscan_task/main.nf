@@ -15,7 +15,7 @@ process dockScanTask {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
+    beforeScript 'hostname;echo "Wait random 10 secs"; sleep $((RANDOM % 10))'
 
 
 
@@ -23,7 +23,7 @@ process dockScanTask {
 
     cache true
     // debug true
-    publishDir "${params.outdir}/stage5_docking/${code}/", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/stage5_docking/", mode: 'copy', overwrite: true
     // debug true
 
 
@@ -32,12 +32,11 @@ process dockScanTask {
     }
 
 
-
+    // --  * val(folder was creating issues)
     input:
-        tuple val(dataset_name), val(code), val(folder), path(protein_struct), path(ligand_struct), path(ligand_struct_2D), val(proj_id), path(proj_files)
+        tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
     output:
-        //  tuple val(dataset_name), val(code), val(folder), val(protein_struct), val(ligand_struct), val(ligand_struct), val(proj_id), val(proj_files), file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
-        tuple val(dataset_name), val(code)
+        tuple val(dataset_name), val(code), val(proj_id), val(protein_struct), val(ligand_struct), val(ligand_struct_2D),  val(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
 
     script:
         def r_effort= params.effort ?: 4.0
@@ -49,16 +48,17 @@ process dockScanTask {
 
         #-- * this works
         # ls -l .
-        echo ${dataset_name}
+
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_dockScan" } \
+                proc=${i_cpus} \
+                -s  -a  -S \
+                confs=${i_confs} \
+                effort=${r_effort} \
+                seed=${i_random_seed} \
+                input=${ligand_struct_2D} \
+                ${proj_id}
+
 
         """
 }
 
-        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_dockScan" } \
-        //         proc=${i_cpus} \
-        //         -s  -a  -S \
-        //         confs=${i_confs} \
-        //         effort=${r_effort} \
-        //         seed=${i_random_seed} \
-        //         input=${ligand_struct_2D} \
-        //         ${proj_id}

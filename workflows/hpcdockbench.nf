@@ -84,6 +84,7 @@ workflow HPCDOCKBENCH {
 
     // -- * Perform dockscan
     dockScan_tasks = dockScanTask( icm_docking_projects)
+
     dockScan_tasks.view()
 
 
