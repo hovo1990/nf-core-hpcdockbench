@@ -19,6 +19,24 @@ process dockScanMakeHitList{
     publishDir "${params.outdir}/stage6_hitlist/$proj_id/", mode: 'copy', overwrite: true
 
 
+    if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
+        container "${params.singularity_local_container}"
+        // containerOptions " --nv"
+    }
+    else if (workflow.containerEngine == 'singularity' ){
+        container "${params.container_link}"
+    }
+    else {
+        container "${params.container_link}"
+        // containerOptions " --gpus all"
+    }
+
+    if (params.mount_options) {
+        containerOptions '--volume ${params.mount_options}'
+    }
+
+
+
     input:
         tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file)
 

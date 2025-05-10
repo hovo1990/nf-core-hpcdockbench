@@ -26,6 +26,24 @@ process dockScanTask {
     publishDir "${params.outdir}/stage5_docking/${code}", mode: 'copy', overwrite: true
     // debug true
 
+    if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
+        container "${params.singularity_local_container}"
+        // containerOptions " --nv"
+    }
+    else if (workflow.containerEngine == 'singularity' ){
+        container "${params.container_link}"
+    }
+    else {
+        container "${params.container_link}"
+        // containerOptions " --gpus all"
+    }
+
+    if (params.mount_options) {
+        containerOptions '--volume ${params.mount_options}'
+    }
+
+
+
 
     if (params.mount_options) {
         containerOptions '--volume ${params.mount_options}'
