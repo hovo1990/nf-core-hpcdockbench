@@ -98,6 +98,26 @@ workflow HPCDOCKBENCH {
 
     // -- * SStage 3: extract hit list as sdf files
     exported_sdf_files = exportSDF(dockscan_hitlist)
+    // exported_sdf_files.view()
+
+
+    // all_comb =  exported_sdf_files.map{ pair ->
+    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
+    // }
+    // // all_comb.view()
+    // all_comb_flat = all_comb.flatten()
+    // all_comb_flat.view()
+
+    // -- * groupTuple looks like the solution i am looking for
+    // channel.of(
+    //     ['chr1', ['/path/to/region1_chr1.vcf', '/path/to/region2_chr1.vcf']],
+    //     ['chr2', ['/path/to/region1_chr2.vcf', '/path/to/region2_chr2.vcf', '/path/to/region3_chr2.vcf']],
+    // )
+    // .flatMap { chr, vcfs ->
+    //     vcfs.collect { vcf ->
+    //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
+    //     }
+    // }.view()
 
 
 
