@@ -94,8 +94,11 @@ workflow HPCDOCKBENCH {
     dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
     dockscan_hitlist.view()
 
-    // -- *  SStage 3: extract hit list as sdf files
+    // -- * SStage 3: extract hit list as sdf files
 
+
+
+    // -- * SStage 4: perform posebuster and compare with cocrystal structure
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
