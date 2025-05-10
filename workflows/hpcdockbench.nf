@@ -84,53 +84,54 @@ workflow HPCDOCKBENCH {
 
 
     // -- * Stage 5: Prepare docking projects
+    // -- TODO fix mount problem issues
     icm_docking_projects = prepIcmProject(tasks_todo_debug)
     // icm_docking_projects.view()
 
 
-    // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
+    // // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
 
-    // -- * SStage 1: Perform dockscan
-    dockScan_tasks = dockScanTask( icm_docking_projects)
+    // // -- * SStage 1: Perform dockscan
+    // dockScan_tasks = dockScanTask( icm_docking_projects)
 
-    // dockScan_tasks.view()
+    // // dockScan_tasks.view()
 
-    // -- * SStage 2: create hitlist
-    dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
-    // dockscan_hitlist.view()
+    // // -- * SStage 2: create hitlist
+    // dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
+    // // dockscan_hitlist.view()
 
-    // -- * SStage 3: extract hit list as sdf files
-    exported_sdf_files = exportSDF(dockscan_hitlist)
-    // exported_sdf_files.view()
+    // // -- * SStage 3: extract hit list as sdf files
+    // exported_sdf_files = exportSDF(dockscan_hitlist)
+    // // exported_sdf_files.view()
 
 
-    all_comb =  exported_sdf_files.map{ pair ->
-        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
-    }
-    // all_comb.view()
-    // all_comb_flat = all_comb.flatten()
-    // all_comb_flat.view()
+    // all_comb =  exported_sdf_files.map{ pair ->
+    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
+    // }
+    // // all_comb.view()
+    // // all_comb_flat = all_comb.flatten()
+    // // all_comb_flat.view()
 
-    // -- * groupTuple looks like the solution i am looking for
-    // channel.of(
-    //     ['chr1', ['/path/to/region1_chr1.vcf', '/path/to/region2_chr1.vcf']],
-    //     ['chr2', ['/path/to/region1_chr2.vcf', '/path/to/region2_chr2.vcf', '/path/to/region3_chr2.vcf']],
-    // )
-    // .flatMap { chr, vcfs ->
-    //     vcfs.collect { vcf ->
-    //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
-    //     }
-    // }.view()
+    // // -- * groupTuple looks like the solution i am looking for
+    // // channel.of(
+    // //     ['chr1', ['/path/to/region1_chr1.vcf', '/path/to/region2_chr1.vcf']],
+    // //     ['chr2', ['/path/to/region1_chr2.vcf', '/path/to/region2_chr2.vcf', '/path/to/region3_chr2.vcf']],
+    // // )
+    // // .flatMap { chr, vcfs ->
+    // //     vcfs.collect { vcf ->
+    // //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
+    // //     }
+    // // }.view()
 
-    all_comb_flat = all_comb.flatMap{ dataset_name, code,proj_id, protein_struct,
-                    ligand_struct, sdf_files ->
-                    sdf_files.collect { sdf ->
-                        tuple(dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
-                        }
-                    }
-    // all_comb_flat.view()
+    // all_comb_flat = all_comb.flatMap{ dataset_name, code,proj_id, protein_struct,
+    //                 ligand_struct, sdf_files ->
+    //                 sdf_files.collect { sdf ->
+    //                     tuple(dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+    //                     }
+    //                 }
+    // // all_comb_flat.view()
 
-    pose_busted = poseBust(all_comb_flat)
+    // pose_busted = poseBust(all_comb_flat)
 
 
     // -- * SStage 4: perform posebuster and compare with cocrystal structure
