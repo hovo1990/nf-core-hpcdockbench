@@ -36,7 +36,7 @@ process dockScanTask {
     input:
         tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
     output:
-        tuple val(dataset_name), val(code), val(proj_id), val(protein_struct), val(ligand_struct), val(ligand_struct_2D),  val(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
+        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
 
     script:
         def r_effort= params.effort ?: 4.0
