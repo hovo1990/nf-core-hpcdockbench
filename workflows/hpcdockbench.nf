@@ -28,6 +28,9 @@ include { prepIcmProject } from '../modules/local/prep_icm_project'
 
 include { dockScanTask  } from '../modules/local/dockscan_task'
 
+include { dockScanMakeHitList  } from '../modules/local/dockscan_makehitlist'
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -87,9 +90,9 @@ workflow HPCDOCKBENCH {
 
     // dockScan_tasks.view()
 
-    // -- * SStage 2: perform
-
-
+    // -- * SStage 2: create hitlist
+    dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
+    dockscan_hitlist.view()
 
 
 

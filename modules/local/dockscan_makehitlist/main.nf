@@ -16,15 +16,15 @@ process dockScanMakeHitList{
 
     cache true
     // debug true
-    publishDir "${params.output_folder}/6_dockProc_novs/$proj_id/", mode: 'copy', overwrite: true
+    publishDir "${params.output_folder}/stage6_hitlist/$proj_id/", mode: 'copy', overwrite: true
 
 
     input:
-        tuple val(ligs), val(pocket_id), val(proj_id), path(proj_files), path(ob_file)
+        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file)
 
 
     output:
-        tuple val(ligs), val(pocket_id), val(proj_id), path(proj_files), path(ob_file), file("proc_novs_${proj_id}_${ligs.simpleName}1.icb")
+        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), file("proc_novs_${proj_id}_${ligand_struct_2D.simpleName}1.icb")
 
 
     script:
@@ -38,12 +38,12 @@ process dockScanMakeHitList{
 
         #-- * this works
         #ls -l .
-        ${params.icm_exec ?: "${params.icmhome_default}/icm64"} \
-        ${projectDir}/bin/dockScan_proc_vs_stage1_novs_v2.icm \
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        ${projectDir}/bin/dockScan_makehitlist.icm \
                 -pf="." \
                 -pn=${proj_id} \
                 -ob=${ob_file} \
-                -o="proc_novs_${proj_id}_${ligs.simpleName}1.icb"
+                -o="proc_novs_${proj_id}_${ligand_struct_2D.simpleName}1.icb"
 
         """
 }

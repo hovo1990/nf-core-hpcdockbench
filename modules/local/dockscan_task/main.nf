@@ -23,7 +23,7 @@ process dockScanTask {
 
     cache true
     // debug true
-    publishDir "${params.outdir}/stage5_docking/", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/stage5_docking/${code}", mode: 'copy', overwrite: true
     // debug true
 
 
