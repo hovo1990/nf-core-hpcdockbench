@@ -101,10 +101,10 @@ workflow HPCDOCKBENCH {
     // exported_sdf_files.view()
 
 
-    // all_comb =  exported_sdf_files.map{ pair ->
-    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
-    // }
-    // // all_comb.view()
+    all_comb =  exported_sdf_files.map{ pair ->
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
+    }
+    // all_comb.view()
     // all_comb_flat = all_comb.flatten()
     // all_comb_flat.view()
 
@@ -118,6 +118,15 @@ workflow HPCDOCKBENCH {
     //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
     //     }
     // }.view()
+
+    all_comb_flat = all_comb.flatMap{ dataset_name, code,proj_id, protein_struct,
+                    ligand_struct, sdf_files ->
+                    sdf_files.collect { sdf ->
+                        tuple(dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+                        }
+                    }
+    all_comb_flat.view()
+
 
 
 
