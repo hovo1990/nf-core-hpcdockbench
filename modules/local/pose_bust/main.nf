@@ -1,0 +1,39 @@
+process poseBust{
+
+    label 'low_cpu_debug'
+
+    beforeScript 'hostname;echo "Wait random 10 secs"; sleep $((RANDOM % 10))'
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 1){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
+
+
+    cache true
+    // debug true
+    publishDir "${params.outdir}/stage8_pose_bust/$dataset_name/$proj_id/", mode: 'copy', overwrite: true
+
+
+    input:
+        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose)
+
+
+    output:
+        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose), path("${docked_pose.simpleName}.csv")
+
+
+    script:
+        def i_version=1
+        """
+        echo "Export docking poses as sdf file  v${i_version}"
+
+        bust ${docked_pose} -l ${ligand_struct} -p ${protein_struct} --outfmt csv > ${docked_pose.simpleName}.csv
+
+        """
+}
+

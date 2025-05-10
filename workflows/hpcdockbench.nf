@@ -33,6 +33,9 @@ include { dockScanMakeHitList  } from '../modules/local/dockscan_makehitlist'
 
 include { exportSDF } from '../modules/local/export_sdf'
 
+include { poseBust} from '../modules/local/pose_bust'
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -125,9 +128,9 @@ workflow HPCDOCKBENCH {
                         tuple(dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
                         }
                     }
-    all_comb_flat.view()
+    // all_comb_flat.view()
 
-
+    pose_busted = poseBust(all_comb_flat)
 
 
     // -- * SStage 4: perform posebuster and compare with cocrystal structure
