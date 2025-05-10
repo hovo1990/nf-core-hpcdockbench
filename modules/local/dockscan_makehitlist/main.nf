@@ -16,7 +16,7 @@ process dockScanMakeHitList{
 
     cache true
     // debug true
-    publishDir "${params.output_folder}/stage6_hitlist/$proj_id/", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/stage6_hitlist/$proj_id/", mode: 'copy', overwrite: true
 
 
     input:
@@ -28,11 +28,9 @@ process dockScanMakeHitList{
 
 
     script:
-        def input_str = ligs instanceof List ? ligs.join(",") : ligs
-        def i_version=9
+        def i_version=1
         """
         #-- * Copy docking project to scratch generated folder
-        hostname
         echo "Time to Process NO VS mode v${i_version}"
 
 
