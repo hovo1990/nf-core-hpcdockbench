@@ -56,7 +56,7 @@ def timeit(func):
 
 def validate_csv(ctx, param, value):
     logger.info(" Info> validate_csv is ", value)
-    if not value.lower().endswith(".data"):
+    if not value.lower().endswith(".csv"):
         raise click.BadParameter("File must have a .csv extension")
     return value
 
@@ -71,54 +71,74 @@ def validate_csv(ctx, param, value):
     required=True,
     callback=validate_csv,
 )
-def start_program(input):
+@click.option(
+    "--dataset",
+    help="dataset name",
+    required=True,
+
+)
+@click.option(
+    "--prot",
+    help="protein structre",
+    type=click.Path(exists=True),
+    required=True,
+)
+@click.option(
+    "--lig",
+    help="ligand cocrystall structure",
+    type=click.Path(exists=True),
+    required=True,
+)
+@click.option(
+    "--lig",
+    help="ligand cocrystall structure",
+    type=click.Path(exists=True),
+    required=True,
+)
+@click.option(
+    "--dock",
+    help="docked pose",
+    type=click.Path(exists=True),
+    required=True,
+)
+@click.option(
+    "--code",
+    help="code name",
+    required=True,
+
+)
+@click.option(
+    "--proj",
+    help="proj name",
+    required=True,
+
+)
+@click.option(
+    "--output",
+    help="output name",
+    required=True,
+    callback=validate_csv,
+)
+def start_program(input,dataset,prot,lig,dock,code,proj,output):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
-    exit(1)
+    # exit(1)
 
     try:
-        df = pd.read_csv(input,header=None)
+        df = pd.read_csv(input)
+
+        df['RANK'] = input.split('_')[-2]
+        df['_DATASET_'] =  dataset
+        df['_PROTFILE_'] =  prot
+        df['_LIGFILE_'] =  lig
+        df['_DOCKFILE_'] =  dock
+        df['_CODE_'] =  code
+        df['_PROJ_'] =  proj
+
         logger.debug(df)
 
-        df.columns = ['Path']
-
-
-        # -- * Check if it a file or folder
-        directory_lists = []
-        for p in df['Path']:
-            path = Path(p)
-            if path.is_file():
-                logger.debug(f"{p} is a file")
-            elif path.is_dir():
-                logger.debug(f"{p} is a directory")
-                dir_name = path.name
-                directory_lists.append([dir_name,path])
-            else:
-                logger.debug(f"{p} does not exist")
-
-
-        logger.debug(directory_lists)
-
-
-
-        # -- * find all subfolders
-        for i in directory_lists:
-            subfolders_temp = [p for p in i[-1].iterdir() if p.is_dir()]
-            subfolders = [str(p) for p in subfolders_temp]
-            temp_df = pd.DataFrame(subfolders,columns=['PATH'])
-            # temp_df['SET'] = i[0]
-
-            temp_df.insert(0, 'SET',i[0])
-            # temp_df['CODE'] = [p.name for p in subfolders_temp ]
-            temp_p = [p.name for p in subfolders_temp ]
-            temp_df.insert(1, 'CODE',temp_p)
-            file_save = "{}.csv".format(i[0])
-            temp_df.to_csv(file_save,index=False)
-            logger.debug(temp_df)
-            logger.debug(" ========== ")
-
-
+        df.to_csv(output,index=False)
 
         logger.info(" Info> There were no errors")
         exit(0)

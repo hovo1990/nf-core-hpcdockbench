@@ -57,14 +57,14 @@ process poseBust{
 
 
         # -- * Run python script to append extra info for absolute data
-        python ${projectDir}/bin/posebust_update.py   --input=${docked_pose.simpleName}_pre.csv \
+        python ${projectDir}/bin/posebust_update.py --input=${docked_pose.simpleName}_pre.csv \
                                                     --dataset=${dataset_name} \
                                                     --prot=${protein_struct} \
                                                     --lig=${ligand_struct} \
                                                     --dock=${docked_pose} \
                                                     --code=${code} \
                                                     --proj=${proj_id} \
-                                                    --output==${docked_pose.simpleName}.csv
+                                                    --output=${docked_pose.simpleName}.csv
 
         """
 }
