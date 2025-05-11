@@ -101,6 +101,13 @@ def start_program(input,output):
 
         logger.debug(df)
 
+
+        # temp = []
+        # for i in df['csv_data']:
+        #     logger.debug(" Debug> reading {}".format(i))
+        #     temp_df = pd.read_csv(i)
+
+
         # df.to_csv(output,index=False)
 
         logger.info(" Info> There were no errors")
