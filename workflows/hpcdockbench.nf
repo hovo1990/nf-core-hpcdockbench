@@ -133,11 +133,15 @@ workflow HPCDOCKBENCH {
                         }
                     }
     // all_comb_flat.view()
-
+    // -- * SStage 4: perform posebuster and compare with cocrystal structure
     pose_busted = poseBust(all_comb_flat)
 
 
-    // -- * SStage 4: perform posebuster and compare with cocrystal structure
+    // -- * SStage 5: collect all the csv files and start making plots
+    posebusted_files =      pose_busted .collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    posebusted_files.view()
+
+
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
