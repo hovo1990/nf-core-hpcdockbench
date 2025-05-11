@@ -44,8 +44,15 @@ process prepIcmProject {
 
 
     if (params.mount_options) {
-        containerOptions "--volume ${params.mount_options}"
+        if (workflow.containerEngine == 'singularity' ) {
+            containerOptions "--bind ${params.mount_options}"
+        }
+        else {
+            containerOptions "--volume ${params.mount_options}"
+        }
     }
+
+
 
 
     input:
