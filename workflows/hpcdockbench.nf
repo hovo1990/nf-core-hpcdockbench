@@ -147,6 +147,10 @@ workflow HPCDOCKBENCH {
     collectedData = collectAllData(posebusted_files)
 
 
+    // -- * SStage 6: make plot test
+
+
+
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
 
 

@@ -99,16 +99,20 @@ def start_program(input,output):
                      'csv_file']
 
 
-        logger.debug(df)
+        # logger.debug(df)
+
+        csv_data_toiter = df['csv_file']
+        # logger.debug(csv_data_toiter)
+        temp = []
+        final_df = pd.DataFrame()
+        for i in tqdm(csv_data_toiter):
+            # logger.debug(" Debug> reading {}".format(i))
+            temp_df = pd.read_csv(i)
+            final_df  = pd.concat([final_df,temp_df])
 
 
-        # temp = []
-        # for i in df['csv_data']:
-        #     logger.debug(" Debug> reading {}".format(i))
-        #     temp_df = pd.read_csv(i)
 
-
-        # df.to_csv(output,index=False)
+        final_df.to_csv(output,index=False)
 
         logger.info(" Info> There were no errors")
         exit(0)
