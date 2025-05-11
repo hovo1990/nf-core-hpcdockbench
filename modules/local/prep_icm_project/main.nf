@@ -9,14 +9,14 @@ process prepIcmProject {
     label 'low_cpu_debug'
 
     // -- * For debug purposes comment it
-    // maxRetries 1
-    // errorStrategy {
-    //     if (task.exitStatus >= 100){
-    //         'retry'
-    //     } else {
-    //         'terminate'
-    //     }
-    // }
+    maxRetries 5
+    errorStrategy {
+        if (task.exitStatus >= 100){
+            'retry'
+        } else {
+            'terminate'
+        }
+    }
 
 
     beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
