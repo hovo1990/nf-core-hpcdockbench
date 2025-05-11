@@ -54,11 +54,6 @@ def timeit(func):
 
     return wrapped
 
-def validate_data(ctx, param, value):
-    logger.info(" Info> validate_csv is ", value)
-    if not value.lower().endswith(".data"):
-        raise click.BadParameter("File must have a .csv extension")
-    return value
 
 def validate_csv(ctx, param, value):
     logger.info(" Info> validate_csv is ", value)
@@ -74,19 +69,13 @@ def validate_csv(ctx, param, value):
     help="csv input of the posebusted results",
     type=click.Path(exists=True),
     required=True,
-    callback=validate_data,
-)
-@click.option(
-    "--output",
-    help="output name",
-    required=True,
     callback=validate_csv,
 )
-def start_program(input,output):
+def start_program(input):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
-    exit(1)
+    # exit(1)
 
     try:
         df = pd.read_csv(input,header=None)
