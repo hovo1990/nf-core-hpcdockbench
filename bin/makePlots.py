@@ -23,6 +23,11 @@ from tqdm.contrib import tzip
 import traceback
 from pathlib import Path
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
 def logger_wraps(*, entry=True, exit=True, level="DEBUG"):
     def wrapper(func):
         name = func.__name__
@@ -84,6 +89,29 @@ def start_program(input):
         unique_datasets = df['_DATASET_'].unique()
         logger.debug (" Debug> unique datasets {}".format(unique_datasets))
 
+
+
+        for dataset in unique_datasets:
+            curr_dataset = df[ df['_DATASET_'] == dataset]
+
+            top_rank1 = curr_dataset[curr_dataset['RANK'] == 1]
+            logger.debug( " Debug> {}".format(top_rank1))
+
+
+            # -- * Make plot how many are rmsd_≤_2å
+
+            # Count the number of True and False values
+            count_data = data['is_active'].value_counts().reset_index()
+            count_data.columns = ['is_active', 'count']
+
+            # Create the barplot
+            sns.barplot(data=count_data, x='is_active', y='count')
+
+            # Add labels and show the plot
+            plt.xlabel('Is Active')
+            plt.ylabel('Count')
+            plt.title('Count of True/False in is_active')
+            plt.show()
 
 
         logger.info(" Info> There were no errorrmsd_≤_2ås")
