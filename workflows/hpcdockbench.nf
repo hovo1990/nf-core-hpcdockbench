@@ -35,6 +35,9 @@ include { exportSDF } from '../modules/local/export_sdf'
 
 include { poseBust} from '../modules/local/pose_bust'
 
+include { collectAllData} from '../modules/local/collectAllData'
+
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,7 +144,7 @@ workflow HPCDOCKBENCH {
     posebusted_files =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
     posebusted_files.view()
 
-
+    collectedData = collectAllData(posebusted_files)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
