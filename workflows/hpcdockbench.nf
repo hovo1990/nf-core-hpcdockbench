@@ -37,6 +37,7 @@ include { poseBust} from '../modules/local/pose_bust'
 
 include { collectAllData} from '../modules/local/collect_all_data'
 
+include { makePlot} from '../modules/local/make_plot'
 
 
 /*
