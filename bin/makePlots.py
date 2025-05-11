@@ -78,10 +78,15 @@ def start_program(input):
     # exit(1)
 
     try:
-        df = pd.read_csv(input,header=None)
+        df = pd.read_csv(input)
+        logger.debug(" {}".format(df.columns))
+
+        unique_datasets = df['_DATASET_'].unique()
+        logger.debug (" Debug> unique datasets {}".format(unique_datasets))
 
 
-        logger.info(" Info> There were no errors")
+
+        logger.info(" Info> There were no errorrmsd_≤_2ås")
         exit(0)
     except Exception as e:
         logger.warning(" Error> Processing the files {}".format(e))
