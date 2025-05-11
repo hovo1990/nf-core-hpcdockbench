@@ -47,7 +47,7 @@ process collectAllData{
     script:
         def i_version=1
     """
-        python ${projectDir}/bin/filterFolders.py   --input=${input} --output=collectedData.csv
+        python ${projectDir}/bin/collectAllData.py   --input=${input} --output=collectedData.csv
     """
 }
 

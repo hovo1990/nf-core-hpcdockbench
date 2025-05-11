@@ -35,7 +35,7 @@ include { exportSDF } from '../modules/local/export_sdf'
 
 include { poseBust} from '../modules/local/pose_bust'
 
-include { collectAllData} from '../modules/local/collectAllData'
+include { collectAllData} from '../modules/local/collect_all_data'
 
 
 

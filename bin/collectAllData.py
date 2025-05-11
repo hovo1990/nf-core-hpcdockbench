@@ -54,6 +54,12 @@ def timeit(func):
 
     return wrapped
 
+def validate_data(ctx, param, value):
+    logger.info(" Info> validate_csv is ", value)
+    if not value.lower().endswith(".data"):
+        raise click.BadParameter("File must have a .csv extension")
+    return value
+
 def validate_csv(ctx, param, value):
     logger.info(" Info> validate_csv is ", value)
     if not value.lower().endswith(".csv"):
@@ -62,14 +68,13 @@ def validate_csv(ctx, param, value):
 
 
 
-
 @click.command()
 @click.option(
     "--input",
-    help="csv input of the smiles",
+    help="csv input of the posebusted results",
     type=click.Path(exists=True),
     required=True,
-    callback=validate_csv,
+    callback=validate_data,
 )
 @click.option(
     "--output",
@@ -81,22 +86,22 @@ def start_program(input,output):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
-    exit(1)
+    # exit(1)
 
     try:
-        df = pd.read_csv(input)
+        df = pd.read_csv(input,header=None)
+        df.columns =['dataset_name',
+                     'code',
+                     'proj_id',
+                     'protein_struct',
+                     'ligand_struct',
+                     'docked_pose',
+                     'csv_file']
 
-        df['RANK'] = input.split('_')[-2]
-        df['_DATASET_'] =  dataset
-        df['_PROTFILE_'] =  prot
-        df['_LIGFILE_'] =  lig
-        df['_DOCKFILE_'] =  dock
-        df['_CODE_'] =  code
-        df['_PROJ_'] =  proj
 
         logger.debug(df)
 
-        df.to_csv(output,index=False)
+        # df.to_csv(output,index=False)
 
         logger.info(" Info> There were no errors")
         exit(0)
