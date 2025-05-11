@@ -149,7 +149,7 @@ workflow HPCDOCKBENCH {
 
 
     // -- * SStage 6: make plot test
-
+    plots = makePlot(collectAllData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU

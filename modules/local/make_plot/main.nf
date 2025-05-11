@@ -41,13 +41,14 @@ process makePlot{
         path(input)
 
     output:
-        path("collectedData.csv")
+        path("*.pdf")
+        path("*.svg")
 
 
     script:
         def i_version=1
     """
-        python ${projectDir}/bin/collectAllData.py   --input=${input} --output=collectedData.csv
+        python ${projectDir}/bin/makePlots.py   --input=${input}
     """
 }
 
