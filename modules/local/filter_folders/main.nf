@@ -34,8 +34,17 @@ process filterFolders{
         }
     }
 
-        awk -F, 'BEGIN {OFS=","} NR==1 {$\0=$\0",ProjID"} NR>1 {$\0=$\0",${proj_id}"} 1' ${docked_pose.simpleName}_pre.csv > ${docked_pose.simpleName}.csv
 
+
+
+    input:
+        path(input)
+
+    output:
+        path("*.csv")
+
+
+    script:
         def i_version=1
     """
         python ${projectDir}/bin/filterFolders.py   --input=${input}
