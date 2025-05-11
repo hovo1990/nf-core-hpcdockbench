@@ -51,9 +51,20 @@ process poseBust{
     script:
         def i_version=1
         """
-        echo "Export docking poses as sdf file  v${i_version}"
+        echo "Pose busting  v${i_version}"
 
-        bust ${docked_pose} -l ${ligand_struct} -p ${protein_struct} --outfmt csv > ${docked_pose.simpleName}.csv
+        bust ${docked_pose} -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose.simpleName}_pre.csv
+
+
+        # -- * Run python script to append extra info for absolute data
+        python ${projectDir}/bin/posebust_update.py   --input=${docked_pose.simpleName}_pre.csv \
+                                                    --dataset=${dataset_name} \
+                                                    --prot=${protein_struct} \
+                                                    --lig=${ligand_struct} \
+                                                    --dock=${docked_pose} \
+                                                    --code=${code} \
+                                                    --proj=${proj_id} \
+                                                    --output==${docked_pose.simpleName}.csv
 
         """
 }
