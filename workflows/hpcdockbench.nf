@@ -138,7 +138,7 @@ workflow HPCDOCKBENCH {
 
 
     // -- * SStage 5: collect all the csv files and start making plots
-    posebusted_files =      pose_busted .collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    posebusted_files =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
     posebusted_files.view()
 
 
