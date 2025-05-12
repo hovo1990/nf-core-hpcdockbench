@@ -15,7 +15,7 @@ process dockScanTask {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 10 secs"; sleep $((RANDOM % 10))'
+    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
 
 
 

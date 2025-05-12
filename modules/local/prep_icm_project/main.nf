@@ -19,13 +19,12 @@ process prepIcmProject {
     }
 
 
-    beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
+    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
 
 
 
     cache true
 
-    maxForks 20
     publishDir "${params.outdir}/stage4_docking_projects/${code}/", mode: 'copy', overwrite: true
     // debug true
 
