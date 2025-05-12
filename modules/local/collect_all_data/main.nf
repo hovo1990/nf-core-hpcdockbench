@@ -16,7 +16,7 @@ process collectAllData{
     }
 
 
-    publishDir "${params.outdir}/stage9_collected_data", mode: 'copy', overwrite: true
+    // publishDir "${params.outdir}/stage9_collected_data", mode: 'copy', overwrite: true
 
     // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?
     //         ${params.singularity_local_container} :
