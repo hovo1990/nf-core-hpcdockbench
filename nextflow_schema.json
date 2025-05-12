@@ -207,6 +207,12 @@
                     "default": 25051990,
                     "hidden": false
                 },
+                "save_intermediate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save intermediate results or not. Default: false",
+                    "hidden": false
+                },
             }
         }
     },

@@ -5,8 +5,9 @@ process filterFolders{
 
     label 'low_cpu'
 
-
-    publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
+    }
     // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?
     //         ${params.singularity_local_container} :
     //         'biocontainers/gawk:5.3.0' }"
