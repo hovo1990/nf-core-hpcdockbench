@@ -6,7 +6,7 @@ process makePlot{
     label 'low_cpu'
 
 
-    publishDir "${params.outdir}/stage10_plots", mode: 'copy', overwrite: true
+    publishDir "${params.outdir}/plots", mode: 'copy', overwrite: true
     // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?
     //         ${params.singularity_local_container} :
     //         'biocontainers/gawk:5.3.0' }"
