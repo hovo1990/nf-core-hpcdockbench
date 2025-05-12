@@ -5,6 +5,16 @@ process collectAllData{
 
     label 'low_cpu'
 
+    maxRetries 5
+    errorStrategy {
+        if (task.exitStatus >= 100 ){
+            sleep(Math.pow(2, task.attempt) * 15 as long);
+            'retry'
+        } else {
+            'terminate'
+        }
+    }
+
 
     publishDir "${params.outdir}/stage9_collected_data", mode: 'copy', overwrite: true
     // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?

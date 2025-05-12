@@ -5,7 +5,7 @@ process dockScanMakeHitList{
     beforeScript 'hostname;echo "Wait random 25 secs"; sleep $((RANDOM % 25))'
     maxRetries 5
     errorStrategy {
-        if (task.exitStatus >= 1){
+        if (task.exitStatus >= 100){
             sleep(Math.pow(2, task.attempt) * 15 as long);
             'retry'
         } else {
