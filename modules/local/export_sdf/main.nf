@@ -16,9 +16,9 @@ process exportSDF{
     cache true
     // debug true
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage7_export_sdf/$proj_id/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage7_export_sdf/$proj_id/", mode: 'copy', overwrite: true
+    // }
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
         container "${params.singularity_local_container}"

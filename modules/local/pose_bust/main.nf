@@ -39,9 +39,9 @@ process poseBust{
 
     cache true
     // debug true
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage8_pose_bust/$dataset_name/$proj_id/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage8_pose_bust/$dataset_name/$proj_id/", mode: 'copy', overwrite: true
+    // }
 
     input:
         tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose)

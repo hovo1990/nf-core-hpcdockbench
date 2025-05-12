@@ -5,14 +5,12 @@ process filterFolders{
 
     label 'low_cpu'
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
-    }
-    // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?
-    //         ${params.singularity_local_container} :
-    //         'biocontainers/gawk:5.3.0' }"
+    // -- ! this does not work unfortunately
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
+    // }
 
-    // container "/home/hovakim/GitSync/quick.sif"
+
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
         container "${params.singularity_local_container}"

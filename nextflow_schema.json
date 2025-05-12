@@ -51,6 +51,12 @@
                     "type": "string",
                     "description": "Mount options",
                     "errorMessage": "Mount options, especially useful for containers"
+                },
+                "save_intermediate": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save intermediate results or not. Default: false",
+                    "hidden": false
                 }
             }
         },
@@ -206,13 +212,7 @@
                     "description": "Number for the random seed. Default: 25051990",
                     "default": 25051990,
                     "hidden": false
-                },
-                "save_intermediate": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Save intermediate results or not. Default: false",
-                    "hidden": false
-                },
+                }
             }
         }
     },

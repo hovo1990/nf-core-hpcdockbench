@@ -3,9 +3,10 @@ process unzipDataset{
 
     label 'low_cpu'
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage2_unpacked_dataset", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage2_unpacked_dataset", mode: 'copy', overwrite: true
+    // }
+
 
     beforeScript "hostname"
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
