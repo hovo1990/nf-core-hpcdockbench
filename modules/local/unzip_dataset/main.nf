@@ -35,9 +35,6 @@ process unzipDataset{
 
 
 
-    label "process_low"
-
-
     input:
         path(input)
 

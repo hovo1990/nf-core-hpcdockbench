@@ -80,7 +80,7 @@ def start_program(input):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
-    # exit(1)
+    exit(1)
 
     try:
         df = pd.read_csv(input)
