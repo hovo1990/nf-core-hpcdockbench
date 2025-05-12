@@ -91,7 +91,7 @@ def start_program(input):
 
 
 
-        for dataset in unique_datasets:
+        for dataset in tqdm(unique_datasets):
             curr_dataset = df[ df['_DATASET_'] == dataset]
 
             top_rank1 = curr_dataset[curr_dataset['RANK'] == 1]
@@ -101,17 +101,24 @@ def start_program(input):
             # -- * Make plot how many are rmsd_≤_2å
 
             # Count the number of True and False values
-            count_data = data['is_active'].value_counts().reset_index()
-            count_data.columns = ['is_active', 'count']
+            count_data = top_rank1['rmsd_≤_2å'].value_counts().reset_index()
+            count_data.columns = ['rmsd_≤_2å', 'count']
 
             # Create the barplot
-            sns.barplot(data=count_data, x='is_active', y='count')
+            sns.barplot(data=count_data, x='rmsd_≤_2å', y='count')
 
             # Add labels and show the plot
-            plt.xlabel('Is Active')
+            plt.xlabel('rmsd_≤_2å')
             plt.ylabel('Count')
-            plt.title('Count of True/False in is_active')
-            plt.show()
+            plt.title('Count of True/False in rmsd_≤_2å')
+
+            output = 'output_{}.svg'.format(dataset)
+            outputpdf = 'output_{}.pdf'.format(dataset)
+
+
+            plt.savefig(output)
+
+            plt.savefig(outputpdf)
 
 
         logger.info(" Info> There were no errorrmsd_≤_2ås")
