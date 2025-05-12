@@ -46,7 +46,7 @@ process makePlot{
 
 
     script:
-        def i_version=1
+        def i_version=2
     """
         python ${projectDir}/bin/makePlots.py   --input=${input}
     """
