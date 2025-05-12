@@ -11,7 +11,6 @@ process makePlot{
     //         ${params.singularity_local_container} :
     //         'biocontainers/gawk:5.3.0' }"
 
-    // container "/home/hovakim/GitSync/quick.sif"
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
         container "${params.singularity_local_container}"

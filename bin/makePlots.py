@@ -80,7 +80,7 @@ def start_program(input):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
-    exit(1)
+    # exit(1)
 
     try:
         df = pd.read_csv(input)
@@ -88,6 +88,17 @@ def start_program(input):
 
         unique_datasets = df['_DATASET_'].unique()
         logger.debug (" Debug> unique datasets {}".format(unique_datasets))
+
+
+        name_dict = {'astex_diverse_set':'Astex',
+                     'posebusters_benchmark_set':'PoseBusters'}
+
+        # Set color palette
+        palette = {
+            'Astex': '#76c7c0',         # teal
+            'PoseBusters': '#f97b72'    # coral
+        }
+
 
 
 
@@ -104,12 +115,17 @@ def start_program(input):
             count_data = top_rank1['rmsd_≤_2å'].value_counts().reset_index()
             count_data.columns = ['rmsd_≤_2å', 'count']
 
+            # Add a percentage column
+            total = count_data['count'].sum()
+            count_data['percentage'] = (count_data['count'] / total) * 100
+
             # Create the barplot
-            sns.barplot(data=count_data, x='rmsd_≤_2å', y='count')
+            plt.figure()
+            sns.barplot(data=count_data, x='rmsd_≤_2å', y='percentage')
 
             # Add labels and show the plot
             plt.xlabel('rmsd_≤_2å')
-            plt.ylabel('Count')
+            plt.ylabel('Percentage')
             plt.title('Count of True/False in rmsd_≤_2å')
 
             output = 'output_{}.svg'.format(dataset)
@@ -119,6 +135,7 @@ def start_program(input):
             plt.savefig(output)
 
             plt.savefig(outputpdf)
+            plt.gca()
 
 
         logger.info(" Info> There were no errorrmsd_≤_2ås")
