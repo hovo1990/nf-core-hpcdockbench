@@ -86,6 +86,15 @@ write table mol chem  lig_save_name
 
 
 
+# -- * Optimize object before preparation, if more than 10 chains
+# exit
+if Nof(a_1.A) > 10 then
+  to_keep = Mol(Sphere(ligObj a_1.* 12. ))
+  to_delete = a_1.* & !to_keep
+  delete Mol(to_delete)
+endif
+
+
 
 # -- * Now select pocket
 Dirinp = NameGene
