@@ -70,10 +70,10 @@ workflow ICM_VLS{
     //     }
     // }.view()
 
-    all_comb_flat = all_comb.flatMap{ dataset_name, code,proj_id, protein_struct,
+    all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
                     ligand_struct, sdf_files ->
                     sdf_files.collect { sdf ->
-                        tuple(dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+                        tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
                         }
                     }
     // all_comb_flat.view()
