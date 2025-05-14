@@ -3,6 +3,6 @@ Gold,Classical,67,64,58,55
 Vina,Classical,58,56,60,58
 DeepDock,DL-based,35,11,20,5.2
 Uni-Mol,DL-based,45,12,20,2.0
-DiffDock,DL-based,72,47,38,12
+DiffDock,DL-based blind,72,47,38,12
 EquiBind,DL-based blind,7.1,1.2,2.0,2.0
 TankBind,DL-based blind,59,5.9,16,3.3

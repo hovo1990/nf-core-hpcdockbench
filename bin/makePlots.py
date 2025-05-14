@@ -178,6 +178,16 @@ def posebusted_results_rank1(df):
 
 
 def make_rank1_plot(df):
+    # -- * To make text editable
+    # Optional: specify a font that Inkscape can recognize (e.g., Arial, Times New Roman)
+    plt.rcParams.update(
+        {
+            "svg.fonttype": "none",  # <- Ensures text is stored as <text> elements
+            "text.usetex": False,  # <- Avoids LaTeX rendering (which embeds text as paths)
+            "font.family": "sans-serif",  # or "serif", "Arial", etc.
+        }
+    )
+
     # --- Configuration ---
 
     teal_color = "#80CBC4"  # A light teal
@@ -202,17 +212,20 @@ def make_rank1_plot(df):
         current_category = None
         start_idx = 0
         for i, category_name in enumerate(categories_series):
+            logger.debug(" Debug> i is {} and category is {}".format(i, category_name))
             if current_category != category_name:
                 if current_category is not None:
                     category_definitions[current_category] = (start_idx, i - 1)
                 current_category = category_name
                 start_idx = i
-        # Add the last category
+        # -- * Add the last category
         if current_category is not None:
             category_definitions[current_category] = (
                 start_idx,
                 len(categories_series) - 1,
             )
+
+    logger.debug(" Debug> category def is {}".format(category_definitions))
 
     # --- Setup for Plotting (derived from loaded data) ---
     N = len(methods)
@@ -274,7 +287,7 @@ def make_rank1_plot(df):
                         textcoords="offset points",
                         ha="center",
                         va="bottom",
-                        fontsize=7,
+                        fontsize=6,
                     )
 
     add_bar_labels([bars1, bars2, bars3, bars4])
