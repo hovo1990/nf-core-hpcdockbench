@@ -67,6 +67,8 @@ process poseBust{
                                                     --dock=${docked_pose} \
                                                     --code=${code} \
                                                     --proj=${proj_id} \
+                                                    --method=${method} \
+                                                    --category=${category} \
                                                     --output=${docked_pose.simpleName}.csv
 
         """
