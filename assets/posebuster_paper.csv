@@ -1,0 +1,7 @@
+dataset,tool,type,rmsd_<2_in_percent,rmsd_<2_PB_in_percent
+Astex,Gold,Classical,67,64
+PoseBusters,Gold,Classical,58,55
+Astex,Vina,Classical,58,56
+PoseBusters,Vina,Classical,60,58
+Astex,DeepDock,DL-based,35,11
+PoseBusters,DeepDock,Dl-based,20,5.2
