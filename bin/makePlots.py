@@ -82,7 +82,8 @@ def posebusted_results_rank1(df):
     # Set color palette
     palette = {"Astex": "#76c7c0", "PoseBusters": "#f97b72"}  # teal  # coral
 
-    temp_data = []
+    temp_data_astex = []
+    temp_data_posebuster = []
 
     for dataset in tqdm(unique_datasets):
         curr_dataset = df[df["_DATASET_"] == dataset]
@@ -136,9 +137,12 @@ def posebusted_results_rank1(df):
         # Add a percentage column
         total = count_data["count"].sum()
         total_PB = value_counts["count"].sum()
-        count_data["percentage"] = (count_data["count"] / total) * 100
-        count_data["PB_percentage"] = (value_counts["count"] / total_PB) * 100
-
+        tot_perc = (count_data["count"] / total) * 100
+        tot_perc_PB = (value_counts["count"] / total_PB) * 100
+        count_data["percentage"] = tot_perc
+        count_data["PB_percentage"] = tot_perc_PB
+        tot_perc_vals = tot_perc.values[0]
+        tot_perc_PB_vals = tot_perc_PB.values[0]
         # logger.debug(" Debug> {}".format(count_data))
 
         # # Reshape data to long format
@@ -148,8 +152,29 @@ def posebusted_results_rank1(df):
             var_name="Type",
             value_name="Percentage",
         )
-        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
+
+        if dataset == "astex_diverse_set":
+            temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
+        elif dataset == "posebusters_benchmark_set":
+            temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
+
+        # logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
         logger.debug(" ========== " * 10)
+
+    final_list = ["ICM VLS", "Classical"] + temp_data_astex + temp_data_posebuster
+    # logger.debug(final_list)
+
+    final_df = pd.DataFrame([final_list])
+    final_df.columns = [
+        "Method",
+        "Category",
+        "Astex_RMSD_le_2A",
+        "Astex_RMSD_le_2A_PB_Valid",
+        "PoseBusters_RMSD_le_2A",
+        "PoseBusters_RMSD_le_2A_PB_Valid",
+    ]
+    logger.debug(final_df)
+    return final_df
 
 
 def make_rank1_plot(df):
@@ -401,21 +426,25 @@ def start_program(input, paperdata):
 
         logger.debug(" Debug> {}".format(df_posebusted))
 
-        get_df = posebusted_results_rank1(df_posebusted)
+        df = posebusted_results_rank1(df_posebusted)
 
-        # csv_file_path = paperdata  # Path to your CSV file
-        # # --- Load Data from CSV ---
-        # try:
-        #     df = pd.read_csv(csv_file_path)
-        # except FileNotFoundError:
-        #     print(f"Error: The file '{csv_file_path}' was not found.")
-        #     exit()
-        # except Exception as e:
-        #     print(f"Error reading CSV file: {e}")
-        #     exit()
+        csv_file_path = paperdata  # Path to your CSV file
+        # --- Load Data from CSV ---
+        try:
+            df_paper = pd.read_csv(csv_file_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{csv_file_path}' was not found.")
+            exit()
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+            exit()
+
+        if df_paper is not None:
+            df = pd.concat([df, df_paper])
+            logger.debug(df)
 
         # # -- * 1. Load your data
-        # make_rank1_plot(df)
+        make_rank1_plot(df)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
@@ -430,5 +459,7 @@ def start_program(input, paperdata):
     # --output="${name}_${id}.xyz"
 
 
+if __name__ == "__main__":
+    start_program()
 if __name__ == "__main__":
     start_program()
