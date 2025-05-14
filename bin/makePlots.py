@@ -169,25 +169,15 @@ def posebusted_results_rank1(df):
         logger.debug(" ===" * 20)
 
 
-def make_rank1_plot(data):
+def make_rank1_plot(df):
     # --- Configuration ---
-    csv_file_path = data  # Path to your CSV file
+
     teal_color = "#80CBC4"  # A light teal
     coral_color = "#FFAB91"  # A light coral
 
-    # --- Load Data from CSV ---
-    try:
-        df = pd.read_csv(csv_file_path)
-    except FileNotFoundError:
-        print(f"Error: The file '{csv_file_path}' was not found.")
-        exit()
-    except Exception as e:
-        print(f"Error reading CSV file: {e}")
-        exit()
-
     if df.empty:
-        print("Error: The CSV file is empty.")
-        exit()
+        print("Error: The dataframe is empty.")
+        exit(1)
 
     # Extract data from DataFrame
     methods = df["Method"].tolist()
@@ -426,8 +416,19 @@ def start_program(input, paperdata):
     try:
         df_posebusted = pd.read_csv(input)
 
+        csv_file_path = paperdata  # Path to your CSV file
+        # --- Load Data from CSV ---
+        try:
+            df = pd.read_csv(csv_file_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{csv_file_path}' was not found.")
+            exit()
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+            exit()
+
         # -- * 1. Load your data
-        make_rank1_plot(paperdata)
+        make_rank1_plot(df)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
