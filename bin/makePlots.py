@@ -68,7 +68,7 @@ def validate_csv(ctx, param, value):
     return value
 
 
-def posebusted_results(df):
+def posebusted_results_rank1(df):
     logger.debug(" {}".format(df.columns))
 
     unique_datasets = df["_DATASET_"].unique()
