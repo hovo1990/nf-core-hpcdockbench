@@ -19,7 +19,7 @@ process dockScanMakeHitList{
 
 
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage6_hitlist/$proj_id/", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage6_hitlist/$proj_id/${method}", mode: 'copy', overwrite: true
     }
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {

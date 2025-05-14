@@ -25,7 +25,7 @@ process dockScanTask {
     cache true
     // debug true
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage5_docking/${code}", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage5_docking/${code}/ICM-VLS", mode: 'copy', overwrite: true
     }
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
