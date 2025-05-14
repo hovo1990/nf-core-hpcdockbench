@@ -367,33 +367,33 @@ def start_program(input, paperdata):
 
         # --- Custom Legend (to match the image style) ---
         legend_handles = [
-            Line2D(
-                [0], [0], linestyle="none", marker="", label="Astex Diverse set"
-            ),  # Title for 1st column
+            # Line2D(
+            #     [0], [0], linestyle="none", marker="", label=""
+            # ),  # Title for 1st column
             Patch(
                 facecolor=teal_color,
                 edgecolor="grey",
-                label=r"RMSD $\leq 2\mathring{A}$",
+                label=r"Astex Diverse set RMSD $\leq 2\mathring{A}$",
             ),
             Patch(
                 facecolor=teal_color,
                 edgecolor="grey",
                 hatch="////",
-                label=r"RMSD $\leq 2\mathring{A}$ & PB-Valid",
+                label=r"Astex Diverse set RMSD $\leq 2\mathring{A}$ & PB-Valid",
             ),
-            Line2D(
-                [0], [0], linestyle="none", marker="", label="PoseBusters Benchmark set"
-            ),  # Title for 2nd column
+            # Line2D(
+            #     [0], [0], linestyle="none", marker="", label="PoseBusters Benchmark set"
+            # ),  # Title for 2nd column
             Patch(
                 facecolor=coral_color,
                 edgecolor="grey",
-                label=r"RMSD $\leq 2\mathring{A}$",
+                label=r"PoseBusters Benchmark set RMSD $\leq 2\mathring{A}$",
             ),
             Patch(
                 facecolor=coral_color,
                 edgecolor="grey",
                 hatch="////",
-                label=r"RMSD $\leq 2\mathring{A}$ & PB-Valid",
+                label=r"PoseBusters Benchmark setRMSD $\leq 2\mathring{A}$ & PB-Valid",
             ),
         ]
 
@@ -402,11 +402,9 @@ def start_program(input, paperdata):
         # Order for handles: Title1, Title2, Item1_Col1, Item1_Col2, Item2_Col1, Item2_Col2
         ordered_handles = [
             legend_handles[0],
-            legend_handles[3],  # Titles
-            legend_handles[1],
-            legend_handles[4],  # RMSD <= 2A
+            legend_handles[1],  # RMSD <= 2A
             legend_handles[2],
-            legend_handles[5],  # RMSD <= 2A & PB-Valid
+            legend_handles[3],  # RMSD <= 2A & PB-Valid
         ]
 
         leg = ax.legend(
@@ -422,15 +420,15 @@ def start_program(input, paperdata):
             edgecolor="lightgrey",
         )
 
-        # Make legend titles bold and adjust spacing if needed
-        for i, text in enumerate(leg.get_texts()):
-            if (
-                text.get_text() == "Astex Diverse set"
-                or text.get_text() == "PoseBusters Benchmark set"
-            ):
-                text.set_fontweight("bold")
-                # To remove the (non-existent) marker for title lines if they had one:
-                # leg.legendHandles[i].set_visible(False) # Not strictly needed for Line2D with no visible elements
+        # # Make legend titles bold and adjust spacing if needed
+        # for i, text in enumerate(leg.get_texts()):
+        #     if (
+        #         text.get_text() == "Astex Diverse set"
+        #         or text.get_text() == "PoseBusters Benchmark set"
+        #     ):
+        #         text.set_fontweight("bold")
+        #         # To remove the (non-existent) marker for title lines if they had one:
+        #         # leg.legendHandles[i].set_visible(False) # Not strictly needed for Line2D with no visible elements
 
         # --- Adding Category X-axis Labels ---
         plt.subplots_adjust(bottom=0.15)  # Make space for category labels
@@ -440,7 +438,7 @@ def start_program(input, paperdata):
         y_pos_line = y_pos_text - (0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]))
 
         category_definitions = {
-            "classical": (0, 1),  # indices of methods in this category
+            "Classical": (0, 1),  # indices of methods in this category
             "DL-based": (2, 4),
             "DL-based blind": (5, 6),
         }
