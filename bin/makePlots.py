@@ -194,97 +194,54 @@ def start_program(input, paperdata):
         df_posebusted = pd.read_csv(input)
 
         # -- * 1. Load your data
-        df = pd.read_csv(paperdata)
-        logger.debug(" Debug> dataframe is {}".format(df))
 
-        # -- * It works but the way it looks like this
-        # # -- * Make sure the ordering is fixed:
-        # tools = [
-        #     "Gold",
-        #     "Vina",
-        #     "DeepDock",
-        #     "Uni-Mol",
-        #     "DiffDock",
-        #     "Equibind",
-        #     "TankBind",
-        # ]
-        # datasets = ["Astex", "PoseBusters"]
-
-        # # --* 3. Set up the bar plot
-        # n_tools = len(tools)
-        # bar_width = 0.35
-        # x = np.arange(n_tools)  # the label locations
-
-        # fig, ax = plt.subplots(figsize=(10, 5))
-
-        # # -- * For each dataset, shift the bars left/right
-        # offsets = {"Astex": -bar_width / 2, "PoseBusters": +bar_width / 2}
-        # hatches = {"rmsd_<2_in_percent": "//", "rmsd_<2_PB_in_percent": "xx"}
-
-        # for dataset in datasets:
-        #     subset = df[df["dataset"] == dataset].set_index("tool").loc[tools]
-        #     for i, metric in enumerate(["rmsd_<2_in_percent", "rmsd_<2_PB_in_percent"]):
-        #         values = subset[metric].astype(float).values
-        #         # compute x positions for this dataset+metric
-        #         xpos = x + offsets[dataset]
-        #         # further offset the second metric within each dataset
-        #         xpos = xpos + (i * bar_width / 2)
-        #         ax.bar(
-        #             xpos,
-        #             values,
-        #             bar_width / 2,
-        #             label=f"{dataset} – {'RMSD ≤2 Å' if i==0 else 'RMSD ≤2 Å & PB‑valid'}",
-        #             hatch=hatches[metric],
-        #             edgecolor="black",
-        #             linewidth=1,
-        #         )
-
-        # # 4. Formatting
-        # ax.set_xticks(x)
-        # ax.set_xticklabels(tools, rotation=45, ha="right")
-        # ax.set_ylabel("Percentage of predictions")
-        # ax.set_ylim(0, 100)
-        # ax.legend(ncol=2, fontsize="small", frameon=False)
-        # ax.grid(axis="y", linestyle="--", alpha=0.5)
-
-        # plt.tight_layout()
-
-        methods = [
-            "Gold",
-            "Vina",
-            "DeepDock",
-            "Uni-Mol",
-            "DiffDock",
-            "EquiBind",
-            "TankBind",
-        ]
-        method_categories = {
-            "classical": ["Gold", "Vina"],
-            "DL-based": ["DeepDock", "Uni-Mol", "DiffDock"],
-            "DL-based blind": ["EquiBind", "TankBind"],
-        }
-
-        # Values for Astex Diverse Set
-        astex_rmsd_le_2A = [67, 60, 35, 45, 72, 7.1, 59]  # Solid Teal
-        astex_rmsd_le_2A_pb_valid = [64, 56, 11, 12, 47, 1.2, 5.9]  # Hatched Teal
-
-        # Values for PoseBusters Benchmark Set
-        posebusters_rmsd_le_2A = [58, 60, 20, 22, 38, 2.0, 16]  # Solid Coral
-        posebusters_rmsd_le_2A_pb_valid = [
-            55,
-            58,
-            5.2,
-            2.0,
-            12,
-            2.0,
-            3.3,
-        ]  # Hatched Coral
-
-        # Colors
+        # --- Configuration ---
+        csv_file_path = paperdata  # Path to your CSV file
         teal_color = "#80CBC4"  # A light teal
         coral_color = "#FFAB91"  # A light coral
 
-        # --- Setup ---
+        # --- Load Data from CSV ---
+        try:
+            df = pd.read_csv(csv_file_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{csv_file_path}' was not found.")
+            exit()
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+            exit()
+
+        if df.empty:
+            print("Error: The CSV file is empty.")
+            exit()
+
+        # Extract data from DataFrame
+        methods = df["Method"].tolist()
+        astex_rmsd_le_2A = df["Astex_RMSD_le_2A"].tolist()
+        astex_rmsd_le_2A_pb_valid = df["Astex_RMSD_le_2A_PB_Valid"].tolist()
+        posebusters_rmsd_le_2A = df["PoseBusters_RMSD_le_2A"].tolist()
+        posebusters_rmsd_le_2A_pb_valid = df["PoseBusters_RMSD_le_2A_PB_Valid"].tolist()
+        categories_series = df["Category"]
+
+        # Determine category definitions (start and end indices for each category)
+        # Assumes methods are grouped by category in the CSV
+        category_definitions = {}
+        if not categories_series.empty:
+            current_category = None
+            start_idx = 0
+            for i, category_name in enumerate(categories_series):
+                if current_category != category_name:
+                    if current_category is not None:
+                        category_definitions[current_category] = (start_idx, i - 1)
+                    current_category = category_name
+                    start_idx = i
+            # Add the last category
+            if current_category is not None:
+                category_definitions[current_category] = (
+                    start_idx,
+                    len(categories_series) - 1,
+                )
+
+        # --- Setup for Plotting (derived from loaded data) ---
         N = len(methods)
         x = np.arange(N)  # the label locations
         bar_width = 0.2  # the width of the bars
@@ -333,17 +290,19 @@ def start_program(input, paperdata):
         # --- Adding Percentage Labels on Bars ---
         def add_bar_labels(bars_list):
             for bars_group in bars_list:
-                for bar in bars_group:
-                    height = bar.get_height()
-                    ax.annotate(
-                        f"{height:.1f}%",  # Using .1f to show one decimal like in EquiBind/TankBind
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha="center",
-                        va="bottom",
-                        fontsize=7,
-                    )
+                for bar_item in bars_group:  # bar_item is the actual bar object
+                    height = bar_item.get_height()
+                    # Ensure height is a number before formatting
+                    if isinstance(height, (int, float)) and not np.isnan(height):
+                        ax.annotate(
+                            f"{height:.1f}%",
+                            xy=(bar_item.get_x() + bar_item.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha="center",
+                            va="bottom",
+                            fontsize=7,
+                        )
 
         add_bar_labels([bars1, bars2, bars3, bars4])
 
@@ -366,10 +325,7 @@ def start_program(input, paperdata):
         ax.tick_params(axis="both", which="major", labelsize=10)
 
         # --- Custom Legend (to match the image style) ---
-        legend_handles = [
-            # Line2D(
-            #     [0], [0], linestyle="none", marker="", label=""
-            # ),  # Title for 1st column
+        legend_handles_list = [
             Patch(
                 facecolor=teal_color,
                 edgecolor="grey",
@@ -381,30 +337,24 @@ def start_program(input, paperdata):
                 hatch="////",
                 label=r"Astex Diverse set RMSD $\leq 2\mathring{A}$ & PB-Valid",
             ),
-            # Line2D(
-            #     [0], [0], linestyle="none", marker="", label="PoseBusters Benchmark set"
-            # ),  # Title for 2nd column
             Patch(
                 facecolor=coral_color,
                 edgecolor="grey",
-                label=r"PoseBusters Benchmark set RMSD $\leq 2\mathring{A}$",
+                label=r"PoseBusters Benchmark se RMSD $\leq 2\mathring{A}$",
             ),
             Patch(
                 facecolor=coral_color,
                 edgecolor="grey",
                 hatch="////",
-                label=r"PoseBusters Benchmark setRMSD $\leq 2\mathring{A}$ & PB-Valid",
+                label=r"PoseBusters Benchmark se RMSD $\leq 2\mathring{A}$ & PB-Valid",
             ),
         ]
 
-        # The legend is filled column by column due to ncol=2 and the order of handles.
-        # To achieve row-by-row filling for titles then items:
-        # Order for handles: Title1, Title2, Item1_Col1, Item1_Col2, Item2_Col1, Item2_Col2
         ordered_handles = [
-            legend_handles[0],
-            legend_handles[1],  # RMSD <= 2A
-            legend_handles[2],
-            legend_handles[3],  # RMSD <= 2A & PB-Valid
+            legend_handles_list[0],
+            legend_handles_list[1],  # RMSD <= 2A
+            legend_handles_list[2],
+            legend_handles_list[3],  # RMSD <= 2A & PB-Valid
         ]
 
         leg = ax.legend(
@@ -420,34 +370,28 @@ def start_program(input, paperdata):
             edgecolor="lightgrey",
         )
 
-        # # Make legend titles bold and adjust spacing if needed
-        # for i, text in enumerate(leg.get_texts()):
-        #     if (
-        #         text.get_text() == "Astex Diverse set"
-        #         or text.get_text() == "PoseBusters Benchmark set"
-        #     ):
-        #         text.set_fontweight("bold")
-        #         # To remove the (non-existent) marker for title lines if they had one:
-        #         # leg.legendHandles[i].set_visible(False) # Not strictly needed for Line2D with no visible elements
+        for i, text in enumerate(leg.get_texts()):
+            if (
+                text.get_text() == "Astex Diverse set"
+                or text.get_text() == "PoseBusters Benchmark set"
+            ):
+                text.set_fontweight("bold")
 
         # --- Adding Category X-axis Labels ---
         plt.subplots_adjust(bottom=0.15)  # Make space for category labels
 
-        # Determine y-position for these labels relative to the plot
-        y_pos_text = -0.12 * (ax.get_ylim()[1] - ax.get_ylim()[0])
+        y_pos_text = -0.12 * (
+            ax.get_ylim()[1] - ax.get_ylim()[0]
+        )  # Adjusted for potential negative min y_lim if not 0
         y_pos_line = y_pos_text - (0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]))
 
-        category_definitions = {
-            "Classical": (0, 1),  # indices of methods in this category
-            "DL-based": (2, 4),
-            "DL-based blind": (5, 6),
-        }
-
         for cat_name, (start_idx, end_idx) in category_definitions.items():
-            # Calculate the x-range for the category based on actual bar positions
-            # Left edge of the first bar in the category's first method
+            if start_idx > end_idx:  # Should not happen if CSV is structured correctly
+                print(
+                    f"Warning: Category '{cat_name}' has invalid indices ({start_idx}, {end_idx}). Skipping."
+                )
+                continue
             cat_x_start = x[start_idx] - 1.5 * bar_width - bar_width / 2
-            # Right edge of the last bar in the category's last method
             cat_x_end = x[end_idx] + 1.5 * bar_width + bar_width / 2
 
             center_x = (cat_x_start + cat_x_end) / 2
@@ -473,9 +417,7 @@ def start_program(input, paperdata):
         plt.title(
             "Performance Benchmark", fontsize=14, pad=20
         )  # Optional: Add a main title
-        fig.tight_layout(
-            rect=[0, 0.05, 1, 1]
-        )  # Adjust layout to prevent labels from being cut off, leave space at bottom for category labels
+        fig.tight_layout(rect=[0, 0.05, 1, 1])
 
         output = "output_Benchmark.svg"
         outputpdf = "output_Benchmark.pdf"
