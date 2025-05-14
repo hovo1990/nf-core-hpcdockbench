@@ -97,7 +97,13 @@ workflow HPCDOCKBENCH {
     // -- * Subworkflow 1: ICM VLS RUN
     icm_vls_posebusted = ICM_VLS(icm_docking_projects)
 
+    // -- * Subworkflow 2: ICM RIDGE RUN
 
+
+    // -- * Merge from multiple sources
+
+
+    // -- * Collect all data
     collectedData = collectAllData(icm_vls_posebusted)
 
 

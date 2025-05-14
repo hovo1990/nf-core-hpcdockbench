@@ -53,7 +53,7 @@ workflow ICM_VLS{
 
 
     all_comb =  exported_sdf_files.map{ pair ->
-        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[-1]]
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
     }
     // all_comb.view()
     // all_comb_flat = all_comb.flatten()

@@ -45,11 +45,11 @@ process dockScanMakeHitList{
 
 
     input:
-        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file)
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file)
 
 
     output:
-        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), file("proc_novs_${proj_id}_${ligand_struct_2D.simpleName}1.icb")
+        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), file("proc_novs_${proj_id}_${ligand_struct_2D.simpleName}1.icb")
 
 
     script:

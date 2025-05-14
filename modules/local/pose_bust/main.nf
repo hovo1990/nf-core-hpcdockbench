@@ -44,11 +44,11 @@ process poseBust{
     }
 
     input:
-        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose)
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose)
 
 
     output:
-        tuple val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose), path("${docked_pose.simpleName}.csv")
+        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose), path("${docked_pose.simpleName}.csv")
 
 
     script:
