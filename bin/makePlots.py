@@ -85,6 +85,9 @@ def posebusted_results_rank1(df):
     temp_data_astex = []
     temp_data_posebuster = []
 
+    method = df["_METHOD_"][0]
+    category = df["_CATEGORY_"][0]
+
     for dataset in tqdm(unique_datasets):
         curr_dataset = df[df["_DATASET_"] == dataset]
 
@@ -143,6 +146,7 @@ def posebusted_results_rank1(df):
         count_data["PB_percentage"] = tot_perc_PB
         tot_perc_vals = tot_perc.values[0]
         tot_perc_PB_vals = tot_perc_PB.values[0]
+
         # logger.debug(" Debug> {}".format(count_data))
 
         # # Reshape data to long format
@@ -161,7 +165,7 @@ def posebusted_results_rank1(df):
         # logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
         logger.debug(" ========== " * 10)
 
-    final_list = ["ICM-VLS", "Classical"] + temp_data_astex + temp_data_posebuster
+    final_list = [method, category] + temp_data_astex + temp_data_posebuster
     # logger.debug(final_list)
 
     final_df = pd.DataFrame([final_list])
