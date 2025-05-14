@@ -1,5 +1,5 @@
 //
-// Subworkflow for ICM-VLS CPU
+// Subworkflow for ICM-RIDGE GPU
 //
 
 /*
