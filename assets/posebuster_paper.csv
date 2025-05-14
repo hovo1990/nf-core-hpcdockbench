@@ -5,3 +5,11 @@ Astex,Vina,Classical,58,56
 PoseBusters,Vina,Classical,60,58
 Astex,DeepDock,DL-based,35,11
 PoseBusters,DeepDock,Dl-based,20,5.2
+Astex,Uni-Mol,DL-based,45,12
+PoseBusters,Uni-Mol,Dl-based,20,2.0
+Astex,DiffDock,DL-based blind,72,47
+PoseBusters,DiffDock,Dl-based blin,38,12
+Astex,Equibind,DL-based blind,7.1,1.2
+PoseBusters,Equibind,Dl-based blin,2.0,0
+Astex,TankBind,DL-based blind,59,5.9
+PoseBusters,TankBind,Dl-based blin,16,3.3
