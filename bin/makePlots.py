@@ -82,6 +82,8 @@ def posebusted_results_rank1(df):
     # Set color palette
     palette = {"Astex": "#76c7c0", "PoseBusters": "#f97b72"}  # teal  # coral
 
+    temp_data = []
+
     for dataset in tqdm(unique_datasets):
         curr_dataset = df[df["_DATASET_"] == dataset]
 
@@ -146,27 +148,8 @@ def posebusted_results_rank1(df):
             var_name="Type",
             value_name="Percentage",
         )
-        logger.debug(" Debug> {}".format(melted_data))
-
-        # Create the barplot
-        plt.figure()
-        # sns.barplot(data=count_data, x='rmsd_≤_2å', y='percentage')
-
-        sns.barplot(data=melted_data, x="rmsd_≤_2å", y="Percentage", hue="Type")
-
-        # Add labels and show the plot
-        plt.xlabel("RMSD ≤ 2Å")
-        plt.ylabel("Percentage")
-        plt.title("Count of True/False in RMSD ≤ 2Å")
-
-        output = "output_{}.svg".format(dataset)
-        outputpdf = "output_{}.pdf".format(dataset)
-
-        plt.savefig(output)
-
-        plt.savefig(outputpdf)
-        plt.gca()
-        logger.debug(" ===" * 20)
+        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
+        logger.debug(" ========== " * 10)
 
 
 def make_rank1_plot(df):
@@ -416,19 +399,23 @@ def start_program(input, paperdata):
     try:
         df_posebusted = pd.read_csv(input)
 
-        csv_file_path = paperdata  # Path to your CSV file
-        # --- Load Data from CSV ---
-        try:
-            df = pd.read_csv(csv_file_path)
-        except FileNotFoundError:
-            print(f"Error: The file '{csv_file_path}' was not found.")
-            exit()
-        except Exception as e:
-            print(f"Error reading CSV file: {e}")
-            exit()
+        logger.debug(" Debug> {}".format(df_posebusted))
 
-        # -- * 1. Load your data
-        make_rank1_plot(df)
+        get_df = posebusted_results_rank1(df_posebusted)
+
+        # csv_file_path = paperdata  # Path to your CSV file
+        # # --- Load Data from CSV ---
+        # try:
+        #     df = pd.read_csv(csv_file_path)
+        # except FileNotFoundError:
+        #     print(f"Error: The file '{csv_file_path}' was not found.")
+        #     exit()
+        # except Exception as e:
+        #     print(f"Error reading CSV file: {e}")
+        #     exit()
+
+        # # -- * 1. Load your data
+        # make_rank1_plot(df)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
