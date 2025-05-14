@@ -161,7 +161,7 @@ def posebusted_results_rank1(df):
         # logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
         logger.debug(" ========== " * 10)
 
-    final_list = ["ICM VLS", "Classical"] + temp_data_astex + temp_data_posebuster
+    final_list = ["ICM-VLS", "Classical"] + temp_data_astex + temp_data_posebuster
     # logger.debug(final_list)
 
     final_df = pd.DataFrame([final_list])
