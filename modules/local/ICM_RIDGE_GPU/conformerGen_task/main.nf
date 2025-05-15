@@ -20,7 +20,7 @@ process confGenTask_CPU {
 
 
 
-    label 'cpu_task'
+    label 'low_cpu_debug'
 
     cache true
     // debug true
