@@ -10,6 +10,8 @@
 
 include { confGenTask_CPU } from '../../../modules/local/ICM_RIDGE_GPU/conformerGen_task'
 
+include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task'
+
 
 
 
@@ -39,7 +41,9 @@ workflow ICM_RIDGE{
     lig_conformers = confGenTask_CPU(icm_docking_projects)
 
     // -- * SStage 2: Run Ridge calculation (GPU)
+    tasks_todo_debug =  lig_conformers.take(20)
 
+    ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
 
     // dockScan_tasks.view()
 
