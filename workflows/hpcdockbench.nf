@@ -35,6 +35,9 @@ include { collectAllData} from '../modules/local/collect_all_data'
 // -- * SubWorkflow section
 include { ICM_VLS } from '../subworkflows/local/ICM_VLS'
 
+include { ICM_RIDGE } from '../subworkflows/local/ICM_RIDGE'
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -95,20 +98,22 @@ workflow HPCDOCKBENCH {
 
 
     // -- * Subworkflow 1: ICM VLS RUN
-    icm_vls_posebusted = ICM_VLS(icm_docking_projects)
+    // icm_vls_posebusted = ICM_VLS(icm_docking_projects)
 
     // -- * Subworkflow 2: ICM RIDGE RUN
+    icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
+
 
 
     // -- * Merge from multiple sources
 
 
-    // -- * Collect all data
-    collectedData = collectAllData(icm_vls_posebusted)
+    // // -- * Collect all data
+    // collectedData = collectAllData(icm_vls_posebusted)
 
 
-    // -- * SStage 6: make plot test
-    plots = makePlot( collectedData)
+    // // -- * SStage 6: make plot test
+    // plots = makePlot( collectedData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
