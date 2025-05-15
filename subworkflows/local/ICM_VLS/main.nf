@@ -9,14 +9,14 @@
 */
 
 
-include { dockScanTask  } from '../../../modules/local/dockscan_task'
+include { dockScanTask  } from '../../../modules/local/ICM_VLS/dockscan_task'
 
-include { dockScanMakeHitList  } from '../../../modules/local/dockscan_makehitlist'
+include { dockScanMakeHitList  } from '../../../modules/local/ICM_VLS/dockscan_makehitlist'
 
 
-include { exportSDF } from '../../../modules/local/export_sdf'
+include { exportSDF } from '../../../modules/local/ICM_VLS/export_sdf'
 
-include { poseBust} from '../../../modules/local/pose_bust'
+include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
 
 
 
