@@ -5,7 +5,7 @@
 # Runtime image is smaller than the devel/build image
 FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04 AS mpi-cuda-12.0.1
 LABEL authors="Hovakim Grabski" \
-        description="Docker image containing all software requirements for the nf-core/hpcdockbench pipeline"
+        description="Docker image containing all software requirements for the nf-core/hpcdockbench pipeline GPU ICM-RIDGE stage"
 
 
 # Set up environment variables
@@ -57,7 +57,7 @@ RUN apt-get update -y \
     curl
 
 
-#-- * Install mamba
+# -- * Install mamba
 RUN mkdir -p ${MAMBA_ROOT_PREFIX}
 WORKDIR ${MAMBA_ROOT_PREFIX}
 
@@ -80,4 +80,5 @@ RUN updatedb
 # RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
 
 # -- * Manually run steps from hpcdockbench.rc
+
 
