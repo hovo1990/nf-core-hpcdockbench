@@ -50,11 +50,11 @@ process confGenTask_CPU {
 
 
 
-    // if (params.save_intermediate) {
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
+    }
 
-    // }
 
-    publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
 
     // publishDir "${params.outdir}/ICM-Ridge/Stage1_ginger/${task.id}", mode: 'copy', overwrite: true
 
@@ -62,7 +62,7 @@ process confGenTask_CPU {
     input:
         tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
     output:
-        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("confGen_${ligand_struct_2D.simpleName}.sdf")
+        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("confGen_${ligand_struct_2D.simpleName}.molt")
 
     script:
         def r_effort= params.effort ?: 4.0
@@ -73,7 +73,7 @@ process confGenTask_CPU {
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
              effort=10.0 torlimit=50 sizelimit=600 \
              -V -c -r -A -C mnconf=50 \
-             proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.sdf
+             proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
         """
 }
@@ -184,7 +184,7 @@ process gingerTask_GPU {
     input:
         tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
     output:
-        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.sdf")
+        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.molt")
 
     script:
         def r_effort= params.effort ?: 4.0
@@ -194,7 +194,7 @@ process gingerTask_GPU {
         """
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
                 ${ligand_struct_2D} \
-                ginger_${ligand_struct_2D.simpleName}.sdf
+                ginger_${ligand_struct_2D.simpleName}.molt
 
         """
 }

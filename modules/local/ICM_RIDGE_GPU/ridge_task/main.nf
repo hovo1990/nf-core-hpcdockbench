@@ -63,11 +63,12 @@ process ridgeTask_GPU {
 
     // --  * val(folder was creating issues)
     input:
-        tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files), path(conformer_file)
+        tuple val(method), val(category), val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files), path(conformer_file)
     output:
-        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(conformer_file)
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(conformer_file), path("ridge_${proj_id}.sdf")
 
     script:
+        def i_version = 2
         def r_effort= params.effort ?: 4.0
         def i_confs =  params.conformations ?: 10
         def i_cpus = task.cpus
@@ -84,7 +85,11 @@ process ridgeTask_GPU {
                 -C \
                 scoreCutoff=${r_scoreCutoff} \
                 mnhits=${r_mnhits}  \
-                output=ridge_${proj_id}_${conformer_file.simpleName}.sdf
-
+                output=ridge_${proj_id}.sdf
         """
 }
+
+
+// -- * Ridge can write an empty file that is not good at all
+// -- ! it is asking for molt file
+        // /pro/icm/icms/icm64 _confGen  append=yes -c -r -A -C mnconf=30 proc=6 /tmp/confGen_p1GM8_SOX_2D_ligand_conf_skipped.sdf /tmp/confGen_p1GM8_SOX_2D_ligand_conf.molt
