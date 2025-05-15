@@ -20,7 +20,7 @@ process confGenTask_CPU {
 
 
 
-    label 'gpu_task'
+    label 'cpu_task'
 
     cache true
     // debug true
@@ -28,24 +28,21 @@ process confGenTask_CPU {
 
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
-        container "${params.singularity_local_gpu_container}"
-        containerOptions " --nv"
+        container "${params.singularity_local_cpu_container}"
     }
     else if (workflow.containerEngine == 'singularity' ){
         container "${params.container_link}"
-        containerOptions " --nv"
     }
     else {
         container "${params.container_link}"
-        containerOptions " --gpus all"
     }
 
     if (params.mount_options) {
         if (workflow.containerEngine == 'singularity' ) {
-            containerOptions " --nv --bind ${params.mount_options}"
+            containerOptions "  --bind ${params.mount_options}"
         }
         else {
-            containerOptions " --gpus all --volume ${params.mount_options}"
+            containerOptions " --volume ${params.mount_options}"
         }
     }
 

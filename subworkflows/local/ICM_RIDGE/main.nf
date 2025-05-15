@@ -8,7 +8,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { gingerTask } from '../../../modules/local/ICM_RIDGE_GPU/ginger_task'
+include { confGenTask_CPU } from '../../../modules/local/ICM_RIDGE_GPU/conformerGen_task'
 
 
 
@@ -36,7 +36,7 @@ workflow ICM_RIDGE{
     // -- * Subworkflow 1: think about having a subworkflow for ICM-RIDGE GPU
 
     // -- * SStage 1: Perform ginger calculation (GPU)
-    gingered_tasks =  gingerTask(tasks_todo_debug)
+    lig_conformers = confGenTask_CPU(tasks_todo_debug)
 
     // -- * SStage 2: Run Ridge calculation (GPU)
 
