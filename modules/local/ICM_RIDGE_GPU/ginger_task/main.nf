@@ -5,18 +5,18 @@ process gingerTask {
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
 
 
-    maxRetries 5
-    errorStrategy {
-        if (task.exitStatus >= 100 ){
-            sleep(Math.pow(2, task.attempt) * 15 as long);
-            'retry'
-        } else {
-            'terminate'
-        }
-    }
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 100 ){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
 
 
-    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
+    beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
 
 
 
