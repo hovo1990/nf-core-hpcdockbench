@@ -31,13 +31,21 @@
                     "description": "The working directory of the nextflow pipeline. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "singularity_local_container": {
+                "singularity_local_cpu_container": {
                     "type": "string",
                     "description": "Using Singularity SIF file from the local storage",
                     "format": "file-path",
                     "exists": true,
                     "pattern": "^\\S+\\.sif$",
-                    "errorMessage": "Singularity Container path"
+                    "errorMessage": "Singularity CPU Container path"
+                },
+                "singularity_local_gpu_container": {
+                    "type": "string",
+                    "description": "Using Singularity SIF file from the local storage for GPU calculations",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.sif$",
+                    "errorMessage": "Singularity GPU Container path "
                 },
                 "icm_home": {
                     "type": "string",

@@ -8,12 +8,12 @@ process makePlot{
 
     publishDir "${params.outdir}/plots", mode: 'copy', overwrite: true
     // container  "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_use_local_file ?
-    //         ${params.singularity_local_container} :
+    //         ${params.singularity_local_cpu_container} :
     //         'biocontainers/gawk:5.3.0' }"
 
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
-        container "${params.singularity_local_container}"
+        container "${params.singularity_local_cpu_container}"
         // containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){

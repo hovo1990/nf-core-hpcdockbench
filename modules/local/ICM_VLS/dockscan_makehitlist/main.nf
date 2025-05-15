@@ -23,7 +23,7 @@ process dockScanMakeHitList{
     }
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
-        container "${params.singularity_local_container}"
+        container "${params.singularity_local_cpu_container}"
         // containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){

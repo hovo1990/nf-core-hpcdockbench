@@ -24,28 +24,28 @@ process gingerTask {
 
     cache true
     // debug true
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/ICM-Ridge/${code}/Stage1_ginger", mode: 'copy', overwrite: true
-    }
+
+
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
-        container "${params.singularity_local_container}"
-        // containerOptions " --nv"
+        container "${params.singularity_local_gpu_container}"
+        containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
         container "${params.container_link}"
+        containerOptions " --nv"
     }
     else {
         container "${params.container_link}"
-        // containerOptions " --gpus all"
+        containerOptions " --gpus all"
     }
 
     if (params.mount_options) {
         if (workflow.containerEngine == 'singularity' ) {
-            containerOptions "--bind ${params.mount_options}"
+            containerOptions " --nv --bind ${params.mount_options}"
         }
         else {
-            containerOptions "--volume ${params.mount_options}"
+            containerOptions " --gpus all --volume ${params.mount_options}"
         }
     }
 
@@ -53,8 +53,11 @@ process gingerTask {
 
 
 
+    // if (params.save_intermediate) {
 
+    // }
 
+    publishDir "${params.outdir}/ICM-Ridge/Stage1_ginger/${code}/", mode: 'copy', overwrite: true
 
     // --  * val(folder was creating issues)
     input:
