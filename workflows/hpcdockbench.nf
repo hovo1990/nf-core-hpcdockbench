@@ -105,15 +105,15 @@ workflow HPCDOCKBENCH {
 
 
 
-    // -- * Merge from multiple sources
+    //-- * Merge from multiple sources
 
 
-    // // -- * Collect all data
-    // collectedData = collectAllData(icm_vls_posebusted)
+    // -- * Collect all data
+    collectedData = collectAllData(icm_vls_posebusted)
 
 
-    // // -- * SStage 6: make plot test
-    // plots = makePlot( collectedData)
+    // -- * SStage 6: make plot test
+    plots = makePlot( collectedData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU

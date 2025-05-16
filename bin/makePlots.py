@@ -245,8 +245,9 @@ def make_rank1_plot(df):
         astex_rmsd_le_2A,
         bar_width,
         label="Astex RMSD $\le 2\mathring{A}$",
-        color=teal_color,
-        edgecolor="grey",
+        color="white",  # White box
+        hatch="////",  # Hatch pattern
+        edgecolor=teal_color,  # Teal-colored hatch lines
     )
     bars2 = ax.bar(
         x - 0.5 * bar_width,
@@ -254,7 +255,6 @@ def make_rank1_plot(df):
         bar_width,
         label="Astex RMSD $\le 2\mathring{A}$ & PB-Valid",
         color=teal_color,
-        hatch="////",
         edgecolor="grey",
     )
 
@@ -264,8 +264,9 @@ def make_rank1_plot(df):
         posebusters_rmsd_le_2A,
         bar_width,
         label="PoseBusters RMSD $\le 2\mathring{A}$",
-        color=coral_color,
-        edgecolor="grey",
+        color="white",  # White box
+        hatch="////",  # Hatch pattern
+        edgecolor=coral_color,  # Teal-colored hatch lines
     )
     bars4 = ax.bar(
         x + 1.5 * bar_width,
@@ -273,7 +274,6 @@ def make_rank1_plot(df):
         bar_width,
         label="PoseBusters RMSD $\le 2\mathring{A}$ & PB-Valid",
         color=coral_color,
-        hatch="////",
         edgecolor="grey",
     )
 
@@ -317,26 +317,26 @@ def make_rank1_plot(df):
     # --- Custom Legend (to match the image style) ---
     legend_handles_list = [
         Patch(
-            facecolor=teal_color,
-            edgecolor="grey",
-            label=r"Astex Diverse set RMSD $\leq 2\mathring{A}$",
+            facecolor="white",
+            edgecolor=teal_color,
+            hatch="////",
+            label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$",
         ),
         Patch(
             facecolor=teal_color,
             edgecolor="grey",
+            label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+        ),
+        Patch(
+            facecolor="white",
+            edgecolor=coral_color,
             hatch="////",
-            label=r"Astex Diverse set RMSD $\leq 2\mathring{A}$ & PB-Valid",
+            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$",
         ),
         Patch(
             facecolor=coral_color,
             edgecolor="grey",
-            label=r"PoseBusters Benchmark se RMSD $\leq 2\mathring{A}$",
-        ),
-        Patch(
-            facecolor=coral_color,
-            edgecolor="grey",
-            hatch="////",
-            label=r"PoseBusters Benchmark se RMSD $\leq 2\mathring{A}$ & PB-Valid",
+            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$ & PB-Valid",
         ),
     ]
 

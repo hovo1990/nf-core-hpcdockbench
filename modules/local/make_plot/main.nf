@@ -45,7 +45,7 @@ process makePlot{
 
 
     script:
-        def i_version=3
+        def i_version=4
     """
         python ${projectDir}/bin/makePlots.py   --input=${input} --paperdata=${projectDir}/assets/posebuster_paper.csv
     """
