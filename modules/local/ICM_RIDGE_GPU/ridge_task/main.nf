@@ -75,7 +75,7 @@ process ridgeTask_GPU {
         def i_random_seed  = params.random_seed ?: 25051990
         def nconf = params.nconf  ?: 10 //-- TODO modify this part for testing
         def batchSize = nconf > 5  ? 500 : 1000 //-- * not enough memory for rtx 4070 setting batchSize =1000
-        def r_scoreCutoff = params.scoreCutoff  ?: -25
+        def r_scoreCutoff = params.scoreCutoff  ?: -5
         def r_mnhits = params.mnhits  ?: 20000
         """
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ridge" } \
