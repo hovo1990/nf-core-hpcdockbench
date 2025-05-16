@@ -282,17 +282,18 @@ def make_rank1_plot(df):
         for bars_group in bars_list:
             for bar_item in bars_group:  # bar_item is the actual bar object
                 height = bar_item.get_height()
-                # Ensure height is a number before formatting
-                if isinstance(height, (int, float)) and not np.isnan(height):
-                    ax.annotate(
-                        f"{height:.1f}%",
-                        xy=(bar_item.get_x() + bar_item.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha="center",
-                        va="bottom",
-                        fontsize=6,
-                    )
+                if height > 0.0:
+                    # Ensure height is a number before formatting
+                    if isinstance(height, (int, float)) and not np.isnan(height):
+                        ax.annotate(
+                            f"{height:.1f}%",
+                            xy=(bar_item.get_x() + bar_item.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha="center",
+                            va="bottom",
+                            fontsize=6,
+                        )
 
     add_bar_labels([bars1, bars2, bars3, bars4])
 
