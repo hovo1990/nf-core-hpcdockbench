@@ -51,7 +51,11 @@ endif
 
 read table mol s_sdf_session name='ridgeTable'
 
-exit
+if Nof(ridgeTable) <1 then
+  printf error " Error> table is empty\n"
+  quit 1
+endif
+
 
 
 #  -- * Convert table to stck
