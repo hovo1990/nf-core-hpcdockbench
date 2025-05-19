@@ -77,10 +77,11 @@ process ridgeTask_GPU {
         def i_random_seed  = params.random_seed ?: 25051990
         def nconf = params.nconf  ?: 10 //-- TODO modify this part for testing
         def batchSize = nconf > 5  ? 500 : 1000 //-- * not enough memory for rtx 4070 setting batchSize =1000
-        def r_scoreCutoff = params.scoreCutoff  ?: 30
+        def r_scoreCutoff = params.scoreCutoff  ?: 10000
         def r_mnhits = params.mnhits  ?: 20000
         """
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ridge" } \
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+                ${projectDir}/bin/_ridge_custom.icm \
                 ${proj_id}  \
                 input=${conformer_file} \
                 batchSize=${batchSize} \
@@ -90,22 +91,22 @@ process ridgeTask_GPU {
                 mnhits=${r_mnhits}  \
                 output=ridge_${proj_id}.sdf
 
-        # -- * Validate that the output is not an empty file
-        # Check if file exists
-        if [ ! -e  "ridge_${proj_id}.sdf"]; then
-            echo " Error> File does not exist."
-            exit 1
-        fi
-
-        # Get file size in bytes
-        size=\$(stat --format=%s "ridge_${proj_id}.sdf")
-
-        if [ "\$size" -eq 0 ]; then
-            echo " Error> File is empty (0 bytes)."
-            exit 1
-        fi
         """
 }
+
+
+
+
+// -- Old version
+        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ridge" } \
+        //         ${proj_id}  \
+        //         input=${conformer_file} \
+        //         batchSize=${batchSize} \
+        //         -C \
+        //         -keepStack  \
+        //         scoreCutoff=${r_scoreCutoff} \
+        //         mnhits=${r_mnhits}  \
+        //         output=ridge_${proj_id}.sdf
 
 
 // -- * Ridge can write an empty file that is not good at all

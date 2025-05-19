@@ -33,8 +33,15 @@ process exportRidgeSDF{
         // containerOptions " --gpus all"
     }
 
-    if (params.mount_options) {
-        if (workflow.containerEngine == 'singularity' ) {
+    if (params.mount_options) {        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ridge" } \
+        //         ${proj_id}  \
+        //         input=${conformer_file} \
+        //         batchSize=${batchSize} \
+        //         -C \
+        //         -keepStack  \
+        //         scoreCutoff=${r_scoreCutoff} \
+        //         mnhits=${r_mnhits}  \
+        //         output=ridge_${proj_id}.sdfngine == 'singularity' ) {
             containerOptions "--bind ${params.mount_options}"
         }
         else {
