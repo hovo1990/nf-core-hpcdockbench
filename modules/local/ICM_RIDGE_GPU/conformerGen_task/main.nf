@@ -194,6 +194,9 @@ process gingerTask_GPU {
         """
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
                 ${ligand_struct_2D} \
+                sizelimit=600 \
+                -C mnconf=50 \
+                -hydrogen \
                 ginger_${ligand_struct_2D.simpleName}.molt
 
         """
