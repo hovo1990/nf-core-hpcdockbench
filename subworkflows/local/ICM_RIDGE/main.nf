@@ -56,7 +56,8 @@ workflow ICM_RIDGE{
 
 
     // -- * SStage 2: Run Ridge calculation (GPU)
-    tasks_todo_debug =  lig_conformers.take(20)
+    // tasks_todo_debug =  lig_conformers.take(20)
+    tasks_todo_debug =  lig_conformers
 
     ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
 
