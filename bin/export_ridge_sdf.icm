@@ -51,6 +51,9 @@ endif
 
 read table mol s_sdf_session name='ridgeTable'
 
+exit
+
+
 #  -- * Convert table to stck
 # parrayToMol ridgeTable.mol [ 1 ] "stack"
 
