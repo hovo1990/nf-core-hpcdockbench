@@ -8,8 +8,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+// -- * Conformer generation stage
 include { confGenTask_CPU } from '../../../modules/local/ICM_RIDGE_GPU/conformerGen_task'
+include { gingerTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/conformerGen_task'
 
+
+// -- * GPU docking
 include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task'
 
 
@@ -40,7 +44,8 @@ workflow ICM_RIDGE{
     // -- * SStage 1: Perform ginger calculation (GPU)
     // lig_conformers = confGenTask_CPU(icm_docking_projects)
 
-    lig_conformers = gingerTask_GPU(icm_docking_projects)
+    tasks_todo_debug_conf =  icm_docking_projects.take(50)
+    lig_conformers = gingerTask_GPU(tasks_todo_debug_conf)
 
     // -- * SStage 2: Run Ridge calculation (GPU)
     tasks_todo_debug =  lig_conformers.take(20)

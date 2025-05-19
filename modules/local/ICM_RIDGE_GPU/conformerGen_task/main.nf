@@ -120,6 +120,8 @@ process confGenTask_CPU {
 // -- * Sometimes this fails, maybe for benchmark just use confGen
 process gingerTask_GPU {
 
+    tag "GPU-GINGER-${proj_id}"
+
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
 
