@@ -48,7 +48,7 @@ process exportRidgeSDF{
 
 
     output:
-        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file), path("${proj_id}_rank_*.sdf")
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file), path("${proj_id}_ridge_rank_*.sdf")
 
 
     script:

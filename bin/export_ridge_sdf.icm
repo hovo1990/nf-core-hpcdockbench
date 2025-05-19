@@ -47,34 +47,28 @@ endif
 # #-- * this can be buggy need to fix this
 # call s_icmhome + "_startup"
 
-exit
+# exit
 
 read table mol s_sdf_session name='ridgeTable'
 
 #  -- * Convert table to stck
-parrayToMol ridgeTable.mol [ 1 ] "stack"
+# parrayToMol ridgeTable.mol [ 1 ] "stack"
 
 
 i_numStack  = Nof(a_1. conf)
 
 
-# -- * Convert the columns to Rarray
 
-Field(ridgeTable.RTCNN,"]",1,)
-
+split ridgeTable.mol name="T_docked_conf"
 
 
 
-for i=1,Nof(i_numStack)
+for i=1,Nof(T_docked_conf)
   print " i is ", String(i)
-  load conf a_1. i
-
-  extractLigand a_v1. "3D" no "" no
-
-  tempT = mainTable [i]
+  tempT = T_docked_conf[i]
 
   add column tempT String(i) name='Rank'
-  toExport = s_project_name + "_rank_" + String(i) + '.sdf'
+  toExport = s_project_name + "_ridge_rank_" + String(i) + '.sdf'
   chemSdfExport "tempT"  toExport "compress" no
   delete tempT
 endfor
@@ -99,3 +93,9 @@ quit 0
 # icm/v1> extractLigand a_v1. "3D" no "" no
 # icm/v1> dsChemLock_new "chem" "chem" 1 yes
 # icm/v1_1> dsChemLock_new "chem" "chem" 1 yes
+
+  # load conf a_1. i
+
+  # extractLigand a_v1. "3D" no "" no
+
+  # tempT = mainTable [i]
