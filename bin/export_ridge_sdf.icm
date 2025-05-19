@@ -25,7 +25,7 @@ r_coefficient = Getarg("-coeff",0.1,delete)
 #output_to_save_arg = Getarg("-o","UNDEFINED",delete)
 
 # check if file exists
-if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not found or not readable."
+if(!Exist(s_sdf_session read)) quit " Error_$P: file '" s_sdf_session"' not found or not readable."
 
 
 
@@ -36,6 +36,7 @@ if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not foun
 
 #-- ? End of argument section
 call _startup
+call _macro
 
 if (Error()) then
   printf error " Error> could not load necessary module\n"
@@ -46,8 +47,20 @@ endif
 # #-- * this can be buggy need to fix this
 # call s_icmhome + "_startup"
 
+exit
 
-quit 1
+read table mol s_sdf_session name='ridgeTable'
+
+#  -- * Convert table to stck
+parrayToMol ridgeTable.mol [ 1 ] "stack"
+
+
+
+print Nof(conf)
+print Nof(a_1. conf)
+
+
+ load conf a_v1. 2
 
 
 read binary s_icb_session

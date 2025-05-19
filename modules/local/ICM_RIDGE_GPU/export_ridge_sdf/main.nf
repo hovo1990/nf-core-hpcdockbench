@@ -54,11 +54,11 @@ process exportRidgeSDF{
     script:
         def i_version=1
         """
-        echo "Export docking poses as sdf file  v${i_version}"
+        echo "Export ridge docking poses as sdf file  v${i_version}"
 
         #ls -l .
         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-        ${projectDir}/bin/export_sdf.icm \
+        ${projectDir}/bin/export_ridge_sdf.icm \
                 -p=${proj_id} \
                 -i=${icb_file}
 

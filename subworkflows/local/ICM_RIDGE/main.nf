@@ -17,6 +17,8 @@ include { gingerTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/conformer
 include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task'
 
 
+// -- * Export ridge docking sdf for Posebusters
+include { exportRidgeSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_sdf'
 
 
 /*
@@ -59,7 +61,8 @@ workflow ICM_RIDGE{
     // dockScan_tasks.view()
 
     // -- * SStage 3: Extract conformations and add the data to sdf file
-
+        // -- * SStage 3: extract hit list as sdf files
+    exported_sdf_files = exportRidgeSDF(ridge_tasks)
 
     emit:
     posebusted_files = test
