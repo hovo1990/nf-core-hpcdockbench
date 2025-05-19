@@ -1,0 +1,90 @@
+#!/pro/icm/icms/icm64 -s
+HELP = """
+  Usage> $P -pf=<path> -pn=<proj_name> -ob=<.ob> -o=<outputfile.icb>
+    Take histlist and export to sdf
+"""
+
+if (Getarg(help)) quit HELP
+l_commands = Getarg("-v",no,delete)
+
+
+
+s_project_name = Getarg("-p","UNDEFINED",delete)
+s_sdf_session = Getarg("-i","UNDEFINED",delete)
+
+n_proc = Getarg("-nproc",4,delete)
+
+#-- ? very important arguments
+r_molweight_control =   Getarg("-molweight",520,delete)
+r_coefficient = Getarg("-coeff",0.1,delete)
+
+
+
+
+#-- ! mo need for that output will be in docking prokect folder
+#output_to_save_arg = Getarg("-o","UNDEFINED",delete)
+
+# check if file exists
+if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not found or not readable."
+
+
+
+# -- * start debug part
+# quit 1
+# exit
+
+
+#-- ? End of argument section
+call _startup
+
+if (Error()) then
+  printf error " Error> could not load necessary module\n"
+  quit 1
+endif
+
+
+# #-- * this can be buggy need to fix this
+# call s_icmhome + "_startup"
+
+
+quit 1
+
+
+read binary s_icb_session
+
+s_tableName = Trim(Name(s_icb_session),all)
+
+
+mainTable = $s_tableName
+
+
+for i=1,Nof(mainTable)
+  print " i is ", String(i)
+  tempT = mainTable [i]
+
+  add column tempT String(i) name='Rank'
+  toExport = s_project_name + "_rank_" + String(i) + '.sdf'
+  chemSdfExport "tempT"  toExport "compress" no
+  delete tempT
+endfor
+
+
+
+if (Error()) then
+  printf error " Error> Problems while exporting to sdf\n"
+  quit 1
+endif
+
+
+
+
+
+#-- * Do successful exit
+quit 0
+
+
+
+# icm/v1> load conf a_v1. 2
+# icm/v1> extractLigand a_v1. "3D" no "" no
+# icm/v1> dsChemLock_new "chem" "chem" 1 yes
+# icm/v1_1> dsChemLock_new "chem" "chem" 1 yes

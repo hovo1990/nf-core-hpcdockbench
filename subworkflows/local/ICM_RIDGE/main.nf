@@ -58,6 +58,8 @@ workflow ICM_RIDGE{
 
     // dockScan_tasks.view()
 
+    // -- * SStage 3: Extract conformations and add the data to sdf file
+
 
     emit:
     posebusted_files = test
