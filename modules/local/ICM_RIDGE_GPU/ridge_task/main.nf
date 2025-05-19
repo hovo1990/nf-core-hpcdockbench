@@ -85,6 +85,7 @@ process ridgeTask_GPU {
                 input=${conformer_file} \
                 batchSize=${batchSize} \
                 -C \
+                -keepStack  \
                 scoreCutoff=${r_scoreCutoff} \
                 mnhits=${r_mnhits}  \
                 output=ridge_${proj_id}.sdf

@@ -1,6 +1,7 @@
 
 process confGenTask_CPU {
 
+    tag "CPU-confGen-${proj_id}"
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
 

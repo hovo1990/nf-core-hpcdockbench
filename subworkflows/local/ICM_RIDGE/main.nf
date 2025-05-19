@@ -42,10 +42,14 @@ workflow ICM_RIDGE{
     // -- * Subworkflow 1: think about having a subworkflow for ICM-RIDGE GPU
 
     // -- * SStage 1: Perform ginger calculation (GPU)
-    // lig_conformers = confGenTask_CPU(icm_docking_projects)
 
-    tasks_todo_debug_conf =  icm_docking_projects.take(50)
-    lig_conformers = gingerTask_GPU(tasks_todo_debug_conf)
+
+    // tasks_todo_debug_conf =  icm_docking_projects.take(50)
+    // lig_conformers = gingerTask_GPU(tasks_todo_debug_conf)
+
+    // -- * SStage 1-1: CPU generation of the conformers
+    lig_conformers = confGenTask_CPU(icm_docking_projects)
+
 
     // -- * SStage 2: Run Ridge calculation (GPU)
     tasks_todo_debug =  lig_conformers.take(20)
