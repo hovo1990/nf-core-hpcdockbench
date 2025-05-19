@@ -91,7 +91,19 @@ process ridgeTask_GPU {
                 output=ridge_${proj_id}.sdf
 
         # -- * Validate that the output is not an empty file
+        # Check if file exists
+        if [ ! -e  "ridge_${proj_id}.sdf"]; then
+            echo " Error> File does not exist."
+            exit 1
+        fi
 
+        # Get file size in bytes
+        size=$(stat --format=%s "ridge_${proj_id}.sdf")
+
+        if [ "$\size" -eq 0 ]; then
+            echo " Error> File is empty (0 bytes)."
+            exit 1
+        fi
         """
 }
 
