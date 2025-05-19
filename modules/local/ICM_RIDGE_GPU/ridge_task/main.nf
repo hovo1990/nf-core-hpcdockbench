@@ -1,6 +1,8 @@
 // -- * Sometimes this fails, maybe for benchmark just use confGen
 process ridgeTask_GPU {
 
+    tag "GPU-RIDGE-${proj_id}"
+
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
 
