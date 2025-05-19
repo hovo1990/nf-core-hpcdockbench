@@ -55,24 +55,22 @@ read table mol s_sdf_session name='ridgeTable'
 parrayToMol ridgeTable.mol [ 1 ] "stack"
 
 
-
-print Nof(conf)
-print Nof(a_1. conf)
+i_numStack  = Nof(a_1. conf)
 
 
- load conf a_v1. 2
+# -- * Convert the columns to Rarray
+
+Field(ridgeTable.RTCNN,"]",1,)
 
 
-read binary s_icb_session
-
-s_tableName = Trim(Name(s_icb_session),all)
 
 
-mainTable = $s_tableName
-
-
-for i=1,Nof(mainTable)
+for i=1,Nof(i_numStack)
   print " i is ", String(i)
+  load conf a_1. i
+
+  extractLigand a_v1. "3D" no "" no
+
   tempT = mainTable [i]
 
   add column tempT String(i) name='Rank'
