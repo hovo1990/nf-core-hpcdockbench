@@ -98,9 +98,9 @@ process ridgeTask_GPU {
         fi
 
         # Get file size in bytes
-        size=$(stat --format=%s "ridge_${proj_id}.sdf")
+        size=\$(stat --format=%s "ridge_${proj_id}.sdf")
 
-        if [ "$\size" -eq 0 ]; then
+        if [ "\$size" -eq 0 ]; then
             echo " Error> File is empty (0 bytes)."
             exit 1
         fi

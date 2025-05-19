@@ -1,0 +1,545 @@
+l_commands = l_info = no
+call _macro
+call _docking
+call _vls
+
+read libraries
+read library mmff
+
+HELP = """
+Use: <icm> $P <projFile> [output=<.sdf>] [<options>] input=<s_confMolt1.molt>,..,<s_confMoltN.molt>
+Options:
+  confs=<N>          : score/save only up to <N> top poses for RTCNN rescore
+  randomSelect=<N>   : dock N random compounds (default - 0, dock everything )
+  list=<subselection.tsv>   : dock subset by ID
+  fr=<i_fr>,to=<i_to>: dock range i_fr/i_to (default, dock everything )
+  output=<.sdf>      : output hitlist sdf file name
+  gpuid=<i_gpu_id>   : use specific GPU (default -1)
+  scoreCutoff=<score>: accept ligs with score better than <score> Default: -25
+  clashWeight=<r_value> : clash penalty weight (default 20.)
+  clashScale=<r_value> : clash
+van der Waals scale (default 0.82)
+  threads=<i_threadsPerBlock> : GPU threads per block (default 256)
+  mnhits=<N>         : maximum number of top scored output hits (default: 20K, 0: disable)
+  -s                 : 'smooth' maps
+  -C                 : perform cartesian optimization for best poses
+  -S                 : rescore with physics-based ICM VLS score
+  confsRescore=<i_ncf> : number of conformations to rescore by combined physics-based ICM VLS and RTCNN scores (default 1)
+  -keepStack         : store all conformations in the hitlist
+  smicol=<s_col>     : name of SMILES column (for direct CSV/TSV input)
+  idcol=<s_col>      : name of ID column (for direct CSV/TSV/SDF input)
+  header=<yes|no>    : interpret first line of CSV/TSV as column names (deault yes)
+"""
+
+if (Getarg(help)) quit HELP
+
+S_input_files = Getarg(list delete)
+
+if (Nof(S_input_files) != 1) quit HELP
+
+i_randSelectionSize = Getarg("randomSelect",0)
+s_listToDock =   Getarg("list","")
+i_outConfs =     Getarg("confs",10)
+i_mnhits   =     Getarg("mnhits",20000)
+r_scoreCutoff =  Getarg("scoreCutoff",-25.)
+r_clashWeight =  Getarg("clashWeight",20.)
+clashThreshold = Getarg("clashScale",0.82)
+i_batchSize =    Getarg("batchSize", 500)   # actually depends on GPU RAM. 1000 is OK for RTX 3090 and 4090
+s_conf_files =   Getarg("input","")
+mcBell       =   Getarg("spread",1.)  # spread of spatial systematic search
+l_rtcnn2     =   Getarg("-rtcnn2",no)
+l_verbose    =   Getarg("-V",no)
+#
+if(l_rtcnn2) MODELS.nnScoring = "nnInterMod2"
+#
+if (Extension(s_conf_files)==".csv") then
+  read table separator="," header s_conf_files name="T_indexToDock"
+  if (Type(T_indexToDock.file) != "unknown" & Type(T_indexToDock.id) != "unknown") then
+    # special case input = file,id
+    S_conf_files = Unique(Sort(T_indexToDock.file))
+  else
+    S_conf_files = Split(s_conf_files,",")
+  endif
+else
+  S_conf_files = Split(s_conf_files,",")
+endif
+if (Nof(S_conf_files) == 0) quit HELP
+#
+icCart =         Getarg("-C",no)
+l_rescore =      Getarg("-S",no)
+l_smooth  =      Getarg("-s",no)
+l_keepStack  =   Getarg("-keepStack",no)
+l_anchors     =   Getarg("-anchors",no)
+s_center      =   Getarg("center","")
+# SMILES input
+l_hasHeader   = Getarg("header",yes)
+s_smiColumn   = Getarg("smicol",l_hasHeader ? "smiles" : "A")
+s_idColumn    = Getarg("idcol", l_hasHeader ? "idnumber" : "B")
+l_keepTmpConf = Getarg("keepConf",no)
+#
+if(l_anchors) l_keepStack = yes
+i_outConfsVlsRescore = Getarg("confsRescore",1)
+if (i_outConfsVlsRescore>1) l_rescore=yes
+#
+i_fr = Getarg("fr",-1)
+i_to = Getarg("to",-1)
+s_index = Getarg("index","")
+I_indexToDock = Iarray(Split(s_index,","))
+if (Nof(S_conf_files)>1 & (i_fr != -1 | i_to != -1)) then
+  i_fr = i_to = -1
+  print " Warning> ignoring fr=/to= arguments for multiple molt input"
+endif
+
+maxFileSizeMb = 10000
+s_projName = S_input_files[1]
+
+if(!Exist(s_projName + ".dtb") & !Exist(s_projName + ".tab") & !Exist(s_projName)) quit " Error> cannot find project file " + s_projName + HELP
+if (Nof(S_conf_files)==0) quit " Error> no conf DBs are provided as input=<...>"  + HELP
+#
+s_projPath = Path(s_projName)
+s_projName = Name(s_projName)
+s_projFullName = s_projPath + s_projName
+
+TOOLS.idGPU = Getarg("gpuid",-1)
+
+s_outputName = Getarg("output", "")
+if (s_outputName == "")  s_outputName = s_projName + "_dock_" + Name(S_conf_files[1]) + ".sdf"
+if (i_fr != -1 & i_to != -1) s_outputName = Path(s_outputName) + Name(s_outputName) + "_" + i_fr + "_" + i_to + Extension(s_outputName)
+
+TOOLS.gpuThreadsPerBlock = Getarg("threads",256)
+
+# --------------------------- load project table and unpack parameter values
+if(Exist(s_projPath + s_projName+".dtb")) then
+  read table s_projPath + s_projName + ".dtb"
+else
+  read table s_projPath + s_projName + ".tab"
+endif
+s_projName =  Field( Name( table [ Nof( table ) ] ) [1] 1 "."  )
+s_recName      	= $s_projName.s_recName            # receptor
+ligInitPosition	= $s_projName.R_ligInitPosition
+if (s_center != "") then
+  R_out = Rarray(Split(s_center,","))
+  if (Nof(R_out) != 3) quit " Error> incorrect center= argument provided"
+  ligInitPosition = R_out
+endif
+
+#
+group table T S_conf_files "fi" Iarray(Nof(S_conf_files)) "minid" Iarray(Nof(S_conf_files)) "maxid" Iarray(Nof(S_conf_files)) "nof" Iarray(Nof(S_conf_files),0) "has_conf" Sarray(Nof(S_conf_files)) "fi_conf" Iarray(Nof(S_conf_files)) "sz_conf"
+print " Info> processing " + Sum( T.fi ",")
+for i=1,Nof(T)
+
+  if (Extension(T.fi[i]) == ".smi" | Extension(T.fi[i]) == ".csv" | Extension(T.fi[i]) == ".tsv" | Extension(T.fi[i]) == ".cxsmiles" | Extension(T.fi[i]) == ".sdf"  ) then
+    T.has_conf[i] = 0
+    T.nof[i] = i
+    if (i_randSelectionSize > 0) then
+      i_randSelectionSize = 0
+      printf " Warning> disabling randomSelect=<N> argument for direct smiles/SDF input\n"
+    endif
+  elseif (Extension(T.fi[i]) == ".molt") then
+    c_out = Info( T.fi[i] filename )
+    T.has_conf[i] = c_out["ride"] ? 1 : 0
+    s_tab = c_out["molcart_table"]
+
+    query molcart "select min(id) as val from `$s_tab`" name="t" filename=T.fi[i]; T.minid[i] = t.val[1];
+    query molcart "select max(id) as val from `$s_tab`" name="t" filename=T.fi[i]; T.maxid[i] = t.val[1];
+    T.nof[i] = T.maxid[i] - T.minid[i] + 1
+  else
+    quit " Error> unsupported input file type " + T.fi[i]
+  endif
+endfor
+i_totalSize = Sum(T.nof)
+
+print "********************************************************"
+print " Info> input DB size: " + i_totalSize
+
+r_percSel = Real(i_randSelectionSize)/i_totalSize
+i_dockSize = i_totalSize
+
+if (s_listToDock != "") then
+  if (!Exist(s_listToDock)) quit " Error> " + s_listToDock + " is not found"
+  if (Nof(T) != 1) quit " Error> list=<file.tsv> can only be used with single input"
+  read table separator="\t" s_listToDock name="T_listToDock"
+  s_idcol = Nof( Name(T_listToDock) ) == 1 ? "A" : "B"
+  S_ID = Sarray(T_listToDock.$s_idcol)
+  c_out = Info( T.fi[1] filename )
+  s_tab = c_out["molcart_table"]
+
+  printf " Info> pooling %d ids from %s\n" Nof(S_ID) , s_tab
+  query molcart filename=T.fi[1] "select id from `$s_tab` where vendor_id in :S_ID" name="T_res"
+
+  if (Nof(T_res) == 0) quit " Error> cannot find any compounds to dock from " + s_listToDock
+
+  I_indexToDock = Iarray(T_res.id)
+  sort I_indexToDock
+  i_dockSize = Nof(I_indexToDock)
+  print " Info> list selection size: " + Nof(I_indexToDock)
+elseif (i_randSelectionSize) then
+  print " Info> random selection size: " + i_randSelectionSize
+  i_dockSize = i_randSelectionSize
+elseif (Nof(T_indexToDock)>0) then
+  i_dockSize = Nof(T_indexToDock)
+elseif (Nof(I_indexToDock)>0) then
+  i_dockSize = Nof(I_indexToDock)
+endif
+
+print " Info> total number of compounds to dock: " + i_dockSize
+
+printf " Info> %d best conformations will be scored by RTCNN\n" i_outConfs
+if (l_rescore) printf " Info> %d best conformations will be re-scored by Combined ICM VLS and RTCNN score \n" i_outConfsVlsRescore
+if (icCart) print " Info> cartesian minimization will be applied"
+if (s_center != "") print " Info> ligand initial position provided:" + s_center
+print " Info> RTCNN Score cutoff: " + r_scoreCutoff
+if (i_mnhits>0) printf " Info> %d top scored hits will be saved\n", i_mnhits
+print " Info> output: " + s_outputName
+print "********************************************************"
+#
+s_templateObj      = $s_projName.s_templateObj # docking template
+if(s_templateObj != "none" ) then
+  if (!Exist(s_templateObj)) s_templateObj = s_projPath + s_templateObj
+  read object s_templateObj name = "DOCKTEMPLATE"
+  print " Info> docking will be biased with template APF"
+  call _setAPFparams
+endif
+#
+read binary s_icmhome + MODELS.nnScoring + ".inm"
+read object s_projPath + s_recName
+printf " Receptor: %d polypeptide/%d nucleic/%d hetero/%d metal/%d water molecules\n", Nof( a_A ), Nof( a_N ), Nof( a_H ), Nof( a_M ), Nof( a_W )
+#
+l_info = yes
+scanPrepMaps s_projPath + s_projName yes
+#
+s_grte = "gc,gh,ge,gs,gb"
+if(Nof(a_DOCKTEMPLATE.)!=0) then
+  s_templateMatch = $s_projName.s_templateMatch  # maybe needed downstream in rescoring
+  if( s_templateMatch =="APF")then
+    GRID.gpGaussianRadius = 1.2
+    make map potential "gp" a_DOCKTEMPLATE.// Box(m_gc) occupancy
+    s_grte = s_grte + ",gp"
+  else
+    print " Warning> only APF template method is supported in RIDGE docking, template ignored"
+  endif
+endif
+#
+drop = 10.
+vicinity= 0.6
+mnconf=i_outConfs
+#
+nProc = Getarg("nproc",Nof(fork))
+#vwCutoff = 5.5
+TOOLS.useGPU = yes
+#
+show area mute surface a_//!C1,C3,C4,C44,C5,vt* a_//!C1,C3,C4,C44,C5,vt*
+show area mute surface a_//!h*,vt*  a_//!h*,vt*
+set field a_//!C1,C3,C4,C44,C5,vt* name="sac" 0.1*Area( a_//!C1,C3,C4,C44,C5,vt* )
+#
+if(l_rtcnn2)then
+  show hbond exact mute
+  set field a_//!C1,C3,C4,C44,C5,vt* name="hbi"  Field( a_//!C1,C3,C4,C44,C5,vt* )
+endif
+#
+set energy nnInterMod a_//!C1,C3,C4,C44,C5,vt* & Box( m_gc ) stack  # 'stack' to support 4D
+#
+i_docked = 0
+
+icCsv = Extension(s_outputName) == ".csv"
+if (icCsv) then
+  delete system s_outputName l_warn=no
+endif
+
+
+if (Sum(T.has_conf) == 0) then
+  # GINGER
+  for ifi=1,Nof(T)
+
+    S_args = Sarray()
+    S_args //= "-P" + s_icmhome
+    S_args //= "_ginger"
+
+    if (Extension(T.fi[ifi]) == ".molt") then
+      s_where = ""
+      if (i_randSelectionSize > 0) then
+        i_size = Max(Integer(Floor( T.nof[ifi] * r_percSel + 0.5 )),1)
+        if (ifi == Nof(T)) i_size = i_randSelectionSize - i_docked
+        I_idx = Random( T.minid[ifi], T.maxid[ifi], i_size )
+
+        s_where += " where id in :I_idx "
+      elseif (Nof(T_indexToDock)>0) then
+        I_idx = (T_indexToDock.file == T.fi[ifi]).id
+        s_where += " where id in :I_idx "
+        i_size = Nof( I_idx )
+      elseif (Nof(I_indexToDock)>0) then
+        s_where += " where id in :I_indexToDock "
+        i_size = Nof( I_indexToDock )
+      elseif (i_fr != -1 & i_to != -1) then
+        i_size = i_to - i_fr
+        s_where += " where id >= :i_fr and id <= :i_to "
+      else
+        i_size = T.nof[ifi]
+        s_where = ""
+      endif
+
+      c_out = Info( T.fi[ifi] filename )
+      s_tab = c_out["molcart_table"]
+      print " Info> preparing smiles for GINGER generator"
+      query molcart "select id,vendor_id,smi from `$s_tab` " + s_where name="T_tmp" filename=T.fi[ifi]
+      s_infile = s_tempDir + s_tab + ".tsv"
+      s_outfile = s_tempDir + s_tab + "_" + i + "_conf.molt"
+      write table separator="\t" header T_tmp s_infile delete
+      s_smiCol = "smi"
+      s_idCol = "id"
+      l_header = yes
+      l_rm = yes
+    else
+      s_infile = T.fi[ifi]
+      s_outfile = s_tempDir + Name(T.fi[ifi]) + "_conf.molt"
+      s_smiCol = s_smiColumn
+      s_idCol = s_idColumn
+      l_header = l_hasHeader
+      if (i_fr != -1 & i_to != -1) then
+        S_args //= "-fr=" + i_fr
+        S_args //= "-to=" + i_to
+      endif
+      l_rm = no
+      i_size = 0
+    endif
+
+    S_args //= "-f"
+    S_args //= "smicol=" + s_smiCol
+    S_args //= "idcol=" + s_idCol
+    if (l_header) S_args = S_args // "header=yes"
+    S_args //= s_infile
+    S_args //= s_outfile
+
+    s_cmd = Path(macro,S_args)
+    s_cmd
+    unix $s_cmd
+    if (i_out != 0) quit error " Error> running GINGER. Please check output above"
+    if (l_rm) then
+      delete system s_infile
+      delete T_tmp
+    endif
+
+    T.fi_conf[ifi] = s_outfile
+    T.sz_conf[ifi] = i_size
+
+    i_docked += i_size
+  endfor
+endif
+
+
+for ifi=1,Nof(T)
+
+  s_opt = ""
+  if (icCart)  s_opt += " cartesian dielConst=2. "
+  if (l_smooth)s_opt += " smooth "
+  if (l_keepStack|i_outConfsVlsRescore>1)s_opt += " conf "
+
+  if (T.has_conf[ifi]) then
+    if (i_randSelectionSize > 0) then
+      i_size = Max(Integer(Floor( T.nof[ifi] * r_percSel + 0.5 )),1)
+      if (ifi == Nof(T)) i_size = i_randSelectionSize - i_docked
+      I_idx = Random( T.minid[ifi], T.maxid[ifi], i_size )
+
+      s_opt += " index=I_idx "
+    elseif (Nof(T_indexToDock)>0) then
+      I_idx = (T_indexToDock.file == T.fi[ifi]).id
+      s_opt += " index=I_idx "
+      i_size = Nof( I_idx )
+    elseif (Nof(I_indexToDock)>0) then
+      s_opt += " index=I_indexToDock "
+      i_size = Nof( I_indexToDock )
+    elseif (i_fr != -1 & i_to != -1) then
+      i_size = i_to - i_fr
+      s_opt += " i_fr//i_to "
+    else
+      i_size = T.nof[ifi]
+    endif
+    s_confFile = T.fi[ifi]
+  else
+    i_size = T.sz_conf[ifi]
+    s_confFile = T.fi_conf[ifi]
+  endif
+
+  print ifi,T.fi[ifi], i_size,i_docked
+
+  delete T_docked_tmp l_warn = no
+  dock molcart filename=s_confFile size=i_batchSize number=i_mnhits limit=r_scoreCutoff $s_opt s_grte center=ligInitPosition[1:3] clash=r_clashWeight name="T_docked_tmp"
+  if (Error()) quit "Error running RIDGE"
+  i_docked += Nof(T_docked_tmp)
+  if (Nof(T_docked_tmp)>0) then
+    add column T_docked_tmp Sarray(Nof(T_docked_tmp),T.fi[ifi]) name="db"
+    add column T_docked_tmp Name(T_docked_tmp.mol) name="molid"
+    #
+    icMoltInput = Extension( T.fi[ifi] ) == ".molt"
+    #
+    if (icMoltInput) then
+      if (T.fi_conf[ifi] != "") then
+        # original 'id'
+        c_info = Info( T.fi_conf[ifi] filename )
+        s_sqlTab = c_info["molcart_table"]
+        query molcart "select id,vendor_id as ID from `$s_sqlTab` where id in :T_docked_tmp.molid" name="T_id" filename=T.fi_conf[ifi]
+        add column T_id Sarray(T_id.id) name="molid"
+        join T_docked_tmp.molid T_id.molid left name="T_docked_tmp" column="T_docked_tmp.*,T_id.ID"
+        delete T_docked_tmp.molid
+        add column T_docked_tmp Sarray(T_docked_tmp.ID) name="molid"
+        delete T_docked_tmp.ID
+      endif
+      s_db = T.fi[ifi]
+    else
+      s_db = T.fi_conf[ifi]
+    endif
+    #
+    c_info = Info( s_db filename )
+    s_sqlTab = c_info["molcart_table"]
+    #
+    connect molcart filename=s_db
+    #
+    if (!icCsv) then
+      #add column T_docked_tmp Sarray(Nof(T_docked_tmp)) name="ID"
+      s_idCol  = "vendor_id"
+      print bar " Info> fetching IDs" Nof(T_docked_tmp) l_info=yes
+      query molcart "select id,$s_idCol as ID from `$s_sqlTab` where id in :T_docked_tmp.molid" name="T_id"
+      add column T_id Sarray(T_id.id) name="molid"
+      join T_docked_tmp.molid T_id.molid left name="T_docked_tmp" column="T_docked_tmp.*,T_id.ID"
+      #for i=1,Nof(T_docked_tmp)
+      #  T_docked_tmp.ID[i] = Sql("select " + s_idCol + " as ID from " + s_sqlTab + " where id=" + T_docked_tmp.molid[i]).ID[1]
+      #  print bar Nof(T_docked_tmp) l_info=yes
+      #endfor
+      print bar "End\n" l_info=yes
+    endif
+    #
+    connect molcart off
+  endif
+  if (T.fi_conf[ifi] != "") then
+    if (!l_keepTmpConf) then
+      delete system T.fi_conf[ifi] l_info=yes # tmp conf file
+    else
+      printf " Info> conformational database is kept in %s\n", T.fi_conf[ifi]
+    endif
+  endif
+  if (icCsv) then
+    # save only scores and 2D compounds
+    if (Nof(T_docked_tmp)>0) then
+    # add column T_docked_tmp function="RTCNN[1]" name="Score"
+      add column T_docked_tmp T_docked_tmp.RTCNN  name="Score"
+      delete T_docked_tmp.RTCNN
+      delete T_docked_tmp.clash
+      delete T_docked_tmp.strain
+      delete hydrogen T_docked_tmp.mol all
+      S_smi = Smiles( T_docked_tmp.mol cartesian )
+      delete T_docked_tmp.mol
+      add column T_docked_tmp S_smi name="mol"
+      s_hdr = ""
+      if (!Exist(s_outputName)) s_hdr = "header"
+      write table append $s_hdr separator="," T_docked_tmp s_outputName
+    endif
+  else
+    if (Type(T_docked) == "unknown") then
+      rename T_docked_tmp "T_docked"
+    else
+      add T_docked T_docked_tmp
+    endif
+  endif
+  if (i_mnhits > 0 & i_docked >= i_mnhits) break
+endfor
+#
+if (icCsv) quit
+#
+if (Type(T_docked) != "table") then
+  printf " Info> No hits found\n"
+  quit
+endif
+#
+if(l_anchors)then
+  rFragAreaCutoff = 5.
+  copy a_ "tmprec" strip
+  set object a_tmprec.
+  if (!l_verbose) l_info = l_warn = no
+  N = Nof(T_docked)
+  group table append T_docked Rarray(N) "RTCNN_single" Rarray(N) "strain_single" Rarray(N) "clash_single" Iarray(N) "rconf"
+  for il = 1 Nof( T_docked )
+    read mol stack field T_docked.mol[il]
+
+    for ic = 1 Nof( a_ conf)
+      load conf a_ ic
+      copy a_ "tmplig"
+      move a_tmplig. a_tmprec.
+      set object a_tmprec.
+      #
+      as_cap = Select( a_// "r" )
+      if (Nof(as_cap)==0) then
+        find chemical all a_* [$] "[*;i1]"
+        as_cap = as_outT_docked_tmp
+      endif
+      # show area surface a_* [$] & a_//r* a_//!h*
+      show area surface a_* [$] & as_cap a_//!h*
+      delete a_tmprec.* [$]
+      set object a_. [$]
+      if(r_out > rFragAreaCutoff)break
+    endfor
+    if( ic <= Nof(a_ conf))then
+      T_docked.mol[il] = Chemical(a_ exact hydrogen )
+      T_docked.RTCNN_single[il]  = T_docked.RTCNN[il][ic]
+      T_docked.strain_single[il] = T_docked.strain[il][ic]
+      T_docked.clash_single[il] =  T_docked.clash[il][ic]
+      T_docked.rconf[il] = ic
+    endif
+    delete a_ [$]
+  endfor
+  delete T_docked.RTCNN T_docked.strain T_docked.clash
+  rename T_docked.RTCNN_single "T_docked.RTCNN"
+  rename T_docked.clash_single  "T_docked.clash"
+  rename T_docked.strain_single "T_docked.strain"
+  print " Anchor fragments without access will be removed, N= " + Nof( T_docked.RTCNN == 0. )
+  delete T_docked.RTCNN == 0.
+  delete a_tmprec.
+endif
+#
+if(l_rescore)then
+  nProc = Integer(Ceil(Nof(fork)*0.75))
+  if (!l_verbose) l_info = l_warn = no
+  rename T_docked.RTCNN "RTCNN_Ridge"
+  if (i_outConfsVlsRescore > 1) then
+    delete conf T_docked.mol i_outConfsVlsRescore+1   # delete confs [i_outConfsVlsRescore+1-$]
+    add column T_docked Count(Nof(T_docked)) name="MOL_NUM"
+    split T_docked.mol name="T_docked_conf"
+    delete T_docked
+    rename T_docked_conf "T_docked"
+  endif
+# test
+#l_useAm1BCC = yes
+  scanScoreTable s_projPath + s_projName "T_docked" no
+  add column T_docked name="Score_Combined" T_docked.Score + T_docked.RTCNN index=2
+
+  if (i_outConfsVlsRescore > 1) then
+    group T_docked.MOL_NUM T_docked.Score_Combined "min,Score_Combined"  all "refmin"  name="T_docked"
+    delete T_docked.MOL_NUM
+  endif
+
+  sort T_docked.Score_Combined
+endif
+#
+s_resTab = Name( Name(s_projName) + "_docked" unique )
+i_docked = Nof(T_docked)
+
+
+# -- * My custom fix, otherwise it could generate an empty sdf file
+if Nof(T_docked) < 1 then
+  print " Error> final table is empty, exit with status code 1\n"
+  quit 1
+endif
+
+rename T_docked $s_resTab
+
+if (Extension(s_outputName) == ".icb") then
+  set property display $s_resTab
+  write binary delete $s_resTab s_outputName l_info=yes
+elseif (Extension(s_outputName) == ".sdf") then
+  write table mol delete $s_resTab s_outputName l_info=yes
+endif
+
+
+printf " Info> finished docking %d compounds. %d number of hits stored into %s\n", i_dockSize, i_docked, s_outputName
+quit
+
+
