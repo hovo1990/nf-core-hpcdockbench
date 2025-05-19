@@ -95,3 +95,29 @@ process ridgeTask_GPU {
 // -- * Ridge can write an empty file that is not good at all
 // -- ! it is asking for molt file
         // /pro/icm/icms/icm64 _confGen  append=yes -c -r -A -C mnconf=30 proc=6 /tmp/confGen_p1GM8_SOX_2D_ligand_conf_skipped.sdf /tmp/confGen_p1GM8_SOX_2D_ligand_conf.molt
+
+
+
+// -- * Command line
+Startup> Loading config file /home/hovakim/.icm/config/icm.cfg ..
+Use: <icm> ./_ridge <projFile> [output=<.sdf>] [<options>] input=<s_confMolt1.molt>,..,<s_confMoltN.molt>
+Options:
+  confs=<N>          : score/save only up to <N> top poses for RTCNN rescore
+  randomSelect=<N>   : dock N random compounds (default - 0, dock everything )
+  list=<subselection.tsv>   : dock subset by ID
+  fr=<i_fr>,to=<i_to>: dock range i_fr/i_to (default, dock everything )
+  output=<.sdf>      : output hitlist sdf file name
+  gpuid=<i_gpu_id>   : use specific GPU (default -1)
+  scoreCutoff=<score>: accept ligs with score better than <score> Default: -25
+  clashWeight=<r_value> : clash penalty weight (default 20.)
+  clashScale=<r_value> : clash van der Waals scale (default 0.82)
+  threads=<i_threadsPerBlock> : GPU threads per block (default 256)
+  mnhits=<N>         : maximum number of top scored output hits (default: 20K, 0: disable)
+  -s                 : 'smooth' maps
+  -C                 : perform cartesian optimization for best poses
+  -S                 : rescore with physics-based ICM VLS score
+  confsRescore=<i_ncf> : number of conformations to rescore by combined physics-based ICM VLS and RTCNN scores (default 1)
+  -keepStack         : store all conformations in the hitlist
+  smicol=<s_col>     : name of SMILES column (for direct CSV/TSV input)
+  idcol=<s_col>      : name of ID column (for direct CSV/TSV/SDF input)
+  header=<yes|no>    : interpret first line of CSV/TSV as column names (deault yes)
