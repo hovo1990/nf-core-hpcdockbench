@@ -83,10 +83,13 @@ workflow ICM_RIDGE{
     // -- * SStage 4: perform posebuster and compare with cocrystal structure
     pose_busted = poseBust(all_comb_flat)
 
+    // -- * SStage 5: collect all the csv files and start making plots
+    posebusted_files_ridge =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // posebusted_files.view()
 
 
     emit:
-    posebusted_files = pose_busted
+    posebusted_files = posebusted_files_ridge
     // samplesheet = ch_samplesheet
     // posebusted_files   = posebusted_files
 }
