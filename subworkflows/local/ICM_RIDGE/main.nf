@@ -58,13 +58,7 @@ workflow ICM_RIDGE{
     // -- * SStage 2: Run Ridge calculation (GPU)
     // tasks_todo_debug =  lig_conformers.take(20)
     tasks_todo_debug =  lig_conformers
-
-
-    // -- * Why does Ridge generate an empty sdf file? for what purpose come on
-    ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
-
-    // dockScan_tasks.view()
-
+posebusted_files_ridge
     // -- * SStage 3: Extract conformations and add the data to sdf file
         // -- * SStage 3: extract hit list as sdf files
     exported_sdf_files = exportRidgeSDF(ridge_tasks)
@@ -84,12 +78,12 @@ workflow ICM_RIDGE{
     pose_busted = poseBust(all_comb_flat)
 
     // -- * SStage 5: collect all the csv files and start making plots
-    posebusted_files_ridge =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // posebusted_files_ridge =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
     // posebusted_files.view()
 
 
     emit:
-    posebusted_files = posebusted_files_ridge
+    posebusted_files = pose_busted
     // samplesheet = ch_samplesheet
     // posebusted_files   = posebusted_files
 }
