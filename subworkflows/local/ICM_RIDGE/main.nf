@@ -69,24 +69,24 @@ workflow ICM_RIDGE{
         // -- * SStage 3: extract hit list as sdf files
     exported_sdf_files = exportRidgeSDF(ridge_tasks)
 
-    // all_comb =  exported_sdf_files.map{ pair ->
-    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
-    // }
+    all_comb =  exported_sdf_files.map{ pair ->
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    }
 
-    // all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
-    //                 ligand_struct, sdf_files ->
-    //                 sdf_files.collect { sdf ->
-    //                     tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
-    //                     }
-    //                 }
-    // // all_comb_flat.view()
-    // // -- * SStage 4: perform posebuster and compare with cocrystal structure
-    // pose_busted = poseBust(all_comb_flat)
+    all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
+                    ligand_struct, sdf_files ->
+                    sdf_files.collect { sdf ->
+                        tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+                        }
+                    }
+    // all_comb_flat.view()
+    // -- * SStage 4: perform posebuster and compare with cocrystal structure
+    pose_busted = poseBust(all_comb_flat)
 
 
 
     emit:
-    posebusted_files = test
+    posebusted_files = pose_busted
     // samplesheet = ch_samplesheet
     // posebusted_files   = posebusted_files
 }
