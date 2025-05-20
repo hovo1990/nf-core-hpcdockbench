@@ -61,7 +61,6 @@ process ridgeTask_GPU {
 
 
 
-    // publishDir "${params.outdir}/ICM-Ridge/Stage1_ginger/${task.id}", mode: 'copy', overwrite: true
 
     // --  * val(folder was creating issues)
     input:

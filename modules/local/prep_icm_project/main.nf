@@ -29,7 +29,6 @@ process prepIcmProject {
         publishDir "${params.outdir}/stage4_docking_projects/", mode: 'copy', overwrite: true
     }
 
-    // publishDir { params.save_intermediate? "${params.outdir}/stage4_docking_projects/${code}/" : null }, mode: 'copy', overwrite: true
 
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
