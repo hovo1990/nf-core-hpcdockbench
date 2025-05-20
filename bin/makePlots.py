@@ -463,6 +463,7 @@ def start_program(input, paperdata):
 
         logger.debug(" Debug> {}".format(df_posebusted))
 
+        # -- * Top rank 1 calculations
         df = posebusted_results_rank1(df_posebusted)
 
         csv_file_path = paperdata  # Path to your CSV file
