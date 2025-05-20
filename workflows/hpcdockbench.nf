@@ -105,13 +105,13 @@ workflow HPCDOCKBENCH {
     icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
 
-
+    // -- TODO improve later so it can be toggled on or off
     // -- * Merge from multiple sources
     merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
     // merged_data.view()
 
     merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    merged_data_csv.view()
+    // merged_data_csv.view()
 
     // // // -- * Collect all data
     collectedData = collectAllData(merged_data_csv)
