@@ -94,6 +94,11 @@ def posebusted_results_rank1(df):
     for method in tqdm(unique_methods):
         curr_method = df[df["_METHOD_"] == method]
         category = curr_method["_CATEGORY_"].values.tolist()[0]
+        if method == "ICM-VLS":
+            realname = "ICM-VLS (CPU)"
+        elif method == "ICM-RIDGE":
+            realname = "ICM-RIDGE (GPU)"
+
         for dataset in tqdm(unique_datasets):
             curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
             logger.debug(" DEBUG> dataset {}, method {}".format(dataset, method))
@@ -178,7 +183,7 @@ def posebusted_results_rank1(df):
 
         logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
 
-        final_list.append([method, category] + temp_data_astex + temp_data_posebuster)
+        final_list.append([realname, category] + temp_data_astex + temp_data_posebuster)
         logger.debug(final_list)
         logger.debug(" ========== " * 10)
 
