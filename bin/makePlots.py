@@ -71,6 +71,8 @@ def validate_csv(ctx, param, value):
 def posebusted_results_rank1(df):
     logger.debug(" {}".format(df.columns))
 
+    unique_methods = df["_METHOD_"].unique()
+    unique_categories = df["_CATEGORY_"].unique()
     unique_datasets = df["_DATASET_"].unique()
     logger.debug(" Debug> unique datasets {}".format(unique_datasets))
 
@@ -85,90 +87,102 @@ def posebusted_results_rank1(df):
     temp_data_astex = []
     temp_data_posebuster = []
 
-    method = df["_METHOD_"][0]
-    category = df["_CATEGORY_"][0]
+    # method = df["_METHOD_"][0]
+    # category = df["_CATEGORY_"][0]
+    final_list = []
 
-    for dataset in tqdm(unique_datasets):
-        curr_dataset = df[df["_DATASET_"] == dataset]
+    for method in tqdm(unique_methods):
+        curr_method = df[df["_METHOD_"] == method]
+        category = curr_method["_CATEGORY_"].values.tolist()[0]
+        for dataset in tqdm(unique_datasets):
+            curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
+            logger.debug(" DEBUG> dataset {}, method {}".format(dataset, method))
+            # logger.debug(" DEBUG> method df is {}".format(curr_method))
 
-        top_rank1 = curr_dataset[curr_dataset["RANK"] == 1]
-        # logger.debug( " Debug> {}".format(top_rank1))
-        # logger.debug( " Debug> {}".format(top_rank1['rmsd_≤_2å']))
+            logger.debug("===" * 20)
 
-        # -- * Make plot how many are rmsd_≤_2å
+            logger.debug(" Debug> Curr method is {}".format(method))
 
-        # Count the number of True and False values
-        count_data = top_rank1["rmsd_≤_2å"].value_counts().reset_index()
-        count_data.columns = ["rmsd_≤_2å", "count"]
-        # logger.debug( " Debug> {}".format(count_data) )
+            logger.debug(" Debug> Curr category  is {}".format(category))
 
-        # Check if all values in the specified columns are True for each row
-        columns_of_interest = [
-            "mol_true_loaded",
-            "mol_cond_loaded",
-            "sanitization",
-            "inchi_convertible",
-            "all_atoms_connected",
-            "molecular_formula",
-            "molecular_bonds",
-            "double_bond_stereochemistry",
-            "tetrahedral_chirality",
-            "bond_lengths",
-            "bond_angles",
-            "internal_steric_clash",
-            "aromatic_ring_flatness",
-            "non-aromatic_ring_non-flatness",
-            "double_bond_flatness",
-            "internal_energy",
-            "protein-ligand_maximum_distance",
-            "minimum_distance_to_protein",
-            "minimum_distance_to_organic_cofactors",
-            "minimum_distance_to_inorganic_cofactors",
-            "minimum_distance_to_waters",
-            "volume_overlap_with_protein",
-            "volume_overlap_with_organic_cofactors",
-            "volume_overlap_with_inorganic_cofactors",
-            "volume_overlap_with_waters",
-            "rmsd_≤_2å",
-        ]
-        top_rank1["all_true"] = top_rank1[columns_of_interest].all(axis=1)
+            top_rank1 = curr_dataset[curr_dataset["RANK"] == 1]
+            logger.debug(" Debug> {}".format(top_rank1))
+            # logger.debug( " Debug> {}".format(top_rank1['rmsd_≤_2å']))
 
-        # Count True or False values in the 'all_true' column
-        value_counts = top_rank1["all_true"].value_counts().reset_index()
-        value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
+            # -- * Make plot how many are rmsd_≤_2å
 
-        # Add a percentage column
-        total = count_data["count"].sum()
-        total_PB = value_counts["count"].sum()
-        tot_perc = (count_data["count"] / total) * 100
-        tot_perc_PB = (value_counts["count"] / total_PB) * 100
-        count_data["percentage"] = tot_perc
-        count_data["PB_percentage"] = tot_perc_PB
-        tot_perc_vals = tot_perc.values[0]
-        tot_perc_PB_vals = tot_perc_PB.values[0]
+            # Count the number of True and False values
+            count_data = top_rank1["rmsd_≤_2å"].value_counts().reset_index()
+            count_data.columns = ["rmsd_≤_2å", "count"]
+            # logger.debug( " Debug> {}".format(count_data) )
 
-        # logger.debug(" Debug> {}".format(count_data))
+            # Check if all values in the specified columns are True for each row
+            columns_of_interest = [
+                "mol_true_loaded",
+                "mol_cond_loaded",
+                "sanitization",
+                "inchi_convertible",
+                "all_atoms_connected",
+                "molecular_formula",
+                "molecular_bonds",
+                "double_bond_stereochemistry",
+                "tetrahedral_chirality",
+                "bond_lengths",
+                "bond_angles",
+                "internal_steric_clash",
+                "aromatic_ring_flatness",
+                "non-aromatic_ring_non-flatness",
+                "double_bond_flatness",
+                "internal_energy",
+                "protein-ligand_maximum_distance",
+                "minimum_distance_to_protein",
+                "minimum_distance_to_organic_cofactors",
+                "minimum_distance_to_inorganic_cofactors",
+                "minimum_distance_to_waters",
+                "volume_overlap_with_protein",
+                "volume_overlap_with_organic_cofactors",
+                "volume_overlap_with_inorganic_cofactors",
+                "volume_overlap_with_waters",
+                "rmsd_≤_2å",
+            ]
+            top_rank1["all_true"] = top_rank1[columns_of_interest].all(axis=1)
 
-        # # Reshape data to long format
-        melted_data = count_data.melt(
-            id_vars="rmsd_≤_2å",
-            value_vars=["percentage", "PB_percentage"],
-            var_name="Type",
-            value_name="Percentage",
-        )
+            # Count True or False values in the 'all_true' column
+            value_counts = top_rank1["all_true"].value_counts().reset_index()
+            value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
 
-        if dataset == "astex_diverse_set":
-            temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
-        elif dataset == "posebusters_benchmark_set":
-            temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
+            # Add a percentage column
+            total = count_data["count"].sum()
+            total_PB = value_counts["count"].sum()
+            tot_perc = (count_data["count"] / total) * 100
+            tot_perc_PB = (value_counts["count"] / total_PB) * 100
+            count_data["percentage"] = tot_perc
+            count_data["PB_percentage"] = tot_perc_PB
+            tot_perc_vals = tot_perc.values[0]
+            tot_perc_PB_vals = tot_perc_PB.values[0]
 
-        # logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
+            # logger.debug(" Debug> {}".format(count_data))
+
+            # # Reshape data to long format
+            melted_data = count_data.melt(
+                id_vars="rmsd_≤_2å",
+                value_vars=["percentage", "PB_percentage"],
+                var_name="Type",
+                value_name="Percentage",
+            )
+
+            if dataset == "astex_diverse_set":
+                temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
+            elif dataset == "posebusters_benchmark_set":
+                temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
+
+        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
+
+        final_list.append([method, category] + temp_data_astex + temp_data_posebuster)
+        logger.debug(final_list)
         logger.debug(" ========== " * 10)
 
-    final_list = [method, category] + temp_data_astex + temp_data_posebuster
-    # logger.debug(final_list)
-
-    final_df = pd.DataFrame([final_list])
+    final_df = pd.DataFrame(final_list)
     final_df.columns = [
         "Method",
         "Category",
@@ -447,7 +461,7 @@ def start_program(input, paperdata):
         df = posebusted_results_rank1(df_posebusted)
 
         csv_file_path = paperdata  # Path to your CSV file
-        # --- Load Data from CSV ---
+        # -- * Load Data from CSV ---
         try:
             df_paper = pd.read_csv(csv_file_path)
         except FileNotFoundError:
@@ -457,6 +471,7 @@ def start_program(input, paperdata):
             print(f"Error reading CSV file: {e}")
             exit()
 
+        # -- * Join paper results with main table
         if df_paper is not None:
             df = pd.concat([df, df_paper])
             logger.debug(df)
