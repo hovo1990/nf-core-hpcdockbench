@@ -175,11 +175,11 @@ process gingerTask_GPU {
 
 
 
-    // if (params.save_intermediate) {
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
 
-    // }
+    }
 
-    publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
 
     // publishDir "${params.outdir}/ICM-Ridge/Stage1_ginger/${task.id}", mode: 'copy', overwrite: true
 

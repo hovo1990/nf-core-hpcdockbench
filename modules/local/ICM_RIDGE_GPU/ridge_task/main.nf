@@ -55,11 +55,11 @@ process ridgeTask_GPU {
 
 
 
-    // if (params.save_intermediate) {
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
+    }
 
-    // }
 
-    publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
 
     // publishDir "${params.outdir}/ICM-Ridge/Stage1_ginger/${task.id}", mode: 'copy', overwrite: true
 
