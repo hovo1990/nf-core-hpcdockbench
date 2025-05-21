@@ -79,7 +79,10 @@ workflow ICM_VLS{
     // all_comb_flat.view()
     // -- * SStage 4: perform posebuster and compare with cocrystal structure
 
-    todo_debug_posebusted =  all_comb_flat.take(10)
+    // todo_debug_posebusted =  all_comb_flat.take(10)
+
+
+    todo_debug_posebusted =  all_comb_flat
     pose_busted = poseBust(todo_debug_posebusted)
 
 
