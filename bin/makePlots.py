@@ -157,8 +157,13 @@ def posebusted_results_rank1(df):
             value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
 
             # Add a percentage column
-            total = count_data["count"].sum()
-            total_PB = value_counts["count"].sum()
+            unique_projects = curr_dataset["_CODE_"].unique()
+
+            total = len(unique_projects)
+            total_PB = len(unique_projects)
+
+            # total = count_data["count"].sum()
+            # total_PB = value_counts["count"].sum()
             tot_perc = (count_data["count"] / total) * 100
             tot_perc_PB = (value_counts["count"] / total_PB) * 100
             count_data["percentage"] = tot_perc
