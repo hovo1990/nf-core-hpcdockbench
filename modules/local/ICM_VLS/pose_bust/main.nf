@@ -3,15 +3,15 @@ process poseBust{
     label 'very_low_cpu_debug'
 
     beforeScript 'hostname;echo "Wait random 20 secs"; sleep $((RANDOM % 20))'
-    // maxRetries 5
-    // errorStrategy {
-    //     if (task.exitStatus >= 100 ){
-    //         sleep(Math.pow(2, task.attempt) * 15 as long);
-    //         'retry'
-    //     } else {
-    //         'terminate'
-    //     }
-    // }
+    maxRetries 5
+    errorStrategy {
+        if (task.exitStatus >= 100 ){
+            sleep(Math.pow(2, task.attempt) * 20 as long);
+            'retry'
+        } else {
+            'terminate'
+        }
+    }
 
 
     if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
