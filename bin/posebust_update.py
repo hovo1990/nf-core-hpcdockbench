@@ -20,6 +20,7 @@ from pathlib import Path
 import click
 import pandas as pd
 from loguru import logger
+from rdkit import Chem
 from tqdm.auto import tqdm
 from tqdm.contrib import tzip
 
@@ -137,7 +138,7 @@ def start_program(
     try:
         df = pd.read_csv(input)
 
-        df["RANK"] = input.split("_")[-2]
+        df["_RANK_"] = input.split("_")[-2]
         df["_DATASET_"] = dataset
         df["_PROTFILE_"] = prot
         df["_LIGFILE_"] = lig
@@ -146,6 +147,34 @@ def start_program(
         df["_PROJ_"] = proj
         df["_METHOD_"] = method
         df["_CATEGORY_"] = category
+
+        # -- * Read properties about score and RTCNN in the sdf file
+
+        supplier = Chem.SDMolSupplier(dock)
+        for mol in supplier:
+            if mol is None:
+                continue  # Skip invalid entries
+            # -- *  Get properties (stored in the SDF under tags)
+            props = mol.GetPropsAsDict()
+            logger.debug(" DEBUG> {}".format(props))
+
+            RANK = mol.GetProp("Rank") if mol.HasProp("Rank") else "-100"
+            SCORE = mol.GetProp("Score") if mol.HasProp("Score") else "N/A"
+            RTCNN_SCORE = (
+                mol.GetProp("RTCNNscore") if mol.HasProp("RTCNNscore") else "N/A"
+            )
+            AverageScore = (
+                mol.GetProp("AverageScore") if mol.HasProp("AverageScore") else "N/A"
+            )
+            CombinedScore = (
+                mol.GetProp("CombinedScore") if mol.HasProp("CombinedScore") else "N/A"
+            )
+            corrScoreAverage = (
+                mol.GetProp("corrScoreAverage")
+                if mol.HasProp("corrScoreAverage")
+                else "N/A"
+            )
+            # logger.debug(" DEBUG> Score {}".format(SCORE))
 
         logger.debug(df)
 

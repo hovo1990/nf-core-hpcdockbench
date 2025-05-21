@@ -54,7 +54,7 @@ process poseBust{
 
 
     script:
-        def i_version=1
+        def i_version=4
         """
         echo "Pose busting  v${i_version}"
 

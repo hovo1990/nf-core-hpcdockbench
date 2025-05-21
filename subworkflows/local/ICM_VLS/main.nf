@@ -78,7 +78,9 @@ workflow ICM_VLS{
                     }
     // all_comb_flat.view()
     // -- * SStage 4: perform posebuster and compare with cocrystal structure
-    pose_busted = poseBust(all_comb_flat)
+
+    todo_debug_posebusted =  all_comb_flat.take(10)
+    pose_busted = poseBust(todo_debug_posebusted)
 
 
     // -- * SStage 5: collect all the csv files and start making plots
