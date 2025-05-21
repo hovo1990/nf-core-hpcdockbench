@@ -5,10 +5,7 @@ process filterFolders{
 
     label 'low_cpu'
 
-    // -- ! this does not work unfortunately
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
-    // }
+
 
 
 
@@ -51,3 +48,7 @@ process filterFolders{
 }
 
 
+    // -- ! this does not work unfortunately
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
+    // }

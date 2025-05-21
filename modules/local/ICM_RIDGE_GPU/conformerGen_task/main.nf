@@ -51,10 +51,6 @@ process confGenTask_CPU {
 
 
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
-    // }
-
 
 
 
@@ -174,9 +170,7 @@ process gingerTask_GPU {
 
 
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
-    // }
+
 
 
 
@@ -231,3 +225,15 @@ process gingerTask_GPU {
 //  Warning> GINGER cannot generate conformation for 1 (out of 1) compounds (Stored into ginger_p1GM8_SOX_2D_ligand_skipped.sdf)
 //  Info> use command below to append them to result molt
 //         /pro/icm/icms/icm64 _confGen  append=yes -c -r -A -C mnconf=30 proc=27 ginger_p1GM8_SOX_2D_ligand_skipped.sdf ginger_p1GM8_SOX_2D_ligand.sdf
+
+
+
+
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
+    // }
+
+
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
+    // }

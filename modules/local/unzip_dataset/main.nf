@@ -3,9 +3,7 @@ process unzipDataset{
 
     label 'low_cpu'
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage2_unpacked_dataset", mode: 'copy', overwrite: true
-    // }
+
 
 
     beforeScript "hostname"
@@ -48,3 +46,8 @@ process unzipDataset{
             unzip ${input}
         """
 }
+
+
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage2_unpacked_dataset", mode: 'copy', overwrite: true
+    // }

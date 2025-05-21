@@ -55,9 +55,6 @@ process ridgeTask_GPU {
 
 
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
-    // }
 
 
 
@@ -94,6 +91,11 @@ process ridgeTask_GPU {
         """
 }
 
+
+
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
+    // }
 
 // -- * Ridge can write an empty file that is not good at all
 // -- ! it is asking for molt file

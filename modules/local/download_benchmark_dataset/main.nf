@@ -3,9 +3,6 @@ process downloadBenchmarkDataset{
 
     label 'low_cpu'
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage1_download_benchmark_dataset", mode: 'copy', overwrite: true
-    // }
 
 
 
@@ -50,3 +47,8 @@ process downloadBenchmarkDataset{
             wget ${params.benchmark_dataset}
         """
 }
+
+
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage1_download_benchmark_dataset", mode: 'copy', overwrite: true
+    // }
