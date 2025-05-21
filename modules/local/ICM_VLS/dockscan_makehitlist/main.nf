@@ -69,6 +69,3 @@ process dockScanMakeHitList{
         """
 }
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage6_hitlist/$proj_id/${method}", mode: 'copy', overwrite: true
-    // }

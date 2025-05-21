@@ -63,6 +63,3 @@ process exportRidgeSDF{
         """
 }
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage7_export_sdf/$proj_id/${method}", mode: 'copy', overwrite: true
-    // }

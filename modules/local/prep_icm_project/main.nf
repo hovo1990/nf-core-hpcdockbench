@@ -75,6 +75,3 @@ process prepIcmProject {
 }
 
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage4_docking_projects/", mode: 'copy', overwrite: true
-    // }
