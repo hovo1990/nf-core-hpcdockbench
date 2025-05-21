@@ -249,117 +249,114 @@ def posebusted_results_rank3(df):
 
             top_rank3 = curr_dataset[curr_dataset["RANK"].isin([1, 2, 3])]
             top_rank3.sort_values(by=["_CODE_", "_RANK_"], inplace=True)
-            logger.debug(
-                " Debug> {}".format(
-                    top_rank3[
-                        ["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]
-                    ]
-                )
-            )
-
-            # # Select a single row per target (e.g., first True occurrence)
-            # result = top_rank3.groupby("_CODE_").first().reset_index()
-            # # logger.debug(" Debug> {}".format(result))
-
             # logger.debug(
             #     " Debug> {}".format(
-            #         result[
+            #         top_rank3[
             #             ["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]
             #         ]
             #     )
             # )
 
-            # #         # logger.debug( " Debug> {}".format(top_rank1['rmsd_≤_2å']))
+            result = top_rank3[top_rank3["rmsd_≤_2å"]].drop_duplicates(
+                subset="_CODE_", keep="first"
+            )
+            # # logger.debug(" Debug> {}".format(result))
 
-            # #         # -- * Make plot how many are rmsd_≤_2å
+            logger.debug(
+                " Debug> {}".format(
+                    result[["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]]
+                )
+            )
 
-            # # Count the number of True and False values
-            # count_data = top_rank3["rmsd_≤_2å"].value_counts().reset_index()
-            # count_data.columns = ["rmsd_≤_2å", "count"]
+            #         # -- * Make plot how many are rmsd_≤_2å
+
+            # Count the number of True and False values
+            count_data = result["rmsd_≤_2å"].value_counts().reset_index()
+            count_data.columns = ["rmsd_≤_2å", "count"]
+            logger.debug(" Debug> {}".format(count_data))
+
+            # Check if all values in the specified columns are True for each row
+            columns_of_interest = [
+                "mol_true_loaded",
+                "mol_cond_loaded",
+                "sanitization",
+                "inchi_convertible",
+                "all_atoms_connected",
+                "molecular_formula",
+                "molecular_bonds",
+                "double_bond_stereochemistry",
+                "tetrahedral_chirality",
+                "bond_lengths",
+                "bond_angles",
+                "internal_steric_clash",
+                "aromatic_ring_flatness",
+                "non-aromatic_ring_non-flatness",
+                "double_bond_flatness",
+                "internal_energy",
+                "protein-ligand_maximum_distance",
+                "minimum_distance_to_protein",
+                "minimum_distance_to_organic_cofactors",
+                "minimum_distance_to_inorganic_cofactors",
+                "minimum_distance_to_waters",
+                "volume_overlap_with_protein",
+                "volume_overlap_with_organic_cofactors",
+                "volume_overlap_with_inorganic_cofactors",
+                "volume_overlap_with_waters",
+                "rmsd_≤_2å",
+            ]
+            result["all_true"] = result[columns_of_interest].all(axis=1)
+
+            # -- * Count True or False values in the 'all_true' column
+            value_counts = result["all_true"].value_counts().reset_index()
+            value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
+
+            # # -- * Add a percentage column
+            unique_projects = curr_dataset["_CODE_"].unique()
+
+            total = len(unique_projects)
+            total_PB = len(unique_projects)
+
+            tot_perc = (count_data["count"] / total) * 100
+            tot_perc_PB = (value_counts["count"] / total_PB) * 100
+            count_data["percentage"] = tot_perc
+            count_data["PB_percentage"] = tot_perc_PB
+            tot_perc_vals = tot_perc.values[0]
+            tot_perc_PB_vals = tot_perc_PB.values[0]
+
+            logger.debug(f" Debug> RMSD: {tot_perc_vals} PB: {tot_perc_PB_vals}")
+
             # logger.debug(" Debug> {}".format(count_data))
 
-            # # Check if all values in the specified columns are True for each row
-            # columns_of_interest = [
-            #     "mol_true_loaded",
-            #     "mol_cond_loaded",
-            #     "sanitization",
-            #     "inchi_convertible",
-            #     "all_atoms_connected",
-            #     "molecular_formula",
-            #     "molecular_bonds",
-            #     "double_bond_stereochemistry",
-            #     "tetrahedral_chirality",
-            #     "bond_lengths",
-            #     "bond_angles",
-            #     "internal_steric_clash",
-            #     "aromatic_ring_flatness",
-            #     "non-aromatic_ring_non-flatness",
-            #     "double_bond_flatness",
-            #     "internal_energy",
-            #     "protein-ligand_maximum_distance",
-            #     "minimum_distance_to_protein",
-            #     "minimum_distance_to_organic_cofactors",
-            #     "minimum_distance_to_inorganic_cofactors",
-            #     "minimum_distance_to_waters",
-            #     "volume_overlap_with_protein",
-            #     "volume_overlap_with_organic_cofactors",
-            #     "volume_overlap_with_inorganic_cofactors",
-            #     "volume_overlap_with_waters",
-            #     "rmsd_≤_2å",
-            # ]
-            # top_rank3["all_true"] = top_rank3[columns_of_interest].all(axis=1)
+            # # Reshape data to long format
+            melted_data = count_data.melt(
+                id_vars="rmsd_≤_2å",
+                value_vars=["percentage", "PB_percentage"],
+                var_name="Type",
+                value_name="Percentage",
+            )
 
-            # # -- * Count True or False values in the 'all_true' column
-            # value_counts = top_rank3["all_true"].value_counts().reset_index()
-            # value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
+            if dataset == "astex_diverse_set":
+                temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
+            elif dataset == "posebusters_benchmark_set":
+                temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
 
-            # # # -- * Add a percentage column
-            # unique_projects = curr_dataset["_CODE_"].unique()
+        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
 
-            # total = len(unique_projects)
-            # total_PB = len(unique_projects)
+        final_list.append([realname, category] + temp_data_astex + temp_data_posebuster)
+        logger.debug(final_list)
+        logger.debug(" ========== " * 10)
 
-            # tot_perc = (count_data["count"] / total) * 100
-            # tot_perc_PB = (value_counts["count"] / total_PB) * 100
-            # count_data["percentage"] = tot_perc
-            # count_data["PB_percentage"] = tot_perc_PB
-            # tot_perc_vals = tot_perc.values[0]
-            # tot_perc_PB_vals = tot_perc_PB.values[0]
-
-            # logger.debug(f" Debug> RMSD: {tot_perc_vals} PB: {tot_perc_PB_vals}")
-
-    #         # logger.debug(" Debug> {}".format(count_data))
-
-    #         # # Reshape data to long format
-    #         melted_data = count_data.melt(
-    #             id_vars="rmsd_≤_2å",
-    #             value_vars=["percentage", "PB_percentage"],
-    #             var_name="Type",
-    #             value_name="Percentage",
-    #         )
-
-    #         if dataset == "astex_diverse_set":
-    #             temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
-    #         elif dataset == "posebusters_benchmark_set":
-    #             temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
-
-    #     logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
-
-    #     final_list.append([realname, category] + temp_data_astex + temp_data_posebuster)
-    #     logger.debug(final_list)
-    #     logger.debug(" ========== " * 10)
-
-    # final_df = pd.DataFrame(final_list)
-    # final_df.columns = [
-    #     "Method",
-    #     "Category",
-    #     "Astex_RMSD_le_2A",
-    #     "Astex_RMSD_le_2A_PB_Valid",
-    #     "PoseBusters_RMSD_le_2A",
-    #     "PoseBusters_RMSD_le_2A_PB_Valid",
-    # ]
-    # logger.debug(final_df)
-    # return final_df
+    final_df = pd.DataFrame(final_list)
+    final_df.columns = [
+        "Method",
+        "Category",
+        "Astex_RMSD_le_2A",
+        "Astex_RMSD_le_2A_PB_Valid",
+        "PoseBusters_RMSD_le_2A",
+        "PoseBusters_RMSD_le_2A_PB_Valid",
+    ]
+    logger.debug(final_df)
+    return final_df
 
 
 def make_rank1_plot(df):
