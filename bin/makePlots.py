@@ -257,6 +257,18 @@ def posebusted_results_rank3(df):
                 )
             )
 
+            # # Select a single row per target (e.g., first True occurrence)
+            # result = top_rank3.groupby("_CODE_").first().reset_index()
+            # # logger.debug(" Debug> {}".format(result))
+
+            # logger.debug(
+            #     " Debug> {}".format(
+            #         result[
+            #             ["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]
+            #         ]
+            #     )
+            # )
+
             # #         # logger.debug( " Debug> {}".format(top_rank1['rmsd_≤_2å']))
 
             # #         # -- * Make plot how many are rmsd_≤_2å
