@@ -766,7 +766,8 @@ def make_custom_rank_plot(df, rank=3):
     leg = ax.legend(
         handles=ordered_handles,
         ncol=2,
-        loc="upper right",
+        loc="upper left",
+        # bbox_to_anchor=(1.01, 1),
         handlelength=2,
         handletextpad=0.8,
         labelspacing=0.7,
@@ -824,6 +825,7 @@ def make_custom_rank_plot(df, rank=3):
         "Performance Benchmark for Rank {}".format(rank), fontsize=14, pad=20
     )  # Optional: Add a main title
     fig.tight_layout(rect=[0, 0.05, 1, 1])
+    # fig.tight_layout()
 
     output = "output_Benchmark_rank_{}.svg".format(rank)
     outputpdf = "output_Benchmark_rank_{}.pdf".format(rank)
