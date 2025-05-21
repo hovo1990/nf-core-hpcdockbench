@@ -205,7 +205,7 @@ def posebusted_results_rank1(df):
     return final_df
 
 
-def posebusted_results_rank3(df):
+def posebusted_results_custom_rank(df, rank=3):
     logger.debug(" {}".format(df.columns))
 
     unique_methods = df["_METHOD_"].unique()
@@ -247,7 +247,7 @@ def posebusted_results_rank3(df):
 
             logger.debug(" Debug> Curr category  is {}".format(category))
 
-            top_rank3 = curr_dataset[curr_dataset["RANK"].isin([1, 2, 3])]
+            top_rank3 = curr_dataset[curr_dataset["RANK"].isin(list(range(rank)))]
             top_rank3.sort_values(by=["_CODE_", "_RANK_"], inplace=True)
             # logger.debug(
             #     " Debug> {}".format(
@@ -645,7 +645,7 @@ def start_program(input, paperdata):
         make_rank1_plot(df)
 
         # -- * Calculate top 3 rank
-        df_rank3 = posebusted_results_rank3(df_posebusted)
+        df_rank3 = posebusted_results_custom_rank(df_posebusted, rank=3)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
