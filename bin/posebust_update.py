@@ -90,12 +90,6 @@ def validate_csv(ctx, param, value):
     required=True,
 )
 @click.option(
-    "--lig",
-    help="ligand cocrystall structure",
-    type=click.Path(exists=True),
-    required=True,
-)
-@click.option(
     "--dock",
     help="docked pose",
     type=click.Path(exists=True),
