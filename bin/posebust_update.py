@@ -174,6 +174,17 @@ def start_program(
                 if mol.HasProp("corrScoreAverage")
                 else "N/A"
             )
+
+            RTCNN_RIDGE = mol.GetProp("ENERGY") if mol.HasProp("ENERGY") else "N/A"
+
+            # -- * Add RTCNN_RIDGE GPU
+            df["RANK"] = RANK
+            df["Score"] = SCORE
+            df["RTCNN_SCORE"] = RTCNN_SCORE
+            df["AverageScore"] = AverageScore
+            df["CombinedScore"] = CombinedScore
+            df["corrScoreAverage"] = corrScoreAverage
+            df["RTCNN_RIDGE"] = RTCNN_RIDGE
             # logger.debug(" DEBUG> Score {}".format(SCORE))
 
         logger.debug(df)
