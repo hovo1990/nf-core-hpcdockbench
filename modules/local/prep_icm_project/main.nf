@@ -25,9 +25,9 @@ process prepIcmProject {
 
     cache true
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage4_docking_projects/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/stage4_docking_projects/", mode: 'copy', overwrite: true
+    // }
 
 
 

@@ -39,9 +39,9 @@ process poseBust{
 
     cache true
     // debug true
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/${method}/stage8_pose_bust/$dataset_name/$proj_id/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/${method}/stage8_pose_bust/$dataset_name/$proj_id/", mode: 'copy', overwrite: true
+    // }
 
 
 

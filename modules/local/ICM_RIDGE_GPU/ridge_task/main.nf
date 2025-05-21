@@ -55,9 +55,9 @@ process ridgeTask_GPU {
 
 
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage2_ridge/${code}/", mode: 'copy', overwrite: true
+    // }
 
 
 

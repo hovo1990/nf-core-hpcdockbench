@@ -51,9 +51,9 @@ process confGenTask_CPU {
 
 
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/confGen/${code}/", mode: 'copy', overwrite: true
+    // }
 
 
 
@@ -174,9 +174,9 @@ process gingerTask_GPU {
 
 
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
-    }
+    // if (params.save_intermediate) {
+    //     publishDir "${params.outdir}/ICM-Ridge/Stage1_conformerGen/ginger/${code}/", mode: 'copy', overwrite: true
+    // }
 
 
 
