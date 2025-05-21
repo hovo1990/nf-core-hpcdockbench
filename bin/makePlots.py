@@ -248,7 +248,7 @@ def posebusted_results_rank3(df):
             logger.debug(" Debug> Curr category  is {}".format(category))
 
             top_rank3 = curr_dataset[curr_dataset["RANK"].isin([1, 2, 3])]
-            top_rank3.sort_values(by="_CODE_", inplace=True)
+            top_rank3.sort_values(by=["_CODE_", "_RANK_"], inplace=True)
             logger.debug(
                 " Debug> {}".format(
                     top_rank3[
