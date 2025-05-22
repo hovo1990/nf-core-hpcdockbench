@@ -31,7 +31,7 @@ process filterFolders{
     }
 
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage3_filtered_folders", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage3_filtered_folders_csv", mode: 'copy', overwrite: true
     }
 
 
@@ -52,7 +52,3 @@ process filterFolders{
 }
 
 
-    // -- ! this does not work unfortunately
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage3_prep_csv", mode: 'copy', overwrite: true
-    // }

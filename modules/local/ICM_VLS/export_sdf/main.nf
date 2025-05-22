@@ -40,6 +40,11 @@ process exportSDF{
     }
 
 
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/${method}/stage3_export_sdf/${dataset_name}/$proj_id/", mode: 'copy', overwrite: true
+    }
+
+
     input:
         tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file)
 
@@ -62,6 +67,3 @@ process exportSDF{
         """
 }
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage7_export_sdf/$proj_id/${method}", mode: 'copy', overwrite: true
-    // }

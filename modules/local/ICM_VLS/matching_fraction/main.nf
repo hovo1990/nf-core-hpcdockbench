@@ -39,7 +39,7 @@ process matchingFraction{
 
     cache true
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/${method}/stage8_matching_fraction/${dataset_name}/${proj_id}/", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/${method}/stage4_matching_fraction/${dataset_name}/${proj_id}/", mode: 'copy', overwrite: true
     }
 
 

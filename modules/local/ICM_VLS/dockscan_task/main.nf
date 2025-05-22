@@ -48,8 +48,22 @@ process dockScanTask {
 
 
 
+        // publishDir "", mode: 'copy', overwrite: true, saveAs: { file ->
+        //     def dataset_name = task.inputs[0]
+        //     def proj_id = task.inputs[2]
+        //     return "${dataset_name}/${proj_id}/${file.name}"
+        // }
 
 
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/ICM-VLS/stage1_dockScan/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-VLS/stage1_dockScan/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
 
 
 

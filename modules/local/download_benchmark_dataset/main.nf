@@ -34,7 +34,7 @@ process downloadBenchmarkDataset{
     label "process_low"
 
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage1_downloaded_dataset", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage1_download_benchmark_dataset", mode: 'copy', overwrite: true
     }
 
 
@@ -55,6 +55,3 @@ process downloadBenchmarkDataset{
 }
 
 
-    // if (params.save_intermediate) {
-    //     publishDir "${params.outdir}/stage1_download_benchmark_dataset", mode: 'copy', overwrite: true
-    // }
