@@ -101,6 +101,7 @@ def start_program(input, output):
             "protein_struct",
             "ligand_struct",
             "docked_pose",
+            "docked_pose_mf",
             "csv_file",
         ]
 
