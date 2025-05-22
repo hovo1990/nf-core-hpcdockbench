@@ -1,23 +1,31 @@
 #!/pro/icm/icms/icm64 -s
 HELP = """
-  Usage> $P -pf=<path> -pn=<proj_name> -ob=<.ob> -o=<outputfile.icb>
-    Take histlist and export to sdf
+    Script: matching_fraction.icm
+
+    Description:
+        Calculates the matching fraction between a reference ligand structure and a docked pose
+        using ICM. The result is exported as an SDF file.
+
+    Usage:
+        $P -ic=<ligand_structure.sdf> -id=<docked_pose.sdf> -o=<output_file.sdf>
+
+    Parameters:
+        -ic : Path to the reference ligand structure (.icm file)
+        -id : Path to the docked pose (.icm file)
+        -o  : Output file name for the matching fraction results (.sdf)
+
 """
 
 if (Getarg(help)) quit HELP
 l_commands = Getarg("-v",no,delete)
 
 
-quit 1
-
-s_project_name = Getarg("-p","UNDEFINED",delete)
-s_icb_session = Getarg("-i","UNDEFINED",delete)
+s_cocrystal_pose = Getarg("-ic","UNDEFINED",delete)
+s_docked_pose = Getarg("-id","UNDEFINED",delete)
+s_output_file = Getarg("-o","UNDEFINED",delete)
 
 n_proc = Getarg("-nproc",4,delete)
 
-#-- ? very important arguments
-r_molweight_control =   Getarg("-molweight",520,delete)
-r_coefficient = Getarg("-coeff",0.1,delete)
 
 
 
@@ -26,8 +34,8 @@ r_coefficient = Getarg("-coeff",0.1,delete)
 #output_to_save_arg = Getarg("-o","UNDEFINED",delete)
 
 # check if file exists
-if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not found or not readable."
-
+if(!Exist(s_cocrystal_pose read)) quit " Error_$P: file '" s_cocrystal_pose "' not found or not readable."
+if(!Exist(s_docked_pose  read)) quit " Error_$P: file '" s_docked_pose  "' not found or not readable."
 
 
 # -- * start debug part
@@ -37,6 +45,7 @@ if(!Exist(s_icb_session read)) quit " Error_$P: file '" s_icb_session"' not foun
 
 #-- ? End of argument section
 call _startup
+call _macro
 
 if (Error()) then
   printf error " Error> could not load necessary module\n"
@@ -47,30 +56,64 @@ endif
 # #-- * this can be buggy need to fix this
 # call s_icmhome + "_startup"
 
+exit
+
+read table mol s_cocrystal_pose name="cocrystal_t"
+read table mol s_docked_pose name="docked_t"
 
 
-read binary s_icb_session
+# -- * Extract the cocrystal pose for analysis
 
-s_tableName = Trim(Name(s_icb_session),all)
+if( Type( cocrystal_t.crysym ) == "sarray" ) then
+  read mol input = Sum( Sarray( cocrystal_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( cocrystal_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+  parrayToMol cocrystal_t.mol [ 1 ]
+endif
 
 
-mainTable = $s_tableName
+# -- * Extract the docked pose for analysis
+
+if( Type( docked_t.crysym ) == "sarray" ) then
+  read mol input = Sum( Sarray( docked_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( docked_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+  parrayToMol docked_t.mol [ 1 ]
+endif
+
+if (Error()) then
+  printf error " Error> Loading the necessary objects for further analysis\n"
+  quit 1
+endif
 
 
-for i=1,Nof(mainTable)
-  print " i is ", String(i)
-  tempT = mainTable [i]
 
-  add column tempT String(i) name='Rank'
-  toExport = s_project_name + "_rank_" + String(i) + '.sdf'
-  chemSdfExport "tempT"  toExport "compress" no
-  delete tempT
-endfor
+# -- * Calculate RMSDs
+dock_lig = a_TMPOB.m
+crystal_lig = a_1.m
+curr_RMSD_in_place = Srmsd ( dock_lig crystal_lig chemical ) #-- * does not superimpose
+
+if (Exist(curr_RMSD_in_place)==no) then
+  curr_RMSD_in_place = -1
+endif
+
+curr_RMSD_superimposed = Rmsd ( dock_lig crystal_lig chemical )
+if (Exist(curr_RMSD_superimposed)==no) then
+  curr_RMSD_superimposed = -1
+endif
+
+# -- * add columns to the docked sdf table
+add column docked_t curr_RMSD_in_place name='ICM_RMSD_IN_PLACE_'
+add column docked_t curr_RMSD_superimposed  name='ICM_RMSD_SUPERIMPOSED_'
+
+
+# -- * Calculate matching Fraction
+
+
+
 
 
 
 if (Error()) then
-  printf error " Error> Problems while exporting to sdf\n"
+  printf error " Error> Problems while calculating matching fraction\n"
   quit 1
 endif
 
