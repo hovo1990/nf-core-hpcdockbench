@@ -43,11 +43,11 @@ process poseBust{
 
 
     input:
-        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose)
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(docked_pose),path(docked_pose_mf)
 
 
     output:
-        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose), path("${docked_pose.simpleName}.csv")
+        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose), path(docked_pose_mf), path("${docked_pose_mf.simpleName}.csv")
 
 
     script:
@@ -55,20 +55,20 @@ process poseBust{
         """
         echo "Pose busting  v${i_version}"
 
-        bust ${docked_pose} -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose.simpleName}_pre.csv
+        bust ${docked_pose_mf} -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose_mf.simpleName}_pre.csv
 
 
         # -- * Run python script to append extra info for absolute data
-        python ${projectDir}/bin/posebust_update.py --input=${docked_pose.simpleName}_pre.csv \
+        python ${projectDir}/bin/posebust_update.py --input=${docked_pose_mf.simpleName}_pre.csv \
                                                     --dataset=${dataset_name} \
                                                     --prot=${protein_struct} \
                                                     --lig=${ligand_struct} \
-                                                    --dock=${docked_pose} \
+                                                    --dock=${docked_pose_mf} \
                                                     --code=${code} \
                                                     --proj=${proj_id} \
                                                     --method=${method} \
                                                     --category=${category} \
-                                                    --output=${docked_pose.simpleName}.csv
+                                                    --output=${docked_pose_mf.simpleName}.csv
 
         """
 }

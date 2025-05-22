@@ -171,6 +171,24 @@ def start_program(
 
             RTCNN_RIDGE = mol.GetProp("ENERGY") if mol.HasProp("ENERGY") else "N/A"
 
+            ICM_RMSD_IN_PLACE_ = (
+                mol.GetProp("ICM_RMSD_IN_PLACE_")
+                if mol.HasProp("ICM_RMSD_IN_PLACE_")
+                else "N/A"
+            )
+
+            ICM_RMSD_SUPERIMPOSED_ = (
+                mol.GetProp("ICM_RMSD_SUPERIMPOSED_")
+                if mol.HasProp("ICM_RMSD_SUPERIMPOSED_")
+                else "N/A"
+            )
+
+            ICM_MATCHING_FRACTION = (
+                mol.GetProp("ICM_MATCHING_FRACTION")
+                if mol.HasProp("ICM_MATCHING_FRACTION")
+                else "N/A"
+            )
+
             # -- * Add RTCNN_RIDGE GPU
             df["RANK"] = RANK
             df["Score"] = SCORE
@@ -179,6 +197,10 @@ def start_program(
             df["CombinedScore"] = CombinedScore
             df["corrScoreAverage"] = corrScoreAverage
             df["RTCNN_RIDGE"] = RTCNN_RIDGE
+
+            df["ICM_RMSD_IN_PLACE_"] = ICM_RMSD_IN_PLACE_
+            df["ICM_RMSD_SUPERIMPOSED_"] = ICM_RMSD_SUPERIMPOSED_
+            df["ICM_MATCHING_FRACTION"] = ICM_MATCHING_FRACTION
             # logger.debug(" DEBUG> Score {}".format(SCORE))
 
         logger.debug(df)
