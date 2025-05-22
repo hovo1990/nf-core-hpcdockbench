@@ -41,6 +41,19 @@ process exportRidgeSDF{
     }
 
 
+
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage3_export_sdf/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
+
+
+
     input:
         tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file)
 

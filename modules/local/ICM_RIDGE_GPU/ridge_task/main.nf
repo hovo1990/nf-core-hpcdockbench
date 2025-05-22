@@ -55,6 +55,16 @@ process ridgeTask_GPU {
 
 
 
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage2_ridge/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
+
 
 
 

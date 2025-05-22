@@ -50,7 +50,15 @@ process confGenTask_CPU {
 
 
 
+    if (params.save_intermediate) {
 
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE/stage1_conformer_generation/confGen/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
 
 
 
@@ -169,6 +177,15 @@ process gingerTask_GPU {
 
 
 
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE/stage1_conformer_generation/ginger/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
 
 
 

@@ -102,7 +102,7 @@ workflow HPCDOCKBENCH {
     // icm_vls_posebusted.view()
 
     // // -- * Subworkflow 2: ICM RIDGE RUN
-    // icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
+    icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
 
     // // -- TODO improve later so it can be toggled on or off
