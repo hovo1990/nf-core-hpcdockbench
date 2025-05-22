@@ -87,7 +87,7 @@ workflow ICM_RIDGE{
     // -- * SStage 4: perform RMSD, matching Fraction calculation
     todo_debug_mf=  all_comb_flat.take(10)
 
-    matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
+    matchingFraction_data_ridge = matchingFractionRidge(todo_debug_mf)
 
 
     // -- * SStage 5: perform posebuster and compare with cocrystal structure
