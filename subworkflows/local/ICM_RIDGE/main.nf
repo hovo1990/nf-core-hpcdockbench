@@ -21,7 +21,7 @@ include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task
 include { exportRidgeSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_sdf'
 
 // -- * Matching Fraction calculation
-include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
+include { matchingFractionRidge} from '../../../modules/local/ICM_RIDGE_GPU/matching_fraction_ridge'
 
 // -- * Pose buster
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'

@@ -1,0 +1,259 @@
+#!/pro/icm/icms/icm64 -s
+HELP = """
+    Script: matching_fraction.icm
+
+    Description:
+        Calculates the matching fraction between a reference ligand structure and a docked pose
+        using ICM. The result is exported as an SDF file.
+
+    Usage:
+        $P -ic=<ligand_structure.sdf> -id=<docked_pose.sdf> -o=<output_file.sdf>
+
+    Parameters:
+        -ic : Path to the reference ligand structure (.icm file)
+        -id : Path to the docked pose (.icm file)
+        -o  : Output file name for the matching fraction results (.sdf)
+
+"""
+
+if (Getarg(help)) quit HELP
+l_commands = Getarg("-v",no,delete)
+
+
+s_cocrystal_pose = Getarg("-ic","UNDEFINED",delete)
+s_docked_pose = Getarg("-id","UNDEFINED",delete)
+s_output_file = Getarg("-o","UNDEFINED",delete)
+
+n_proc = Getarg("-nproc",4,delete)
+
+
+
+
+
+#-- ! mo need for that output will be in docking prokect folder
+#output_to_save_arg = Getarg("-o","UNDEFINED",delete)
+
+# check if file exists
+if(!Exist(s_cocrystal_pose read)) quit " Error_$P: file '" s_cocrystal_pose "' not found or not readable."
+if(!Exist(s_docked_pose  read)) quit " Error_$P: file '" s_docked_pose  "' not found or not readable."
+
+
+# -- * start debug part
+# quit 1
+# exit
+
+
+#-- ? End of argument section
+call _startup
+call _macro
+
+if (Error()) then
+  printf error " Error> could not load necessary module\n"
+  quit 1
+endif
+
+
+# #-- * this can be buggy need to fix this
+# call s_icmhome + "_startup"
+
+# exit
+quit 1
+
+read table mol s_cocrystal_pose name="cocrystal_t"
+read table mol s_docked_pose name="docked_t"
+
+
+# -- * Extract the cocrystal pose for analysis
+
+if( Type( cocrystal_t.crysym ) == "sarray" ) then
+  read mol input = Sum( Sarray( cocrystal_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( cocrystal_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+  parrayToMol cocrystal_t.mol [ 1 ]
+endif
+
+
+# -- * Extract the docked pose for analysis
+
+if( Type( docked_t.crysym ) == "sarray" ) then
+  read mol input = Sum( Sarray( docked_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( docked_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+  parrayToMol docked_t.mol [ 1 ]
+endif
+
+if (Error()) then
+  printf error " Error> Loading the necessary objects for further analysis\n"
+  quit 1
+endif
+
+
+
+# -- * Calculate RMSDs
+dock_lig = a_TMPOB.m
+crystal_lig = a_1.m
+curr_RMSD_in_place = Srmsd ( dock_lig crystal_lig chemical ) #-- * does not superimpose
+
+if (Exist(curr_RMSD_in_place)==no) then
+  curr_RMSD_in_place = -1
+endif
+
+curr_RMSD_superimposed = Rmsd ( dock_lig crystal_lig chemical )
+if (Exist(curr_RMSD_superimposed)==no) then
+  curr_RMSD_superimposed = -1
+endif
+
+# -- * add columns to the docked sdf table
+add column docked_t curr_RMSD_in_place name='ICM_RMSD_IN_PLACE_'
+add column docked_t curr_RMSD_superimposed  name='ICM_RMSD_SUPERIMPOSED_'
+
+
+if (Error()) then
+  printf error " Error> Problems with calculating RMSDs for the docked pose\n"
+  quit 1
+endif
+
+
+# -- * Calculate matching Fraction
+#### Calculate the distance of the atom pairs:
+### Eugene`s macro:
+macro findPairs as_1 as_2
+  as_1 = as_1 & a_*.*//!h*,!vt*
+  as_2 = as_2 & a_*.*//!h*,!vt*
+
+  find molecule sstructure  as_1 as_2
+
+  I_enum = Index( as_1 enumerate )
+  S_at0 = Name( as_1 )
+
+  S_at1 = Field( Field( S_out 2 "|") 3 "/" )
+  S_at2 = Field( Field( S_out 1 "|") 3 "/" )
+  I_ord = Iarray(Nof(S_at1))
+  for i=1,Nof(S_at1); I_ord[i] = Index( S_at0 S_at1[i] ); endfor
+
+  group table T S_at1 S_at2 I_ord
+
+  sort T.I_ord
+
+  for i=1,Nof( I_enum)
+    print "Comb", i
+    s_distName = "dist_" + i
+    delete $s_distName l_warn=no
+    for j=1,Nof(T.S_at1)
+      s_at1 = T.S_at1[j]
+      s_at2 = T.S_at2[I_enum[i][j]]
+      print s_at1 s_at2
+      make distance as_1 & a_*.*//$s_at1 as_2 & a_*.*//$s_at2 append name=s_distName
+    endfor
+    keep global $s_distName
+  endfor
+endmacro
+
+
+# -- * find pairs between docked_lig and crystal_lig
+
+strip a_1. # strip cocrystal ligand
+delete hydrogen a_1.m//h*
+delete a_1.m//:b
+
+# -- * delete hydrogen from docked pose
+strip a_2. # strip
+delete hydrogen a_2.m//h*
+delete b.m//:b
+
+#-- * Calculate the distance of the pairs. This script produces 10 (dock conf) Rarrays,
+### where each of the arrays (pairdis_1, pairdis_2, pairdis_3, and so on)
+### contains the distances between all the pairs of atoms in ligand for ONE DOCKING CONFORMATION:
+
+
+i=1
+findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
+DistTab = "dist_" + i + "_tab"
+$DistTab = Table( dist_1 distance )  # save the best findPairs output into table
+pairdis = "pairdis_" + i # name of Rarray, where the dists will be saved for each of 10 confs, e.g."pairdis_1"
+$pairdis = Rarray() # Rarray of dist for each of 10 confs
+for j=1, Nof(Atom(crystal_lig)) # numbers of the atoms of the co-crystallised ligand
+  mydis = Atom(dist_1, j) # Lables for each atom pair from findPairs macro output
+  # mydis
+  numydis = Distance(mydis[1] mydis[2]) # distance between one pair of atoms
+  # numydis
+  $pairdis //= numydis # collect distances between all the pairs of atoms in Rarray, look up: $pairdis
+endfor
+print "pairdis final" $pairdis
+
+
+
+if Error() then
+  printf error " Error> Calculate the distance of the pairs; Rarrays did not created"
+  quit 1
+endif
+
+# --* ---------------------------- Calculation for NOT WEIGHTED distances --------------------------------####
+
+#### Sum, distance calculation function, THE HIGHER THE BETTER (because if we multiply by 100% it will be in percentage):
+# The higher the Distance value, the closer the docking pose is to the crystallographic ligand's conformation.
+
+### Working script:
+
+# For debugging purposes, delete variables
+delete pairdisone
+delete pr
+delete prefmatch
+delete Fmatch
+delete FinFmatch
+delete AllFmatch
+
+AllFmatch = Rarray() # collection of the calculated function (Fmatch = (SumPairs(max(1-(d/3)^2),0))/Npairs) for each docking conformation (10)
+
+pairdisone = "pairdis_" + i # name of Rarrays, the atom dists for each of 10 confs (pairdis_1, pairdis_2, pairdis_3, and so on)
+print "pairdisone" pairdisone
+prefmatch = Rarray() # collection of the transformed distances (max(1-(d/3)^2),0)
+for j=1, Nof($pairdisone)  # number of pairs in one ligand conformation (or number of ligand atoms, for example 49)
+  d = $pairdisone[j] # go though pairs one by one
+  print "d" d
+  pr = 1-(Power(d/3,2)) # calculate the formula "(1-(d/3)^2)", or 1-((d/3)*(d/3))
+  print "pr" pr
+  if pr > 0 then # select those outputs from formula "(1-(d/3)^2)" that more then 0
+    prefmatch //= pr  # collect them in Rarray
+  else
+    print "the number is less then 0"
+  endif
+endfor
+print "prefmatch" prefmatch
+Fmatch = Sum(prefmatch) # get the sum of those outputs from formula "(1-(d/3)^2)" that more then 0 for one docking conformation
+print "Summa" Fmatch
+FinFmatch = Fmatch/Nof($pairdisone) # result of the formula (Fmatch = (SumPairs(max(1-(d/3)^2),0))/Npairs) for 1 docking conformation
+print "FinFmatch" FinFmatch
+AllFmatch //= FinFmatch # collection of transformed docking scores for all docking conformation (f.e. 10) for one ligand
+
+print "AllFmatch final" AllFmatch
+# AllFmatch final 0.210317
+
+add column docked_t  AllFmatch name="ICM_MATCHING_FRACTION"
+
+
+# !!!!!!!!!!!!!
+if Nof(docked_t.ICM_MATCHING_FRACTION) < 1 then
+  printf error " Error> the Distance column did not created "
+  quit 1
+endif
+# !!!!!!!!!!!!!
+
+
+
+
+# -- * now save the SDF file
+write table mol docked_t s_output_file
+
+if (Error()) then
+  printf error " Error> Problems while calculating matching fraction\n"
+  quit 1
+endif
+
+
+
+
+
+#-- * Do successful exit
+quit 0
+
+
+
