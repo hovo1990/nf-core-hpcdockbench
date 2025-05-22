@@ -85,7 +85,8 @@ workflow ICM_RIDGE{
     // all_comb_flat.view()
 
     // -- * SStage 4: perform RMSD, matching Fraction calculation
-    todo_debug_mf=  all_comb_flat.take(10)
+    // todo_debug_mf=  all_comb_flat.take(10)
+    todo_debug_mf=  all_comb_flat
 
     matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
 

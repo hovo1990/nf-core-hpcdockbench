@@ -116,6 +116,10 @@ def start_program(input, output):
             temp_df = pd.read_csv(i)
             final_df = pd.concat([final_df, temp_df])
 
+        if len(final_df) < 1:
+            logger.warning(" Error> The table is empty, that is not good")
+            exit(1)
+
         final_df.to_csv(output, index=False)
 
         logger.info(" Info> There were no errors")

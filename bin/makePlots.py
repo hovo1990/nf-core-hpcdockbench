@@ -356,6 +356,12 @@ def posebusted_results_custom_rank(df, rank=3):
         "PoseBusters_RMSD_le_2A_PB_Valid",
     ]
     logger.debug(final_df)
+
+
+    if len(final_df) <1:
+        logger.warning(" Error> The table is empty, that is not good")
+        exit(1)
+
     return final_df
 
 
@@ -862,7 +868,8 @@ def start_program(input, paperdata):
         logger.debug(" Debug> {}".format(df_posebusted))
 
         # -- * Top rank 1 calculations
-        df = posebusted_results_rank1(df_posebusted)
+        # df = posebusted_results_rank1(df_posebusted)
+        df = posebusted_results_custom_rank(df_posebusted, rank=1)
 
         csv_file_path = paperdata  # Path to your CSV file
         # -- * Load Data from CSV ---

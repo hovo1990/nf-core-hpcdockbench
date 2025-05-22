@@ -88,7 +88,9 @@ workflow ICM_VLS{
 
 
     // -- * SStage 4: calculate RMSD and matching fraction
-    todo_debug_mf=  all_comb_flat.take(10)
+    // todo_debug_mf=  all_comb_flat.take(10)
+
+    todo_debug_mf=  all_comb_flat
     // todo_debug_mf.view()
 
     matchingFraction_data = matchingFraction(todo_debug_mf)
