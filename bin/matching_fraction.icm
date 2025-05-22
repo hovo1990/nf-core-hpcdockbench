@@ -230,7 +230,7 @@ add column docked_t  AllFmatch name="ICM_MATCHING_FRACTION"
 
 
 # !!!!!!!!!!!!!
-if Nof(docked_t.ICM_matchingFraction) < 1 then
+if Nof(docked_t.ICM_MATCHING_FRACTION) < 1 then
   printf error " Error> the Distance column did not created "
   quit 1
 endif
