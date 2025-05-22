@@ -16,6 +16,10 @@ include { dockScanMakeHitList  } from '../../../modules/local/ICM_VLS/dockscan_m
 
 include { exportSDF } from '../../../modules/local/ICM_VLS/export_sdf'
 
+
+include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
+
+
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
 
 
@@ -77,21 +81,42 @@ workflow ICM_VLS{
                         }
                     }
     // all_comb_flat.view()
-    // -- * SStage 4: perform posebuster and compare with cocrystal structure
+
+
+
+
+
+    // -- * SStage 4: calculate RMSD and matching fraction
+    todo_debug_mf=  all_comb_flat.take(10)
+    todo_debug_mf.view()
+
+    matchingFraction_data = matchingFraction(todo_debug_mf)
+
+
+    // -- * SStage 5: perform posebuster and compare with cocrystal structure
 
     // todo_debug_posebusted =  all_comb_flat.take(10)
+    // todo_debug_posebusted.view()
 
 
-    todo_debug_posebusted =  all_comb_flat
-    pose_busted = poseBust(todo_debug_posebusted)
+    // todo_debug_posebusted =  all_comb_flat
+    // pose_busted = poseBust(todo_debug_posebusted)
 
 
-    // -- * SStage 5: collect all the csv files and start making plots
+
+
+    // -- * SStage 6: collect all the csv files and start making plots
     // posebusted_files =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
     // posebusted_files.view()
 
+    // -- * Debug purposes
+    test = Channel.from("Hello")
+
     emit:
     // samplesheet = ch_samplesheet
-    posebusted_files   = pose_busted
+
+    // -- * debug
+    posebusted_files   = test
+    // posebusted_files   = pose_busted
 }
 
