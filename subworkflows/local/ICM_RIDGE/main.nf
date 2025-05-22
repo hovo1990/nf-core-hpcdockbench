@@ -21,7 +21,7 @@ include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task
 include { exportRidgeSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_sdf'
 
 // -- * Matching Fraction calculation
-include { matchingFractionRidge} from '../../../modules/local/ICM_RIDGE_GPU/matching_fraction_ridge'
+include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
 
 // -- * Pose buster
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
@@ -87,7 +87,7 @@ workflow ICM_RIDGE{
     // -- * SStage 4: perform RMSD, matching Fraction calculation
     todo_debug_mf=  all_comb_flat.take(10)
 
-    matchingFraction_data_ridge = matchingFractionRidge(todo_debug_mf)
+    matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
 
 
     // -- * SStage 5: perform posebuster and compare with cocrystal structure

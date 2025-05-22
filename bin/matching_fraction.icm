@@ -87,7 +87,7 @@ endif
 
 
 # -- * Calculate RMSDs
-dock_lig = a_TMPOB.m
+dock_lig = a_2.m
 crystal_lig = a_1.m
 curr_RMSD_in_place = Srmsd ( dock_lig crystal_lig chemical ) #-- * does not superimpose
 
