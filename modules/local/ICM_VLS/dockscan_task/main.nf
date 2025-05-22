@@ -58,7 +58,7 @@ process dockScanTask {
     if (params.save_intermediate) {
 
          publishDir = [
-            path: { "${params.outdir}/ICM-VLS/stage1_dockScan/" },
+            path: { "${params.outdir}/" },
             mode: params.publish_dir_mode,
             saveAs: { filename ->
             filename.equals('versions.yml') ? null : "${params.outdir}/ICM-VLS/stage1_dockScan/${dataset_name}/${proj_id}/${filename}" }

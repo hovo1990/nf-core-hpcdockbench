@@ -43,8 +43,15 @@ process dockScanMakeHitList{
 
 
 
+
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/${method}/stage2_make_hitlist/${dataset_name}/$proj_id/", mode: 'copy', overwrite: true
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage2_make_hitlist/${dataset_name}/${proj_id}/${filename}" }
+        ]
     }
 
 

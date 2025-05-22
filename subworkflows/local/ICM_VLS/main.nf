@@ -49,8 +49,8 @@ workflow ICM_VLS{
     // // dockScan_tasks.view()
 
     // // -- * SStage 2: create hitlist
-    // dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
-    // // dockscan_hitlist.view()
+    dockscan_hitlist = dockScanMakeHitList(dockScan_tasks)
+    // dockscan_hitlist.view()
 
     // // -- * SStage 3: extract hit list as sdf files
     // exported_sdf_files = exportSDF(dockscan_hitlist)
