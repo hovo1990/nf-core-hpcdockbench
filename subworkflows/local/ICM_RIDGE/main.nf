@@ -20,6 +20,9 @@ include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task
 // -- * Export ridge docking sdf for Posebusters
 include { exportRidgeSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_sdf'
 
+// -- * Matching Fraction calculation
+include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
+
 // -- * Pose buster
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
 
@@ -69,31 +72,38 @@ workflow ICM_RIDGE{
         // -- * SStage 3: extract hit list as sdf files
     exported_sdf_files = exportRidgeSDF(ridge_tasks)
 
-    // all_comb =  exported_sdf_files.map{ pair ->
-    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
-    // }
+    all_comb =  exported_sdf_files.map{ pair ->
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    }
 
-    // all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
-    //                 ligand_struct, sdf_files ->
-    //                 sdf_files.collect { sdf ->
-    //                     tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
-    //                     }
-    //                 }
-    // // all_comb_flat.view()
-    // // -- * SStage 4: perform posebuster and compare with cocrystal structure
-    // // todo_debug_posebusted_ridge =  all_comb_flat.take(10)
+    all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
+                    ligand_struct, sdf_files ->
+                    sdf_files.collect { sdf ->
+                        tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+                        }
+                    }
+    // all_comb_flat.view()
 
-    // todo_debug_posebusted_ridge =  all_comb_flat
-    // pose_busted = poseBust(todo_debug_posebusted_ridge)
+    // -- * SStage 4: perform RMSD, matching Fraction calculation
+    todo_debug_mf=  all_comb_flat.take(10)
 
-    // -- * SStage 5: collect all the csv files and start making plots
+    matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
+
+
+    // -- * SStage 5: perform posebuster and compare with cocrystal structure
+    // todo_debug_posebusted_ridge =  all_comb_flat.take(10)
+
+
+    pose_busted = poseBust(matchingFraction_data_ridge )
+
+    // // -- * SStage 6:  No need for it collect all the csv files and start making plots
     // posebusted_files_ridge =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
     // posebusted_files.view()
 
 
     emit:
-    posebusted_files   = test
-    // posebusted_files = pose_busted
+    // posebusted_files   = test
+    posebusted_files = pose_busted
 
 }
 
