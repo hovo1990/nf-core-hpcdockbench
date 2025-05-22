@@ -147,6 +147,8 @@ macro findPairs as_1 as_2
 endmacro
 
 
+
+# -- TODO need to fix bonds, in some cases especially ridge stuff
 # -- * find pairs between docked_lig and crystal_lig
 
 strip a_1. # strip cocrystal ligand
@@ -156,15 +158,27 @@ delete a_1.m//:b
 # -- * delete hydrogen from docked pose
 strip a_2. # strip
 delete hydrogen a_2.m//h*
-delete b.m//:b
+delete a_2.m//:b
 
 #-- * Calculate the distance of the pairs. This script produces 10 (dock conf) Rarrays,
 ### where each of the arrays (pairdis_1, pairdis_2, pairdis_3, and so on)
 ### contains the distances between all the pairs of atoms in ligand for ONE DOCKING CONFORMATION:
 
+#
+# -- * COnvert to ICM otherwise findpair may fail or crash
+convert3Dto3D a_1. no no yes
+convert3Dto3D a_2. no no yes
+
+# -- * Calculate RMSDs
+dock_lig = a_2.m
+crystal_lig = a_1.m
+
+
+findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
+
+# exit
 
 i=1
-findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
 DistTab = "dist_" + i + "_tab"
 $DistTab = Table( dist_1 distance )  # save the best findPairs output into table
 pairdis = "pairdis_" + i # name of Rarray, where the dists will be saved for each of 10 confs, e.g."pairdis_1"
