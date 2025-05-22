@@ -30,6 +30,10 @@ process filterFolders{
         }
     }
 
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/stage3_filtered_folders", mode: 'copy', overwrite: true
+    }
+
 
 
 

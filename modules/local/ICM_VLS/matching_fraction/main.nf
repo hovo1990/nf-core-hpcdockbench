@@ -38,6 +38,9 @@ process matchingFraction{
 
 
     cache true
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/${method}/stage8_matching_fraction/${dataset_name}/${proj_id}/", mode: 'copy', overwrite: true
+    }
 
 
 

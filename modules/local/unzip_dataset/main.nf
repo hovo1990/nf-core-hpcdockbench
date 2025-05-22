@@ -31,6 +31,10 @@ process unzipDataset{
     }
 
 
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/stage2_unzipped_datasets/", mode: 'copy', overwrite: true
+    }
+
 
 
     input:

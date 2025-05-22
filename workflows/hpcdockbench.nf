@@ -97,8 +97,8 @@ workflow HPCDOCKBENCH {
     // icm_docking_projects.view()
 
 
-    // -- * Subworkflow 1: ICM VLS RUN
-    icm_vls_posebusted = ICM_VLS(icm_docking_projects)
+    // // -- * Subworkflow 1: ICM VLS RUN
+    // icm_vls_posebusted = ICM_VLS(icm_docking_projects)
     // icm_vls_posebusted.view()
 
     // // -- * Subworkflow 2: ICM RIDGE RUN

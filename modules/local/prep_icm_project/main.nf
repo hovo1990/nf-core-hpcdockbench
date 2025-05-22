@@ -51,6 +51,9 @@ process prepIcmProject {
         }
     }
 
+    if (params.save_intermediate) {
+        publishDir "${params.outdir}/stage4_ICM_Projects", mode: 'copy', overwrite: true
+    }
 
 
 

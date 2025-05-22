@@ -100,7 +100,7 @@ workflow ICM_VLS{
 
 
     // todo_debug_posebusted =  all_comb_flat
-    // pose_busted = poseBust(todo_debug_posebusted)
+    pose_busted = poseBust(matchingFraction_data)
 
 
 
