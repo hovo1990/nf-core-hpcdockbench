@@ -17,7 +17,7 @@ process confGenTask_CPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
+    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
 
 
 
