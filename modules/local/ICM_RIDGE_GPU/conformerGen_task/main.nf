@@ -76,7 +76,7 @@ process confGenTask_CPU {
         """
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
              effort=10.0 torlimit=50 sizelimit=600 \
-             -V -c -r -A -C mnconf=50 \
+             -V -c -r -A  mnconf=50 \
              proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
         """

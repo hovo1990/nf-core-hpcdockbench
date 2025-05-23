@@ -97,30 +97,30 @@ workflow HPCDOCKBENCH {
     // icm_docking_projects.view()
 
 
-    // -- * Subworkflow 1: ICM VLS RUN
-    icm_vls_posebusted = ICM_VLS(icm_docking_projects)
-    // icm_vls_posebusted.view()
+    // // -- * Subworkflow 1: ICM VLS RUN
+    // icm_vls_posebusted = ICM_VLS(icm_docking_projects)
+    // // icm_vls_posebusted.view()
 
-    // // -- * Subworkflow 2: ICM RIDGE RUN
+    // // // -- * Subworkflow 2: ICM RIDGE RUN
     icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
 
-    // -- TODO improve later so it can be toggled on or off
-    // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
-    // merged_data.view()
+    // // -- TODO improve later so it can be toggled on or off
+    // // -- * Merge from multiple sources
+    // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
+    // // merged_data.view()
 
-    merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    // merged_data_csv.view()
+    // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // // merged_data_csv.view()
 
-    // // // -- * Collect all data
-    collectedData = collectAllData(merged_data_csv)
+    // // // // -- * Collect all data
+    // collectedData = collectAllData(merged_data_csv)
 
-    // collectedData = collectAllData(icm_ridge_posebusted)
+    // // collectedData = collectAllData(icm_ridge_posebusted)
 
 
-    // // // -- * SStage 6: make plot test
-    plots = makePlot( collectedData)
+    // // // // -- * SStage 6: make plot test
+    // plots = makePlot( collectedData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
