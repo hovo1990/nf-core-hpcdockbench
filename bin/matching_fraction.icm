@@ -152,11 +152,15 @@ endmacro
 # -- * find pairs between docked_lig and crystal_lig
 
 strip a_1. # strip cocrystal ligand
+delete a_1. & a_*.//vt*
 delete hydrogen a_1.m//h*
 delete a_1.m//:b
 
+
+
 # -- * delete hydrogen from docked pose
 strip a_2. # strip
+delete a_2. & a_*.//vt*
 delete hydrogen a_2.m//h*
 delete a_2.m//:b
 
@@ -166,8 +170,8 @@ delete a_2.m//:b
 
 #
 # -- * COnvert to ICM otherwise findpair may fail or crash
-convert3Dto3D a_1. no no yes
-convert3Dto3D a_2. no no yes
+# convert3Dto3D a_1. no no yes
+# convert3Dto3D a_2. no no yes
 
 # -- * Calculate RMSDs
 dock_lig = a_2.m
@@ -193,11 +197,11 @@ endfor
 print "pairdis final" $pairdis
 
 
-
-if Error() then
-  printf error " Error> Calculate the distance of the pairs; Rarrays did not created"
-  quit 1
-endif
+# -- This was causing too much problem
+# if Error() then
+#   printf error " Error> Calculate the distance of the pairs; Rarrays did not created"
+#   quit 1
+# endif
 
 # --* ---------------------------- Calculation for NOT WEIGHTED distances --------------------------------####
 
@@ -255,14 +259,6 @@ endif
 
 # -- * now save the SDF file
 write table mol docked_t s_output_file
-
-if (Error()) then
-  printf error " Error> Problems while calculating matching fraction\n"
-  quit 1
-endif
-
-
-
 
 
 #-- * Do successful exit

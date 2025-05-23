@@ -58,37 +58,37 @@ workflow ICM_RIDGE{
     lig_conformers = confGenTask_CPU(icm_docking_projects)
 
 
-    // // -- * SStage 2: Run Ridge calculation (GPU)
-    // // tasks_todo_debug =  lig_conformers.take(20)
-    // tasks_todo_debug =  lig_conformers
+    // -- * SStage 2: Run Ridge calculation (GPU)
+    // tasks_todo_debug =  lig_conformers.take(20)
+    tasks_todo_debug =  lig_conformers
 
 
-    // // -- * Why does Ridge generate an empty sdf file? for what purpose come on
-    // ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
+    // -- * Why does Ridge generate an empty sdf file? for what purpose come on
+    ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
 
-    // // // dockScan_tasks.view()
+    // // dockScan_tasks.view()
 
-    // // -- * SStage 3: Extract conformations and add the data to sdf file
-    //     // -- * SStage 3: extract hit list as sdf files
-    // exported_sdf_files = exportRidgeSDF(ridge_tasks)
+    // -- * SStage 3: Extract conformations and add the data to sdf file
+        // -- * SStage 3: extract hit list as sdf files
+    exported_sdf_files = exportRidgeSDF(ridge_tasks)
 
-    // all_comb =  exported_sdf_files.map{ pair ->
-    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
-    // }
+    all_comb =  exported_sdf_files.map{ pair ->
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    }
 
-    // all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
-    //                 ligand_struct, sdf_files ->
-    //                 sdf_files.collect { sdf ->
-    //                     tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
-    //                     }
-    //                 }
-    // // all_comb_flat.view()
+    all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
+                    ligand_struct, sdf_files ->
+                    sdf_files.collect { sdf ->
+                        tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+                        }
+                    }
+    // all_comb_flat.view()
 
-    // // -- * SStage 4: perform RMSD, matching Fraction calculation
-    // // todo_debug_mf=  all_comb_flat.take(10)
-    // todo_debug_mf=  all_comb_flat
+    // -- * SStage 4: perform RMSD, matching Fraction calculation
+    // todo_debug_mf=  all_comb_flat.take(10)
+    todo_debug_mf=  all_comb_flat
 
-    // matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
+    matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
 
 
     // // -- * SStage 5: perform posebuster and compare with cocrystal structure

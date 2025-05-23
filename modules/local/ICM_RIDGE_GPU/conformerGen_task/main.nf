@@ -75,12 +75,17 @@ process confGenTask_CPU {
         def i_random_seed  = params.random_seed ?: 25051990
         """
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
-             effort=10.0 torlimit=50 sizelimit=600 \
-             -V -c -r -A  mnconf=50 \
+             effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
              proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
         """
 }
+
+
+        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+        //      effort=10.0 torlimit=50 sizelimit=600 \
+        //      -V -c -r -A  mnconf=50 \
+        //      proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
 
 ///pro/icm/icms/icm64 /pro/icm/icms/_confGen  append=yes effort=10.0 torlimit=30 sizelimit=500 -V -c -r  -A -C  mnconf=50 proc=8 p7MSR_DCA_2D_ligand.sdf confGen_p7MSR_DCA_2D_ligand.sdf
