@@ -91,11 +91,11 @@ workflow ICM_RIDGE{
     matchingFraction_data_ridge = matchingFraction(todo_debug_mf)
 
 
-    // // -- * SStage 5: perform posebuster and compare with cocrystal structure
-    // // todo_debug_posebusted_ridge =  all_comb_flat.take(10)
+    // -- * SStage 5: perform posebuster and compare with cocrystal structure
+    // todo_debug_posebusted_ridge =  all_comb_flat.take(10)
 
 
-    // pose_busted = poseBust(matchingFraction_data_ridge )
+    pose_busted = poseBust(matchingFraction_data_ridge )
 
     // // -- * SStage 6:  No need for it collect all the csv files and start making plots
     // posebusted_files_ridge =      pose_busted.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
@@ -103,8 +103,8 @@ workflow ICM_RIDGE{
 
 
     emit:
-    posebusted_files   = test
-    // posebusted_files = pose_busted
+    // posebusted_files   = test
+    posebusted_files = pose_busted
 
 }
 
