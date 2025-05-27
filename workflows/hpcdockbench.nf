@@ -106,7 +106,7 @@ workflow HPCDOCKBENCH {
     // // // -- * Subworkflow 2: ICM RIDGE RUN
     icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
-    // // // -- * Subworkflow 2: ICM RIDGE RUN
+    // // // -- * Subworkflow 3: ICM RIDGE RUN RTCNN2
     icm_ridge_rtcnn2_posebusted = ICM_RIDGE_RTCNN2(icm_docking_projects)
 
 
