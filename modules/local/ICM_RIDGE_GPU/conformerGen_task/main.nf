@@ -17,7 +17,7 @@ process confGenTask_RTCNN2_CPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
+    beforeScript 'hostname;echo "Wait random 35 secs"; sleep $((RANDOM % 35))'
 
 
 
@@ -101,7 +101,7 @@ process confGenTask_CPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
+    beforeScript 'hostname;echo "Wait random 25 secs"; sleep $((RANDOM % 25))'
 
 
 
