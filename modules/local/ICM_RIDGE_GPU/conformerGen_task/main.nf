@@ -56,7 +56,7 @@ process confGenTask_RTCNN2_CPU {
             path: { "${params.outdir}/" },
             mode: params.publish_dir_mode,
             saveAs: { filename ->
-            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE/stage1_conformer_generation/confGen/${dataset_name}/${proj_id}/${filename}" }
+            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE-RTCNN2/stage1_conformer_generation/confGen/${dataset_name}/${proj_id}/${filename}" }
         ]
     }
 
