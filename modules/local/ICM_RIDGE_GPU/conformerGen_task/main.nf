@@ -1,7 +1,7 @@
 // -- * For RTCNN2
 process confGenTask_RTCNN2_CPU {
 
-    tag "CPU-confGen-${proj_id}"
+    tag "CPU-confGen-RTCNN2-${proj_id}"
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
 
