@@ -38,6 +38,8 @@ include { ICM_VLS } from '../subworkflows/local/ICM_VLS'
 include { ICM_RIDGE } from '../subworkflows/local/ICM_RIDGE'
 
 
+include { ICM_RIDGE_RTCNN2 } from '../subworkflows/local/ICM_RIDGE_RTCNN2'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -104,10 +106,14 @@ workflow HPCDOCKBENCH {
     // // // -- * Subworkflow 2: ICM RIDGE RUN
     icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
+    // // // -- * Subworkflow 2: ICM RIDGE RUN
+    icm_ridge_rtcnn2_posebusted = ICM_RIDGE_RTCNN2(icm_docking_projects)
+
+
 
     // -- TODO improve later so it can be toggled on or off
     // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
+    merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
     // merged_data.view()
 
     merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline

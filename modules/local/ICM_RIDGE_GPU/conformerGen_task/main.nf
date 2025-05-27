@@ -1,4 +1,88 @@
+// -- * For RTCNN2
+process confGenTask_RTCNN2_CPU {
 
+    tag "CPU-confGen-${proj_id}"
+    //-- ! something wrong with SLURM and dockScan
+    //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
+
+
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 100 ){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
+
+
+    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
+
+
+
+    label 'low_cpu_debug'
+
+    cache true
+    // debug true
+
+
+
+    if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
+        container "${params.singularity_local_cpu_container}"
+    }
+    else if (workflow.containerEngine == 'singularity' ){
+        container "${params.container_link}"
+    }
+    else {
+        container "${params.container_link}"
+    }
+
+    if (params.mount_options) {
+        if (workflow.containerEngine == 'singularity' ) {
+            containerOptions "  --bind ${params.mount_options}"
+        }
+        else {
+            containerOptions " --volume ${params.mount_options}"
+        }
+    }
+
+
+
+
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE/stage1_conformer_generation/confGen/${dataset_name}/${proj_id}/${filename}" }
+        ]
+    }
+
+
+
+    // --  * val(folder was creating issues)
+    input:
+        tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
+    output:
+        tuple val("ICM-RIDGE-RTCNN2"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("confGen_${ligand_struct_2D.simpleName}.molt")
+
+    script:
+        def r_effort= params.effort ?: 4.0
+        def i_confs =  params.conformations ?: 10
+        def i_cpus = task.cpus
+        def i_random_seed  = params.random_seed ?: 25051990
+        """
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+             effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
+             proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
+
+        """
+}
+
+
+// -- * Original for Ridge
 process confGenTask_CPU {
 
     tag "CPU-confGen-${proj_id}"

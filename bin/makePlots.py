@@ -98,6 +98,8 @@ def posebusted_results_rank1(df):
             realname = "ICM-VLS (CPU)"
         elif method == "ICM-RIDGE":
             realname = "ICM-RIDGE (GPU)"
+        elif method == "ICM-RIDGE-RTCNN2":
+            realname = "ICM-RIDGE-RTCNN2 (GPU)"
 
         for dataset in tqdm(unique_datasets):
             curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
@@ -235,6 +237,8 @@ def posebusted_results_custom_rank(df, rank=3):
             realname = "ICM-VLS (CPU)"
         elif method == "ICM-RIDGE":
             realname = "ICM-RIDGE (GPU)"
+        elif method == "ICM-RIDGE-RTCNN2":
+            realname = "ICM-RIDGE-RTCNN2 (GPU)"
 
         for dataset in tqdm(unique_datasets):
             curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
