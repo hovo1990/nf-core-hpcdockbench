@@ -469,7 +469,7 @@ if(l_anchors)then
       as_cap = Select( a_// "r" )
       if (Nof(as_cap)==0) then
         find chemical all a_* [$] "[*;i1]"
-        as_cap = as_outT_docked_tmp
+        as_cap = as_out
       endif
       # show area surface a_* [$] & a_//r* a_//!h*
       show area surface a_* [$] & as_cap a_//!h*

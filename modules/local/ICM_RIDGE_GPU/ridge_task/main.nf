@@ -92,6 +92,7 @@ process ridgeTask_GPU {
                 input=${conformer_file} \
                 batchSize=${batchSize} \
                 -C \
+                -S \
                 -keepStack  \
                 scoreCutoff=${r_scoreCutoff} \
                 mnhits=${r_mnhits}  \
