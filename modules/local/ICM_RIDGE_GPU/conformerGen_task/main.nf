@@ -17,9 +17,6 @@ process confGenTask_RTCNN2_CPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 35 secs"; sleep $((RANDOM % 35))'
-
-
 
     label 'low_cpu_debug'
 
@@ -101,7 +98,6 @@ process confGenTask_CPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 25 secs"; sleep $((RANDOM % 25))'
 
 
 
@@ -230,7 +226,7 @@ process gingerTask_GPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 5 secs"; sleep $((RANDOM % 5))'
+
 
 
 

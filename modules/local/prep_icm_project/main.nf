@@ -19,10 +19,6 @@ process prepIcmProject {
     }
 
 
-    beforeScript 'hostname;echo "Wait random 15 secs"; sleep $((RANDOM % 15))'
-
-
-
     cache true
 
 

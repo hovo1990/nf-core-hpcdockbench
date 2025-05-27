@@ -2,7 +2,7 @@ process exportSDF{
 
     label 'low_cpu_debug'
 
-    beforeScript 'hostname;echo "Wait random 10 secs"; sleep $((RANDOM % 10))'
+
     maxRetries 5
     errorStrategy {
         if (task.exitStatus >= 100 ){

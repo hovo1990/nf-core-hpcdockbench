@@ -2,7 +2,7 @@ process matchingFraction{
 
     label 'very_low_cpu_debug'
 
-    beforeScript 'hostname;echo "Wait random 20 secs"; sleep $((RANDOM % 20))'
+
     maxRetries 5
     errorStrategy {
         if (task.exitStatus >= 100 ){

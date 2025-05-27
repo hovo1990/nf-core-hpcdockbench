@@ -2,7 +2,6 @@ process dockScanMakeHitList{
 
     label 'low_cpu_debug'
 
-    beforeScript 'hostname;echo "Wait random 25 secs"; sleep $((RANDOM % 25))'
     maxRetries 5
     errorStrategy {
         if (task.exitStatus >= 100){

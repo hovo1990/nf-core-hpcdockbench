@@ -18,7 +18,6 @@ process ridgeTask_RTCNN2_GPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 35 secs"; sleep $((RANDOM % 35))'
 
 
 
@@ -125,7 +124,6 @@ process ridgeTask_GPU {
     // }
 
 
-    beforeScript 'hostname;echo "Wait random 20 secs"; sleep $((RANDOM % 20))'
 
 
 
