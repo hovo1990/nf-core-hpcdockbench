@@ -74,8 +74,8 @@ process dockScanTask {
         tuple val("ICM-VLS"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
 
     script:
-        def r_effort= params.effort ?: 4.0
-        def i_confs =  params.conformations ?: 10
+        def r_effort= params.effort ?: 32.0
+        def i_confs =  params.conformations ?: 40
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
