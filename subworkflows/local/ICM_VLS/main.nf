@@ -14,10 +14,12 @@ include { dockScanTask  } from '../../../modules/local/ICM_VLS/dockscan_task'
 include { dockScanMakeHitList  } from '../../../modules/local/ICM_VLS/dockscan_makehitlist'
 
 
-include { exportSDF } from '../../../modules/local/ICM_VLS/export_sdf'
+// include { exportSDF } from '../../../modules/local/ICM_VLS/export_sdf'
 
 
-include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
+// include { matchingFraction} from '../../../modules/local/ICM_VLS/matching_fraction'
+
+include { exportMFSDF } from '../../../modules/local/ICM_VLS/export_mf_sdf'
 
 
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
@@ -54,7 +56,9 @@ workflow ICM_VLS{
 
 
     // -- * SStage 3 V2: extract hit list as sdf files
-    exported_sdf_files = exportSDF(dockscan_hitlist)
+    todo_debug_export_sdf = dockscan_hitlist.take(20)
+
+    exported_sdf_files = exportMFSDF(todo_debug_export_sdf )
 
 
 
@@ -123,7 +127,7 @@ workflow ICM_VLS{
     // samplesheet = ch_samplesheet
 
     // -- * debug
-    // posebusted_files   = test
-    posebusted_files   = pose_busted
+    posebusted_files   = test
+    // posebusted_files   = pose_busted
 }
 
