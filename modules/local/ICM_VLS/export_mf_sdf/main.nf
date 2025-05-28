@@ -59,7 +59,7 @@ process exportMFSDF{
 
 
     output:
-        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file), path("${icb_file.simpleName}_mf.sdf")
+        tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(ob_file), path(icb_file), path("${proj_id}_mf.sdf")
 
 
     script:
@@ -73,7 +73,7 @@ process exportMFSDF{
                 -p=${proj_id} \
                 -i=${icb_file} \
                 -ic=${ligand_struct } \
-                -o=${icb_file.simpleName}_mf.sdf
+                -o=${proj_id}_mf.sdf
 
         """
 }
