@@ -104,7 +104,7 @@ workflow HPCDOCKBENCH {
     // // icm_vls_posebusted.view()
 
     // // // -- * Subworkflow 2: ICM RIDGE RUN
-    icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
+    // icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
 
     // // // -- * Subworkflow 3: ICM RIDGE RUN RTCNN2 missing Error> [9532] can not open '/pro/icm/icms/nnInterMod2.inm' for reading
     // icm_ridge_rtcnn2_posebusted = ICM_RIDGE_RTCNN2(icm_docking_projects)
@@ -113,7 +113,9 @@ workflow HPCDOCKBENCH {
 
     // -- TODO improve later so it can be toggled on or off
     // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
+    merged_data =icm_vls_posebusted
+
+    // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
     // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
     // merged_data.view()
 

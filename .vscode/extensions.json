@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "donjayamanne.python-extension-pack",
+    "foxundermoon.shell-format",
+    "ms-python.python",
+    "ms-vscode.cpptools",
+    "esbenp.prettier-vscode",
+    "nextflow.nextflow",
+    "markzaretskiy.ICM-PRO",
+    "onnovalkering.vscode-singularity",
+
+  ],
+  "unwantedRecommendations": [
+    "jonrad.docker-diary-vscode"
+  ]
+}
