@@ -56,7 +56,8 @@ workflow ICM_VLS{
 
 
     // -- * SStage 3 V2: extract hit list as sdf files
-    todo_debug_export_sdf = dockscan_hitlist.take(20)
+    // todo_debug_export_sdf = dockscan_hitlist.take(20)
+    todo_debug_export_sdf = dockscan_hitlist
 
     exported_sdf_files = exportMFSDF(todo_debug_export_sdf )
 
