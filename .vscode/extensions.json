@@ -8,7 +8,7 @@
     "nextflow.nextflow",
     "markzaretskiy.ICM-PRO",
     "onnovalkering.vscode-singularity",
-
+    "edwinhuish.better-comments-next"
   ],
   "unwantedRecommendations": [
     "jonrad.docker-diary-vscode"

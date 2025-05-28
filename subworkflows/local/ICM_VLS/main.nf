@@ -57,52 +57,52 @@ workflow ICM_VLS{
     // exported_sdf_files.view()
 
 
-    all_comb =  exported_sdf_files.map{ pair ->
-        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
-    }
-    // all_comb.view()
-    // all_comb_flat = all_comb.flatten()
-    // all_comb_flat.view()
+    // all_comb =  exported_sdf_files.map{ pair ->
+    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    // }
+    // // all_comb.view()
+    // // all_comb_flat = all_comb.flatten()
+    // // all_comb_flat.view()
 
-    // -- * groupTuple looks like the solution i am looking for
-    // channel.of(
-    //     ['chr1', ['/path/to/region1_chr1.vcf', '/path/to/region2_chr1.vcf']],
-    //     ['chr2', ['/path/to/region1_chr2.vcf', '/path/to/region2_chr2.vcf', '/path/to/region3_chr2.vcf']],
-    // )
-    // .flatMap { chr, vcfs ->
-    //     vcfs.collect { vcf ->
-    //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
-    //     }
-    // }.view()
+    // // -- * groupTuple looks like the solution i am looking for
+    // // channel.of(
+    // //     ['chr1', ['/path/to/region1_chr1.vcf', '/path/to/region2_chr1.vcf']],
+    // //     ['chr2', ['/path/to/region1_chr2.vcf', '/path/to/region2_chr2.vcf', '/path/to/region3_chr2.vcf']],
+    // // )
+    // // .flatMap { chr, vcfs ->
+    // //     vcfs.collect { vcf ->
+    // //         tuple(groupKey(chr, vcfs.size()), vcf)              // preserve group size with key
+    // //     }
+    // // }.view()
 
-    all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
-                    ligand_struct, sdf_files ->
-                    sdf_files.collect { sdf ->
-                        tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
-                        }
-                    }
-    // all_comb_flat.view()
-
-
+    // all_comb_flat = all_comb.flatMap{ method, category, dataset_name, code,proj_id, protein_struct,
+    //                 ligand_struct, sdf_files ->
+    //                 sdf_files.collect { sdf ->
+    //                     tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
+    //                     }
+    //                 }
+    // // all_comb_flat.view()
 
 
 
-    // -- * SStage 4: calculate RMSD and matching fraction
-    // todo_debug_mf=  all_comb_flat.take(10)
-
-    todo_debug_mf=  all_comb_flat
-    // todo_debug_mf.view()
-
-    matchingFraction_data = matchingFraction(todo_debug_mf)
 
 
-    // -- * SStage 5: perform posebuster and compare with cocrystal structure
+    // // -- * SStage 4: calculate RMSD and matching fraction
+    // // todo_debug_mf=  all_comb_flat.take(10)
 
-    // todo_debug_posebusted =  all_comb_flat.take(10)
-    // todo_debug_posebusted.view()
+    // todo_debug_mf=  all_comb_flat
+    // // todo_debug_mf.view()
+
+    // matchingFraction_data = matchingFraction(todo_debug_mf)
 
 
-    pose_busted = poseBust(matchingFraction_data)
+    // // -- * SStage 5: perform posebuster and compare with cocrystal structure
+
+    // // todo_debug_posebusted =  all_comb_flat.take(10)
+    // // todo_debug_posebusted.view()
+
+
+    // pose_busted = poseBust(matchingFraction_data)
 
 
 
