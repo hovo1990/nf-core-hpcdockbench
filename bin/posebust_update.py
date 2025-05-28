@@ -183,9 +183,9 @@ def start_program(
                 else "N/A"
             )
 
-            ICM_MATCHING_FRACTION = (
-                mol.GetProp("ICM_MATCHING_FRACTION")
-                if mol.HasProp("ICM_MATCHING_FRACTION")
+            ICM_MATCHING_FRACTION_ = (
+                mol.GetProp("ICM_MATCHING_FRACTION_")
+                if mol.HasProp("ICM_MATCHING_FRACTION_")
                 else "N/A"
             )
 
@@ -200,7 +200,7 @@ def start_program(
 
             df["ICM_RMSD_IN_PLACE_"] = ICM_RMSD_IN_PLACE_
             df["ICM_RMSD_SUPERIMPOSED_"] = ICM_RMSD_SUPERIMPOSED_
-            df["ICM_MATCHING_FRACTION"] = ICM_MATCHING_FRACTION
+            df["ICM_MATCHING_FRACTION_"] = ICM_MATCHING_FRACTION_
             # logger.debug(" DEBUG> Score {}".format(SCORE))
 
         logger.debug(df)

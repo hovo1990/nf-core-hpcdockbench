@@ -60,9 +60,18 @@ workflow ICM_VLS{
     todo_debug_export_sdf = dockscan_hitlist
 
     exported_sdf_files = exportMFSDF(todo_debug_export_sdf )
+    // exported_sdf_files.view()
 
 
+    all_comb =  exported_sdf_files.map{ pair ->
+        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    }
+    // all_comb.view()
 
+
+    pose_busted = poseBust(all_comb)
+
+    // -- ! Old version
     // // -- * SStage 3: extract hit list as sdf files
     // exported_sdf_files = exportSDF(dockscan_hitlist)
     // exported_sdf_files.view()
@@ -92,7 +101,7 @@ workflow ICM_VLS{
     //                     tuple(method, category, dataset_name, code, groupKey(proj_id, sdf_files.size()), protein_struct, ligand_struct, sdf )
     //                     }
     //                 }
-    // // all_comb_flat.view()
+    // all_comb_flat.view()
 
 
 
