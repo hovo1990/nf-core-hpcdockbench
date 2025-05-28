@@ -87,11 +87,18 @@ write table mol chem  lig_save_name
 
 # -- * Optimize object before preparation, if more than 10 chains
 # exit
-if Nof(a_1.A/) > 900 then
-  to_keep = Res(Sphere(ligObj a_1.* 30 . ))
+print " Info> number of amino acids is ", Nof(a_1.A/)
+if Nof(a_1.A/) > 100 then
+  to_keep = Res(Sphere(ligObj a_1.* 25.0 ))
   to_delete = a_1.* & !to_keep
   delete Res(to_delete)
 endif
+
+if (Error()) then
+  printf error " Error> Could not trim objects for Docking project preparation\n"
+  quit 1
+endif
+
 
 
 
