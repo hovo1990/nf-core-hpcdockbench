@@ -66,7 +66,7 @@ process poseBust_update{
 
 
         # -- * Run python script to append extra info for absolute data
-        python ${projectDir}/bin/posebust_update.py --input=${docked_pose_pb} \
+        python ${projectDir}/bin/posebust_update_v2.py --input=${docked_pose_pb} \
                                                     --dataset=${dataset_name} \
                                                     --prot=${protein_struct} \
                                                     --lig=${ligand_struct} \

@@ -77,7 +77,7 @@ workflow ICM_VLS{
 
     // -- * SStage 4 V2: update posebust data with ICM data
     poseBust_updated = poseBust_update(pose_busted)
-    poseBust_updated.view()
+    // poseBust_updated.view()
 
 
     // -- ! Old version
