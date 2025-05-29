@@ -88,7 +88,7 @@ write table mol chem  lig_save_name
 # -- * Optimize object before preparation, if more than 10 chains
 # exit
 print " Info> number of amino acids is ", Nof(a_1.A/)
-if Nof(a_1.A/) > 100 then
+if Nof(a_1.A/) > 1000 then
   to_keep = Res(Sphere(ligObj a_1.* 25.0 ))
   to_delete = a_1.* & !to_keep
   delete Res(to_delete)
