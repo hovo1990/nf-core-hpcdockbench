@@ -159,7 +159,13 @@ currentDockProj.data[8] = "yes"  # ????
 tempsel = SelecForDock & a_$objName. ## old version -> tempsel = PocketSelection & a_$InputPdb. ##
 
 CovDocName = Dirinp
-dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
+# quit 1
+
+# -- * enable enhanced born
+dock2SetupReceptor CovDocName a_$objName. tempsel no  "enhancedBorn"
+
+
+# dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
 if( currentDockProj.l_readyReceptor ) dock5CalcMaps CovDocName 0.5 4.0 no # оменять тут чуток  have changed
 currentDockProj.data[1] = CovDocName
 
