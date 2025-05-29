@@ -6,7 +6,7 @@ process poseBust{
     maxRetries 5
     errorStrategy {
         if (task.exitStatus >= 100 ){
-            sleep(Math.pow(2, task.attempt) * 20 as long);
+            sleep(Math.pow(2, task.attempt) * 35 as long);
             'retry'
         } else {
             'terminate'

@@ -7,7 +7,7 @@ process exportMFSDF{
     maxRetries 5
     errorStrategy {
         if (task.exitStatus >= 100 ){
-            sleep(Math.pow(2, task.attempt) * 15 as long);
+            sleep(Math.pow(2, task.attempt) * 35 as long);
             'retry'
         } else {
             'terminate'
