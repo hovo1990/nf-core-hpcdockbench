@@ -89,7 +89,7 @@ write table mol chem  lig_save_name
 # exit
 print " Info> number of amino acids is ", Nof(a_1.A/)
 if Nof(a_1.A/) > 1000 then
-  to_keep = Res(Sphere(ligObj a_1.* 25.0 ))
+  to_keep = Res(Sphere(ligObj a_1.* 35.0 ))
   to_delete = a_1.* & !to_keep
   delete Res(to_delete)
 endif
