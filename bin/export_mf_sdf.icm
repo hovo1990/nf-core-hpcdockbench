@@ -183,6 +183,7 @@ for i=1,Nof(mainTable)
   endif
 
 
+  errorAction="none"
   # -- * setup
   k=1
   DistTab = "dist_" + k + "_tab"
@@ -207,6 +208,7 @@ for i=1,Nof(mainTable)
   delete FinFmatch
   delete AllFmatch
 
+  errorAction = "quit"
   AllFmatch = Rarray() # collection of the calculated function (Fmatch = (SumPairs(max(1-(d/3)^2),0))/Npairs) for each docking conformation (10)
 
   pairdisone = "pairdis_" + k # name of Rarrays, the atom dists for each of 10 confs (pairdis_1, pairdis_2, pairdis_3, and so on)
@@ -246,6 +248,7 @@ for i=1,Nof(mainTable)
   # toExport = s_project_name + "_rank_" + String(i) + '.sdf'
   # chemSdfExport "tempT"  toExport "compress" no
   # delete tempT
+  print " Info> worked on molecule i is ", String(i)
   print " -----------------===========================================================----------------- "
 endfor
 
