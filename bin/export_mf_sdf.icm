@@ -139,7 +139,7 @@ add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
 
 
 for i=1,Nof(mainTable)
-  print " i is ", String(i)
+  print " Info> working on molecule i is ", String(i)
   docked_t = mainTable [i]
 
 
@@ -176,6 +176,11 @@ for i=1,Nof(mainTable)
 
   # -- * Calculate matching fraction
   findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
+
+  if (Error()) then
+    printf error " Error> Problems calculating findPairs\n"
+    quit 1
+  endif
 
 
   # -- * setup
@@ -241,7 +246,7 @@ for i=1,Nof(mainTable)
   # toExport = s_project_name + "_rank_" + String(i) + '.sdf'
   # chemSdfExport "tempT"  toExport "compress" no
   # delete tempT
-  print " ------------------------------------------------------ "
+  print " -----------------===========================================================----------------- "
 endfor
 
 if Nof(mainTable.ICM_MATCHING_FRACTION_) < 1 then
