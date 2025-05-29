@@ -164,7 +164,7 @@ CovDocName = Dirinp
 # -- * enable enhanced born
 dock2SetupReceptor CovDocName a_$objName. tempsel no  "enhancedBorn"
 
-
+# -- * Old version
 # dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
 if( currentDockProj.l_readyReceptor ) dock5CalcMaps CovDocName 0.5 4.0 no # оменять тут чуток  have changed
 currentDockProj.data[1] = CovDocName

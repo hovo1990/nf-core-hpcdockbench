@@ -62,7 +62,7 @@ process prepIcmProject {
 
 
     script:
-    def i_version=2
+    def i_version=4
     """
     trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
     cp  -r ${folder}/* .
