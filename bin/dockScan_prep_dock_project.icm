@@ -94,6 +94,12 @@ if Nof(a_1.A/) > 1000 then
   delete Res(to_delete)
 endif
 
+
+# -- TODO
+# -- * Template how to select at least 10 aminoacids in the gap
+# preSel = Select(Res(bindpock_pre)  10 )
+
+
 if (Error()) then
   printf error " Error> Could not trim objects for Docking project preparation\n"
   quit 1
