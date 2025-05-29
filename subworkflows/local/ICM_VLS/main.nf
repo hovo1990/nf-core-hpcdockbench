@@ -66,17 +66,17 @@ workflow ICM_VLS{
     // exported_sdf_files.view()
 
 
-    all_comb =  exported_sdf_files.map{ pair ->
-        [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
-    }
-    // all_comb.view()
+    // all_comb =  exported_sdf_files.map{ pair ->
+    //     [pair[0],pair[1],pair[2], pair[3],pair[4],pair[5],pair[6],pair[-1]]
+    // }
+    // // all_comb.view()
 
 
-    pose_busted = poseBust(all_comb)
+    // pose_busted = poseBust(all_comb)
 
 
-    // -- * SStage 4 V2: update posebust data with ICM data
-    poseBust_updated = poseBust_update(pose_busted)
+    // // -- * SStage 4 V2: update posebust data with ICM data
+    // poseBust_updated = poseBust_update(pose_busted)
     // poseBust_updated.view()
 
 
@@ -146,8 +146,8 @@ workflow ICM_VLS{
     // samplesheet = ch_samplesheet
 
     // -- * debug
-    posebusted_files   = poseBust_updated
-    // posebusted_files   = test
+    // posebusted_files   = poseBust_updated
+    posebusted_files   = test
     // posebusted_files   = pose_busted
 }
 
