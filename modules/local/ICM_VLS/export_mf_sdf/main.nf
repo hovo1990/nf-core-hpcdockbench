@@ -1,6 +1,6 @@
 // -- * Special version of SDF export that also calculates RMSD and MF
 process exportMFSDF{
-
+    tag "CPU-VLS-${proj_id}"
     label 'low_cpu_debug'
 
 

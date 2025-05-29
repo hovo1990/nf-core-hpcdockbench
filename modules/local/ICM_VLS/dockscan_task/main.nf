@@ -3,7 +3,7 @@ process dockScanTask {
 
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
-
+    tag "CPU-VLS-${proj_id}"
 
     maxRetries 5
     errorStrategy {

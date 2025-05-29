@@ -1,5 +1,6 @@
 process dockScanMakeHitList{
 
+    tag "CPU-VLS-${proj_id}"
     label 'low_cpu_debug'
 
     maxRetries 5

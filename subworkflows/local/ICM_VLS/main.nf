@@ -146,7 +146,8 @@ workflow ICM_VLS{
     // samplesheet = ch_samplesheet
 
     // -- * debug
-    posebusted_files   = test
+    posebusted_files   = poseBust_updated
+    // posebusted_files   = test
     // posebusted_files   = pose_busted
 }
 

@@ -1,5 +1,5 @@
 process poseBust_update{
-
+    tag "CPU-PBUP-${proj_id}"
     label 'very_low_cpu_debug'
 
 

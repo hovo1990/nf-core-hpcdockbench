@@ -113,7 +113,7 @@ workflow HPCDOCKBENCH {
 
     // // -- TODO improve later so it can be toggled on or off
     // // -- * Merge from multiple sources
-    // merged_data =icm_vls_posebusted
+    merged_data =icm_vls_posebusted
 
     // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
     // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
