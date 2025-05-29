@@ -25,6 +25,9 @@ include { exportMFSDF } from '../../../modules/local/ICM_VLS/export_mf_sdf'
 include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
 
 
+include { poseBust_update} from '../../../modules/local/ICM_VLS/pose_bust_update'
+
+
 
 
 
@@ -70,6 +73,12 @@ workflow ICM_VLS{
 
 
     pose_busted = poseBust(all_comb)
+
+
+    // -- * SStage 4 V2: update posebust data with ICM data
+    poseBust_updated = poseBust_update(pose_busted)
+    poseBust_updated.view()
+
 
     // -- ! Old version
     // // -- * SStage 3: extract hit list as sdf files
