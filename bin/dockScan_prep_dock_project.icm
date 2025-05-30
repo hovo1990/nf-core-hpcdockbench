@@ -96,7 +96,7 @@ print " Info> number of amino acids before optimization is ", Nof(a_1.A/)
 
 # -- * Optimize docking object
 print " Info> optimizing object for docking"
-to_keep = Select(Res(Sphere(ligObj a_1.* 15.0 )),10)
+to_keep = Select(Res(Sphere(ligObj a_1.* 15.0 )), 10)
 to_delete = a_1.* & !to_keep
 delete Res(to_delete)
 print " Info> number of amino acids after optimiziation is ", Nof(a_1.A/)
