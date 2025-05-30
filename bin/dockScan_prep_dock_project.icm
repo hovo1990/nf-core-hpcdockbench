@@ -87,7 +87,7 @@ write table mol chem  lig_save_name
 
 # -- * Optimize object before preparation, if more than 10 chains
 # exit
-print " Info> number of amino acids is ", Nof(a_1.A/)
+print " Info> number of amino acids before optimization is ", Nof(a_1.A/)
 # if Nof(a_1.A/) > 1000 then
 #   to_keep = Res(Sphere(ligObj a_1.* 15.0 ) 10)
 #   to_delete = a_1.* & !to_keep
@@ -95,7 +95,7 @@ print " Info> number of amino acids is ", Nof(a_1.A/)
 # endif
 
 # -- * Optimize docking object
-
+print " Info> optimizing object for docking"
 to_keep = Select(Res(Sphere(ligObj a_1.* 15.0 )),10)
 to_delete = a_1.* & !to_keep
 delete Res(to_delete)
