@@ -98,9 +98,9 @@ workflow HPCDOCKBENCH {
     // -- * #template
     // tasks_todo_debug = tasks_todo_debug.filter { it.code == '8F4J_PHO' }
 
-    tasks_todo_debug = tasks_todo_debug.filter { it[1]== '8F4J_PHO' }
+    // tasks_todo_debug = tasks_todo_debug.filter { it[1]== '8F4J_PHO' }
 
-    tasks_todo_debug.view()
+    // tasks_todo_debug.view()
 
     icm_docking_projects = prepIcmProject(tasks_todo_debug)
     // icm_docking_projects.view()
