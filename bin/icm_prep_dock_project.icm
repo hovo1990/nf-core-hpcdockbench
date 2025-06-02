@@ -28,7 +28,7 @@ call _startup
 # call _dockScan
 
 
-quit 1
+# quit 1
 # exit
 
 
@@ -43,7 +43,9 @@ NameGene = s_projID
 #-- * read pocketome session file
 # openFile input_protein_arg 0 yes no no no " append"
 
-read pdb  input_protein_arg  sstructure
+pdb_code = Field(input_protein_arg, 1, "_")
+
+read pdb  pdb_code sstructure
 
 
 
@@ -65,6 +67,22 @@ Dirinp = NameGene
 read table mol input_ligand_arg name="dataChem"
 
 
+lig_name_full = dataChem.NAME_
+
+lig_name  = Tolower(Field(lig_name_full, 2, "_")[1])
+lig_chain = Tolower(Field(lig_name_full, 3, "_")[1])
+ligSelName = lig_chain + lig_name
+ligSel = a_1.$ligSelName
+
+
+# -- * Extract as 2D drawing
+extractLigand ligSel  "2D" no "" no
+
+delete Res(ligSel)
+delete a_1.W
+# exit
+
+
 # -- ? Convert to 3d molecule
 
 if( Type( dataChem.crysym ) == "sarray" ) then
@@ -75,8 +93,8 @@ endif
 
 ligObj = a_2.m
 
-# -- * Extract as 2D drawing
-extractLigand ligObj  "2D" no "" no
+# # -- * Extract as 2D drawing
+# extractLigand ligObj  "2D" no "" no
 
 
 # -- * save ligand 2D drawing as sdf
@@ -154,7 +172,7 @@ set field name="dockProjectName" objToWork Dirinp
 
 
 
-# -- ? To convert to icm object and assign secondary structure:
+# -- ? To convert to icm object and assign secondary structure: there is no water so no problem
 
 convertObject a_$objName. no yes yes no yes yes no "water=tight "
 assign sstructure a_A
