@@ -16,7 +16,8 @@ s_projID = Getarg("-projID","UNDEFINED",delete) # don't use "-GeneName", it make
 
 
 # check if file exists
-if(!Exist(input_protein_arg read)) quit " Error_$P: file '" input_protein_arg "' not found or not readable."
+if(input_protein_arg== "UNDEFINED") quit " Error> Nothing to do, specify code from benchmark set" + HELP
+
 if(!Exist(input_ligand_arg read)) quit " Error_$P: file '" input_ligand_arg "' not found or not readable."
 if(s_projID== "UNDEFINED") quit " Error> Nothing to do, specify uniprot code" + HELP
 
@@ -45,8 +46,16 @@ NameGene = s_projID
 
 pdb_code = Field(input_protein_arg, 1, "_")
 
+# -- * Read from http
+pdbDirStyle=7
+
 read pdb  pdb_code sstructure
 
+
+if (Error()) then
+  printf error " Error> could not read structure file \n"
+  quit 1
+endif
 
 
 #-- * Get object to work with
