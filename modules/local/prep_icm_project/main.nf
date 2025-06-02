@@ -3,7 +3,7 @@ process prepIcmProject {
     // cache false
     // def date = LocalDate.now().toString().replace("-","_")
 
-    tag "prepare docking Project"
+    tag "CPU-PREP-ICM-p${code}"
 
 
     label 'low_cpu_debug'
