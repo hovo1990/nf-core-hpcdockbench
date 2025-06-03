@@ -102,7 +102,7 @@ workflow HPCDOCKBENCH {
 
 
     // -- ! #change exclude this example
-    tasks_todo_debug = tasks_todo_debug.filter { it[1]!= '8F4J_PHO' }
+    tasks_todo_debug = tasks_todo_debug.filter { it[1] != '8F4J_PHO' }
 
 
     // tasks_todo_debug.view()
