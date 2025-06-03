@@ -96,9 +96,14 @@ workflow HPCDOCKBENCH {
     // -- * Stage 5: Prepare docking projects
     // -- TODO for debug purposes test out only 8F4J_PHO
     // -- * #template
-    // tasks_todo_debug = tasks_todo_debug.filter { it.code == '8F4J_PHO' }
+
 
     // tasks_todo_debug = tasks_todo_debug.filter { it[1]== '8F4J_PHO' }
+
+
+    // -- ! #change exclude this example
+    tasks_todo_debug = tasks_todo_debug.filter { it[1]!= '8F4J_PHO' }
+
 
     // tasks_todo_debug.view()
 
