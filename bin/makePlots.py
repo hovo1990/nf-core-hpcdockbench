@@ -870,8 +870,16 @@ def start_program(input, paperdata):
 
         logger.debug(" Debug> {}".format(df_posebusted))
 
-        # -- * Top rank 1 calculations
-        df = posebusted_results_rank1(df_posebusted)
+        # -- * In some cases posebuster library gives if rmsd 0.4 it gives false, when it should be true
+        # -- * in other cases when ICM rmsd is 2.1, it gives that RMSD is less than 2
+        # -- TODO fix it here in this script
+
+
+        # # -- * Top rank 1 calculations
+        # df = posebusted_results_rank1(df_posebusted)
+        # logger.debug(df)
+        exit(1)
+
         # df = posebusted_results_custom_rank(df_posebusted, rank=1)
 
         csv_file_path = paperdata  # Path to your CSV file
@@ -889,6 +897,9 @@ def start_program(input, paperdata):
         if df_paper is not None:
             df = pd.concat([df, df_paper])
             logger.debug(df)
+
+
+
 
         # # -- * 1. Load your data
         make_rank1_plot(df)
