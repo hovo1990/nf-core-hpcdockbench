@@ -103,6 +103,8 @@ workflow HPCDOCKBENCH {
 
 
     // -- ! #change exclude this example
+    // -- * need to sort tasks_todo_debug
+
     tasks_todo_debug_rborn = tasks_todo_debug.filter { it[1] != '8F4J_PHO' }
     tasks_todo_debug_regular = tasks_todo_debug
 
@@ -110,7 +112,7 @@ workflow HPCDOCKBENCH {
 
     icm_docking_projects_rborn = prepIcmProject_RBORN(tasks_todo_debug_rborn)
     icm_docking_projects_regular = prepIcmProject_Regular(tasks_todo_debug_regular)
-    // icm_docking_projects.view()
+
 
 
     // // -- * Subworkflow 1: ICM VLS RUN
