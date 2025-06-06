@@ -178,7 +178,7 @@ process prepIcmProject_Regular {
                 ${projectDir}/bin/dockScan_prep_dock_project.icm \
                     -i=${code}_protein.pdb \
                     -il=${code}_ligand.sdf  \
-                    -rborn=yes \
+                    -rborn=no \
                     -projID="p${code}"
         """
 
