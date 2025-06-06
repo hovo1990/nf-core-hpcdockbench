@@ -48,7 +48,7 @@ process prepIcmProject_RBORN {
     }
 
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage4_ICM_Projects", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage4_ICM_Projects_RBORN", mode: 'copy', overwrite: true
     }
 
 
@@ -156,7 +156,7 @@ process prepIcmProject_Regular {
     }
 
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage4_ICM_Projects", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage4_ICM_Projects_Regular", mode: 'copy', overwrite: true
     }
 
 
