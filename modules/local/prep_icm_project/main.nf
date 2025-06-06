@@ -3,7 +3,7 @@ process prepIcmProject_RBORN {
     // cache false
     // def date = LocalDate.now().toString().replace("-","_")
 
-    tag "CPU-PREP-ICM-p${code}"
+    tag "CPU-PREP-ICM-RBORN-p${code}"
 
 
     label 'low_cpu_debug'
@@ -111,7 +111,7 @@ process prepIcmProject_Regular {
     // cache false
     // def date = LocalDate.now().toString().replace("-","_")
 
-    tag "CPU-PREP-ICM-p${code}"
+    tag "CPU-PREP-ICM-Regular-p${code}"
 
 
     label 'low_cpu_debug'
