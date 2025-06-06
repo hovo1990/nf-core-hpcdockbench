@@ -31,7 +31,7 @@ call _startup
 # call _dockScan
 
 
-quit 1
+# quit 1
 # exit
 
 
@@ -177,8 +177,11 @@ CovDocName = Dirinp
 # quit 1
 
 # -- * enable enhanced born
-dock2SetupReceptor CovDocName a_$objName. tempsel no  "enhancedBorn"
-
+if rborn_arg==yes then
+  dock2SetupReceptor CovDocName a_$objName. tempsel no  "enhancedBorn"
+else
+  dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
+endif
 # -- * Old version
 # dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
 if( currentDockProj.l_readyReceptor ) dock5CalcMaps CovDocName 0.5 4.0 no # оменять тут чуток  have changed
