@@ -63,7 +63,7 @@ process exportMFSDF{
 
 
     script:
-        def i_version=2
+        def i_version=3
         """
         echo "Export docking poses as sdf file  v${i_version}"
 

@@ -130,7 +130,7 @@ delete hydrogen a_1.m//h*
 delete a_1.m//:b
 
 
-add column mainTable  0 name="Rank"
+add column mainTable  0 name="Rank_corrScoreAverage"
 add column mainTable 0.0  name='ICM_RMSD_IN_PLACE_'
 add column mainTable  0.0  name='ICM_RMSD_SUPERIMPOSED_'
 add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
@@ -236,7 +236,7 @@ for i=1,Nof(mainTable)
 
 
   # -- * Need to modify the table column
-  mainTable.Rank[i] = i
+  mainTable.Rank_corrScoreAverage[i] = i
   mainTable.ICM_RMSD_IN_PLACE_[i] = curr_RMSD_in_place
   mainTable.ICM_RMSD_SUPERIMPOSED_[i] = curr_RMSD_superimposed
   mainTable.ICM_MATCHING_FRACTION_[i] = AllFmatch [1]
@@ -256,6 +256,49 @@ if Nof(mainTable.ICM_MATCHING_FRACTION_) < 1 then
   printf error " Error> the Distance column did not created "
   quit 1
 endif
+
+
+# -- * Now sort by Score, RTCNNscore, AverageScore, CombinedScore
+add column mainTable  0 name="Rank_Score"
+add column mainTable  0 name="Rank_RTCNNscore"
+add column mainTable  0 name="Rank_AverageScore"
+add column mainTable  0 name="Rank_CombinedScore"
+
+sort mainTable.Score
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_Score[i] = i
+endfor
+
+
+sort mainTable.RTCNNscore
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_RTCNNscore[i] = i
+endfor
+
+sort mainTable.AverageScore
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_AverageScore[i] = i
+endfor
+
+sort mainTable.CombinedScore
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_CombinedScore[i] = i
+endfor
+
+# -- *  get back to original state
+sort mainTable.corrScoreAverage
+
+
+if Error() then
+  printf error " Error> could not create ranks for different scores "
+  quit 1
+endif
+
+
 
 toExport = s_output_file
 print " Info> toExport is ",toExport
