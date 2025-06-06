@@ -12,6 +12,9 @@ l_commands = Getarg("-v",no,delete)
 
 input_protein_arg = Getarg("-i","UNDEFINED",delete)
 input_ligand_arg = Getarg("-il","UNDEFINED",delete)
+
+rborn_arg = Getarg("-rborn",no,delete)
+
 s_projID = Getarg("-projID","UNDEFINED",delete) # don't use "-GeneName", it makes some conflict and the icm session is not closing
 
 
@@ -28,7 +31,7 @@ call _startup
 # call _dockScan
 
 
-# quit 1
+quit 1
 # exit
 
 
