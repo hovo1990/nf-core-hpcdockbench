@@ -70,12 +70,16 @@ process dockScanTask {
     // --  * val(folder was creating issues)
     input:
         tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
+        val(method)
+        val(category)
+
+
     output:
-        tuple val("ICM-VLS"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
+        tuple val(method), val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  file("${proj_id}_${ligand_struct_2D.simpleName}1.ob")
 
     script:
-        def r_effort= params.effort ?: 32.0
-        def i_confs =  params.conformations ?: 40
+        def r_effort= params.effort ?: 5.0
+        def i_confs =  params.conformations ?: 10
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """

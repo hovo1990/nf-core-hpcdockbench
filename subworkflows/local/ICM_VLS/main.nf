@@ -41,6 +41,9 @@ workflow ICM_VLS{
 
     take:
     icm_docking_projects //   array: List of positional nextflow CLI args
+    method // just a string with the name of the method
+    category // category type
+
 
     main:
     // -- * Debug purposes
@@ -49,7 +52,7 @@ workflow ICM_VLS{
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
 
     // -- * SStage 1: Perform dockscan
-    dockScan_tasks = dockScanTask( icm_docking_projects)
+    dockScan_tasks = dockScanTask( icm_docking_projects, method, category)
 
     // // dockScan_tasks.view()
 

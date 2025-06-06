@@ -34,12 +34,14 @@ include { collectAllData} from '../modules/local/collect_all_data'
 
 
 // -- * SubWorkflow section
-include { ICM_VLS } from '../subworkflows/local/ICM_VLS'
+include { ICM_VLS as ICM_VLS_eff_5_conf_10_regular } from '../subworkflows/local/ICM_VLS'
+include { ICM_VLS as ICM_VLS_eff_5_conf_10_rborn } from '../subworkflows/local/ICM_VLS'
+
 
 include { ICM_RIDGE } from '../subworkflows/local/ICM_RIDGE'
 
 
-include { ICM_RIDGE_RTCNN2 } from '../subworkflows/local/ICM_RIDGE_RTCNN2'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,8 +117,16 @@ workflow HPCDOCKBENCH {
 
 
 
-    // // -- * Subworkflow 1: ICM VLS RUN
-    // icm_vls_posebusted = ICM_VLS(icm_docking_projects)
+    // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
+    method_name_1 = Channel.from("ICM_VLS_CPU_eff_5_conf_10_regular")
+    method_name_2 = Channel.from("ICM_VLS_CPU_eff_5_conf_10_rboen")
+    category_name = Channel.from("Classical")
+    icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,method_name_1, category_name)
+
+    icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,method_name_2, category_name)
+
+
+
     // // icm_vls_posebusted.view()
 
     // // // -- * Subworkflow 2: ICM RIDGE RUN
