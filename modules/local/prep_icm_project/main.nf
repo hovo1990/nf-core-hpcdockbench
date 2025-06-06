@@ -66,27 +66,41 @@ process prepIcmProject_RBORN {
 
         // -- * #template #example #conditional
         // -- * use this only for one case
-        if (code=='8F4J_PHO'){
-            """
-                trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-                cp  -r ${folder}/* .
-                ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-                    ${projectDir}/bin/icm_prep_dock_project.icm \
-                        -icode=${code} \
-                        -il=${code}_ligand.sdf  \
-                        -projID="p${code}"
-            """
-        } else {
-            """
-                trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-                cp  -r ${folder}/* .
-                ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-                    ${projectDir}/bin/dockScan_prep_dock_project.icm \
-                        -i=${code}_protein.pdb \
-                        -il=${code}_ligand.sdf  \
-                        -projID="p${code}"
-            """
-        }
+        """
+            trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+            cp  -r ${folder}/* .
+            ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+                ${projectDir}/bin/dockScan_prep_dock_project.icm \
+                    -i=${code}_protein.pdb \
+                    -il=${code}_ligand.sdf  \
+                    -rborn=yes \
+                    -projID="p${code}"
+        """
+
+
+        // if (code=='8F4J_PHO'){
+        //     """
+        //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+        //         cp  -r ${folder}/* .
+        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //             ${projectDir}/bin/icm_prep_dock_project.icm \
+        //                 -icode=${code} \
+        //                 -il=${code}_ligand.sdf  \
+        //                 -rborn=yes \
+        //                 -projID="p${code}"
+        //     """
+        // } else {
+        //     """
+        //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+        //         cp  -r ${folder}/* .
+        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //             ${projectDir}/bin/dockScan_prep_dock_project.icm \
+        //                 -i=${code}_protein.pdb \
+        //                 -il=${code}_ligand.sdf  \
+        //                 -rborn=yes \
+        //                 -projID="p${code}"
+        //     """
+        // }
 
 
 }
@@ -157,30 +171,41 @@ process prepIcmProject_Regular {
 
     script:
     def i_version=4
+        """
+            trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+            cp  -r ${folder}/* .
+            ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+                ${projectDir}/bin/dockScan_prep_dock_project.icm \
+                    -i=${code}_protein.pdb \
+                    -il=${code}_ligand.sdf  \
+                    -rborn=yes \
+                    -projID="p${code}"
+        """
+
 
         // -- * #template #example #conditional
         // -- * use this only for one case
-        if (code=='8F4J_PHO'){
-            """
-                trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-                cp  -r ${folder}/* .
-                ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-                    ${projectDir}/bin/icm_prep_dock_project.icm \
-                        -icode=${code} \
-                        -il=${code}_ligand.sdf  \
-                        -projID="p${code}"
-            """
-        } else {
-            """
-                trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
-                cp  -r ${folder}/* .
-                ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-                    ${projectDir}/bin/dockScan_prep_dock_project.icm \
-                        -i=${code}_protein.pdb \
-                        -il=${code}_ligand.sdf  \
-                        -projID="p${code}"
-            """
-        }
+        // if (code=='8F4J_PHO'){
+        //     """
+        //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+        //         cp  -r ${folder}/* .
+        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //             ${projectDir}/bin/icm_prep_dock_project.icm \
+        //                 -icode=${code} \
+        //                 -il=${code}_ligand.sdf  \
+        //                 -projID="p${code}"
+        //     """
+        // } else {
+        //     """
+        //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
+        //         cp  -r ${folder}/* .
+        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //             ${projectDir}/bin/dockScan_prep_dock_project.icm \
+        //                 -i=${code}_protein.pdb \
+        //                 -il=${code}_ligand.sdf  \
+        //                 -projID="p${code}"
+        //     """
+        // }
 
 
 }
