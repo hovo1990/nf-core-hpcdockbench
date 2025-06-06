@@ -143,7 +143,14 @@ def start_program(
         df["_CATEGORY_"] = category
 
         # -- * Read properties about score and RTCNN in the sdf file
-        RANK_LIST = []
+        RANK_LIST_Score = []
+        RANK_LIST_RTCNNscore = []
+        RANK_LIST_AverageScore = []
+        RANK_LIST_CombinedScore = []
+        RANK_LIST_corrScoreAverage = []
+
+
+
         SCORE_LIST = []
         RTCNN_SCORE_LIST = []
         AverageScore_LIST = []
@@ -164,10 +171,19 @@ def start_program(
 
 
 
+            # -- * TODO add the appropriate RANKS
+            RANK_Score = mol.GetProp("Rank_Score") if mol.HasProp("Rank_Score") else "-100"
+            RANK_RTCNNscore = mol.GetProp("Rank_RTCNNscore") if mol.HasProp("Rank_RTCNNscore") else "-100"
+            RANK_AverageScore = mol.GetProp("Rank_AverageScore") if mol.HasProp("Rank_AverageScore") else "-100"
+            RANK_CombinedScore = mol.GetProp("Rank_CombinedScore") if mol.HasProp("Rank_CombinedScore") else "-100"
+            RANK_corrScoreAverage = mol.GetProp("Rank_corrScoreAverage") if mol.HasProp("Rank_corrScoreAverage") else "-100"
 
-            RANK = mol.GetProp("Rank") if mol.HasProp("Rank") else "-100"
 
-            RANK_LIST.append(RANK)
+            RANK_LIST_Score.append(RANK_Score)
+            RANK_LIST_RTCNNscore.append(RANK_RTCNNscore)
+            RANK_LIST_AverageScore.append(RANK_AverageScore)
+            RANK_LIST_CombinedScore.append(RANK_CombinedScore)
+            RANK_LIST_corrScoreAverage .append(RANK_corrScoreAverage )
 
             SCORE = mol.GetProp("Score") if mol.HasProp("Score") else "N/A"
             SCORE_LIST.append(SCORE)
@@ -220,8 +236,13 @@ def start_program(
             ICM_MATCHING_FRACTION_LIST.append(ICM_MATCHING_FRACTION_)
 
         # -- * Add RTCNN_RIDGE GPU
-        df["_RANK_"] = RANK_LIST
-        df["RANK"] = RANK_LIST
+        df["_RANK_Score_"] = RANK_LIST_Score
+        df["RANK_Score"] = RANK_LIST_Score
+        df["RANK_RTCNNscore"] = RANK_LIST_RTCNNscore
+        df["RANK_AverageScore"] = RANK_LIST_AverageScore
+        df["RANK_CombinedScore"] = RANK_LIST_CombinedScore
+        df["RANK_corrScoreAverage"] = RANK_LIST_corrScoreAverage
+
         df["Score"] = SCORE_LIST
         df["RTCNN_SCORE"] = RTCNN_SCORE_LIST
         df["AverageScore"] = AverageScore_LIST

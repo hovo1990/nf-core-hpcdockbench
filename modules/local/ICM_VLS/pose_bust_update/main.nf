@@ -60,7 +60,7 @@ process poseBust_update{
 
 
     script:
-        def i_version=5
+        def i_version=6
         """
         echo "Pose busting update  v${i_version}"
 
