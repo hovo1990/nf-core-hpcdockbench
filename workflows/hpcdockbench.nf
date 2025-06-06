@@ -118,9 +118,9 @@ workflow HPCDOCKBENCH {
 
 
     // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
-    method_name_1 = Channel.from("ICM_VLS_CPU_eff_5_conf_10_regular")
-    method_name_2 = Channel.from("ICM_VLS_CPU_eff_5_conf_10_rborn")
-    category_name = Channel.from("Classical")
+    method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
+    method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
+    category_name = Channel.value("Classical")
     icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
                                                 method_name_1, category_name)
 
