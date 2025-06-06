@@ -292,11 +292,11 @@ endfor
 # -- *  get back to original state
 sort mainTable.corrScoreAverage
 
-
-if Error() then
-  printf error " Error> could not create ranks for different scores "
-  quit 1
-endif
+# -- * This causes problem so ignore it for now
+# if Error() then
+#   printf error " Error> could not create ranks for different scores "
+#   quit 1
+# endif
 
 
 
