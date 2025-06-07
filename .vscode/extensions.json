@@ -9,7 +9,8 @@
     "markzaretskiy.ICM-PRO",
     "onnovalkering.vscode-singularity",
     "edwinhuish.better-comments-next",
-    "mrmlnc.vscode-duplicate"
+    "mrmlnc.vscode-duplicate",
+    "janisdd.vscode-edit-csv"
   ],
   "unwantedRecommendations": [
     "jonrad.docker-diary-vscode"
