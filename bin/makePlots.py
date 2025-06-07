@@ -90,12 +90,22 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     # Set color palette
     palette = {"Astex": "#76c7c0", "PoseBusters": "#f97b72"}  # teal  # coral
 
-    temp_data_astex = []
-    temp_data_posebuster = []
+    temp_data_astex = [0,0]
+    temp_data_posebuster = [0,0]
 
     # method = df["_METHOD_"][0]
     # category = df["_CATEGORY_"][0]
     final_list = []
+
+    if rank_type == 'RANK_corrScoreAverage':
+        rank_name= 'CorrAvScore'
+    elif rank_type == 'RANK_Score':
+        rank_name='Score'
+    elif rank_type=='RANK_RTCNNscore':
+        rank_name='RTCNN'
+    else:
+        rank_name = rank_type
+
 
     for method in tqdm(unique_methods):
 
@@ -104,12 +114,18 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
         logger.debug(" DEBUG>  method {}".format(method))
 
 
+
+
         if method == "ICM-VLS":
             realname = "ICM-VLS (CPU)"
         elif method == "ICM-RIDGE":
             realname = "ICM-RIDGE (GPU)"
         elif method == "ICM-RIDGE-RTCNN2":
             realname = "ICM-RIDGE-RTCNN2 (GPU)"
+        elif method == 'ICM_VLS_CPU_eff_5_conf_10_rborn':
+            realname = 'ICM-VLS(CPU),\nRBorn\nRank: {}'.format(rank_name)
+        elif method == 'ICM_VLS_CPU_eff_5_conf_10_regular':
+            realname = 'ICM-VLS(CPU)\nRank: {}'.format(rank_name)
         else:
             realname = method
 
@@ -215,7 +231,7 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
                 temp_data_posebuster = [tot_perc_vals.item(), tot_perc_PB_vals.item()]
 
 
-        final_list.append([realname, category] + [rank_type] +  temp_data_astex + temp_data_posebuster)
+        final_list.append([realname, category] +  temp_data_astex + temp_data_posebuster)
         logger.debug(final_list)
         logger.debug(" ========== " * 10)
 
@@ -223,7 +239,6 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     final_df.columns = [
         "Method",
         "Category",
-        'Rank_type'
         "Astex_RMSD_le_2A",
         "Astex_RMSD_le_2A_PB_Valid",
         "PoseBusters_RMSD_le_2A",
@@ -238,7 +253,7 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     return final_df
 
 
-def make_rank1_plot(df):
+def make_rank1_plot(df, bar_width=0.2):
     # -- * To make text editable
     # Optional: specify a font that Inkscape can recognize (e.g., Arial, Times New Roman)
     plt.rcParams.update(
@@ -291,9 +306,9 @@ def make_rank1_plot(df):
     # --- Setup for Plotting (derived from loaded data) ---
     N = len(methods)
     x = np.arange(N)  # the label locations
-    bar_width = 0.2  # the width of the bars
 
-    fig, ax = plt.subplots(figsize=(14, 8))  # Adjust figure size as needed
+
+    fig, ax = plt.subplots(figsize=(22, 8))  # Adjust figure size as needed
 
     # --- Plotting Bars ---
     # Astex bars
@@ -528,9 +543,9 @@ def make_custom_rank_plot(df, rank=3):
     # --- Setup for Plotting (derived from loaded data) ---
     N = len(methods)
     x = np.arange(N)  # the label locations
-    bar_width = 0.2  # the width of the bars
+    bar_width = 0.4  # the width of the bars
 
-    fig, ax = plt.subplots(figsize=(14, 8))  # Adjust figure size as needed
+    fig, ax = plt.subplots(figsize=(22, 8))  # Adjust figure size as needed
 
     # --- Plotting Bars ---
     # Astex bars
@@ -763,30 +778,34 @@ def start_program(input, paperdata):
         # logger.debug(df)
         # exit(1)
 
-        df = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
+        df_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
+        df_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNNscore')
+        df_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_corrScoreAverage')
+
+        df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage])
+        logger.debug( " Debug> df is {}".format(df))
+
+        # -- * Load Data from CSV ---
+        try:
+            csv_file_path = paperdata  # Path to your CSV file
+            df_paper = pd.read_csv(csv_file_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{csv_file_path}' was not found.")
+            exit()
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+            exit()
+
+        # -- * Join paper results with main table
+        if df_paper is not None:
+            df = pd.concat([df, df_paper])
+            logger.debug(df)
 
 
-        # # -- * Load Data from CSV ---
-        # try:
-        #     csv_file_path = paperdata  # Path to your CSV file
-        #     df_paper = pd.read_csv(csv_file_path)
-        # except FileNotFoundError:
-        #     print(f"Error: The file '{csv_file_path}' was not found.")
-        #     exit()
-        # except Exception as e:
-        #     print(f"Error reading CSV file: {e}")
-        #     exit()
-
-        # # -- * Join paper results with main table
-        # if df_paper is not None:
-        #     df = pd.concat([df, df_paper])
-        #     logger.debug(df)
 
 
-
-
-        # # # -- * 1. Load your data
-        # make_rank1_plot(df)
+        # # -- * 1. Load your data
+        make_rank1_plot(df)
 
         # # -- * Calculate top 3 rank
         # df_rank3 = posebusted_results_custom_rank(df_posebusted, rank=3)
