@@ -42,6 +42,7 @@ process makePlot{
     output:
         path("*.pdf")
         path("*.svg")
+        path("*.csv")
 
 
     script:

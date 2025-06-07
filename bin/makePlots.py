@@ -209,9 +209,18 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
             unique_projects = curr_dataset["_CODE_"].unique()
 
 
+            logger.debug(" Debug> unique projects len {}".format(len(unique_projects) ))
+
             # -- * this is hard coded not a great idea, but keep for now
-            total =  85 # astex len is 85 len(unique_projects)
-            total_PB = 428 # len(unique_projects)
+            if dataset == "astex_diverse_set":
+                total = 85
+                total_PB = 85
+            elif dataset == "posebusters_benchmark_set":
+                total = 428
+                total_PB = 428
+
+            # total =  len(unique_projects) # 85 # astex len is 85 len(unique_projects)
+            # total_PB =  len(unique_projects) #428 # len(unique_projects)
 
             tot_perc = (count_data["count"] / total) * 100
             tot_perc_PB = (value_counts["count"] / total_PB) * 100
@@ -778,12 +787,18 @@ def start_program(input, paperdata):
         # logger.debug(df)
         # exit(1)
 
+        # -- * for debug > /mnt/nfsa/users/hovakim/a/Projects/hpc_dock_bench/work/6c/91679886b7a9765a44ca1f43746aca
+
         df_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
         df_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNNscore')
         df_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_corrScoreAverage')
 
         df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage])
         logger.debug( " Debug> df is {}".format(df))
+
+        logger.debug (" Debug> writing debug table")
+        df.to_csv("test_debug_table.csv", index=False)
+
 
         # -- * Load Data from CSV ---
         try:
@@ -804,29 +819,30 @@ def start_program(input, paperdata):
 
 
 
+
         # # -- * 1. Load your data
         make_rank1_plot(df)
 
-        # # -- * Calculate top 3 rank
-        # df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
-        # df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage])
-        # make_custom_rank_plot(df_rank3, rank=3)
+        # -- * Calculate top 3 rank
+        df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
+        df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage])
+        make_custom_rank_plot(df_rank3, rank=3)
 
-        # # -- * Calculate top 6 rank
-        # df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
-        # df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage])
-        # make_custom_rank_plot(df_rank6, rank=6)
+        # -- * Calculate top 6 rank
+        df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
+        df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage])
+        make_custom_rank_plot(df_rank6, rank=6)
 
-        # # -- * Calculate top 10 rank
-        # df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
-        # df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage])
-        # make_custom_rank_plot(df_rank10, rank=10)
+        # -- * Calculate top 10 rank
+        df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
+        df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage])
+        make_custom_rank_plot(df_rank10, rank=10)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
