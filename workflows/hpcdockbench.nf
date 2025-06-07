@@ -86,11 +86,10 @@ workflow HPCDOCKBENCH {
 
 
 
-    // tasks_todo_debug = tasks_todo.take(10)
-
     // -- * bigger debug sample
-    tasks_todo_debug = tasks_todo.take(20)
-    // tasks_todo_debug = tasks_todo
+    // tasks_todo_debug = tasks_todo.take(20)
+
+    tasks_todo_debug = tasks_todo
     // tasks_todo_debug.view()
 
 
