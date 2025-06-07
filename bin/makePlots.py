@@ -68,8 +68,14 @@ def validate_csv(ctx, param, value):
     return value
 
 
-def posebusted_results_rank1(df):
+
+def one_based_range(n):
+    return list(range(1, n + 1))
+
+def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage'):
     logger.debug(" {}".format(df.columns))
+
+    # logger.debug(" {}".format(df))
 
     unique_methods = df["_METHOD_"].unique()
     unique_categories = df["_CATEGORY_"].unique()
@@ -92,191 +98,60 @@ def posebusted_results_rank1(df):
     final_list = []
 
     for method in tqdm(unique_methods):
+
         curr_method = df[df["_METHOD_"] == method]
         category = curr_method["_CATEGORY_"].values.tolist()[0]
+        logger.debug(" DEBUG>  method {}".format(method))
+
+
         if method == "ICM-VLS":
             realname = "ICM-VLS (CPU)"
         elif method == "ICM-RIDGE":
             realname = "ICM-RIDGE (GPU)"
         elif method == "ICM-RIDGE-RTCNN2":
             realname = "ICM-RIDGE-RTCNN2 (GPU)"
+        else:
+            realname = method
 
         for dataset in tqdm(unique_datasets):
             curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
             logger.debug(" DEBUG> dataset {}, method {}".format(dataset, method))
-            # logger.debug(" DEBUG> method df is {}".format(curr_method))
+            logger.debug(" DEBUG> curr_dataset df is {}".format(curr_dataset))
+
+            logger.debug( " Debug> rank_type {} and rank {}".format(rank_type,rank))
 
             logger.debug("===" * 20)
 
-            logger.debug(" Debug> Curr method is {}".format(method))
+    #         logger.debug(" Debug> Curr method is {}".format(method))
 
-            logger.debug(" Debug> Curr category  is {}".format(category))
+    #         logger.debug(" Debug> Curr category  is {}".format(category))
 
-            top_rank1 = curr_dataset[curr_dataset["RANK"] == 1]
-            logger.debug(" Debug> {}".format(top_rank1))
-            # logger.debug( " Debug> {}".format(top_rank1['rmsd_≤_2å']))
-
-            # -- * Make plot how many are rmsd_≤_2å
-
-            # Count the number of True and False values
-            count_data = top_rank1["rmsd_≤_2å"].value_counts().reset_index()
-            count_data.columns = ["rmsd_≤_2å", "count"]
-            # logger.debug( " Debug> {}".format(count_data) )
-
-            # Check if all values in the specified columns are True for each row
-            columns_of_interest = [
-                "mol_true_loaded",
-                "mol_cond_loaded",
-                "sanitization",
-                "inchi_convertible",
-                "all_atoms_connected",
-                "molecular_formula",
-                "molecular_bonds",
-                "double_bond_stereochemistry",
-                "tetrahedral_chirality",
-                "bond_lengths",
-                "bond_angles",
-                "internal_steric_clash",
-                "aromatic_ring_flatness",
-                "non-aromatic_ring_non-flatness",
-                "double_bond_flatness",
-                "internal_energy",
-                "protein-ligand_maximum_distance",
-                "minimum_distance_to_protein",
-                "minimum_distance_to_organic_cofactors",
-                "minimum_distance_to_inorganic_cofactors",
-                "minimum_distance_to_waters",
-                "volume_overlap_with_protein",
-                "volume_overlap_with_organic_cofactors",
-                "volume_overlap_with_inorganic_cofactors",
-                "volume_overlap_with_waters",
-                "rmsd_≤_2å",
-            ]
-            top_rank1["all_true"] = top_rank1[columns_of_interest].all(axis=1)
-
-            # Count True or False values in the 'all_true' column
-            value_counts = top_rank1["all_true"].value_counts().reset_index()
-            value_counts.columns = ["rmsd_≤_2å_PB_VALID", "count"]
-
-            # Add a percentage column
-            unique_projects = curr_dataset["_CODE_"].unique()
-
-            total = len(unique_projects)
-            total_PB = len(unique_projects)
-
-            # total = count_data["count"].sum()
-            # total_PB = value_counts["count"].sum()
-            tot_perc = (count_data["count"] / total) * 100
-            tot_perc_PB = (value_counts["count"] / total_PB) * 100
-            count_data["percentage"] = tot_perc
-            count_data["PB_percentage"] = tot_perc_PB
-            tot_perc_vals = tot_perc.values[0]
-            tot_perc_PB_vals = tot_perc_PB.values[0]
-
-            # logger.debug(" Debug> {}".format(count_data))
-
-            # # Reshape data to long format
-            melted_data = count_data.melt(
-                id_vars="rmsd_≤_2å",
-                value_vars=["percentage", "PB_percentage"],
-                var_name="Type",
-                value_name="Percentage",
-            )
-
-            if dataset == "astex_diverse_set":
-                temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
-            elif dataset == "posebusters_benchmark_set":
-                temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
-
-        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
-
-        final_list.append([realname, category] + temp_data_astex + temp_data_posebuster)
-        logger.debug(final_list)
-        logger.debug(" ========== " * 10)
-
-    final_df = pd.DataFrame(final_list)
-    final_df.columns = [
-        "Method",
-        "Category",
-        "Astex_RMSD_le_2A",
-        "Astex_RMSD_le_2A_PB_Valid",
-        "PoseBusters_RMSD_le_2A",
-        "PoseBusters_RMSD_le_2A_PB_Valid",
-    ]
-    logger.debug(final_df)
-    return final_df
-
-
-def posebusted_results_custom_rank(df, rank=3):
-    logger.debug(" {}".format(df.columns))
-
-    unique_methods = df["_METHOD_"].unique()
-    unique_categories = df["_CATEGORY_"].unique()
-    unique_datasets = df["_DATASET_"].unique()
-    logger.debug(" Debug> unique datasets {}".format(unique_datasets))
-
-    name_dict = {
-        "astex_diverse_set": "Astex",
-        "posebusters_benchmark_set": "PoseBusters",
-    }
-
-    # Set color palette
-    palette = {"Astex": "#76c7c0", "PoseBusters": "#f97b72"}  # teal  # coral
-
-    temp_data_astex = []
-    temp_data_posebuster = []
-
-    # method = df["_METHOD_"][0]
-    # category = df["_CATEGORY_"][0]
-    final_list = []
-
-    for method in tqdm(unique_methods):
-        curr_method = df[df["_METHOD_"] == method]
-        category = curr_method["_CATEGORY_"].values.tolist()[0]
-        if method == "ICM-VLS":
-            realname = "ICM-VLS (CPU)"
-        elif method == "ICM-RIDGE":
-            realname = "ICM-RIDGE (GPU)"
-        elif method == "ICM-RIDGE-RTCNN2":
-            realname = "ICM-RIDGE-RTCNN2 (GPU)"
-
-        for dataset in tqdm(unique_datasets):
-            curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
-            logger.debug(" DEBUG> dataset {}, method {}".format(dataset, method))
-            # logger.debug(" DEBUG> method df is {}".format(curr_method))
-
-            logger.debug("===" * 20)
-
-            logger.debug(" Debug> Curr method is {}".format(method))
-
-            logger.debug(" Debug> Curr category  is {}".format(category))
-
-            top_rank3 = curr_dataset[curr_dataset["RANK"].isin(list(range(rank)))]
-            top_rank3.sort_values(by=["_CODE_", "_RANK_"], inplace=True)
+            top_rank_custom = curr_dataset[curr_dataset[rank_type].isin(one_based_range(rank))]
+            top_rank_custom.sort_values(by=["_CODE_", rank_type], inplace=True)
             # logger.debug(
             #     " Debug> {}".format(
-            #         top_rank3[
-            #             ["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]
+            #         top_rank_custom [
+            #             ["_METHOD_", "_DATASET_", "_CODE_", rank_type, "ICM_less_than_two"]
             #         ]
             #     )
             # )
 
-            result = top_rank3[top_rank3["rmsd_≤_2å"]].drop_duplicates(
+            result = top_rank_custom[top_rank_custom["ICM_less_than_two"]].drop_duplicates(
                 subset="_CODE_", keep="first"
             )
             # # logger.debug(" Debug> {}".format(result))
 
             logger.debug(
                 " Debug> {}".format(
-                    result[["_METHOD_", "_DATASET_", "_CODE_", "_RANK_", "rmsd_≤_2å"]]
+                    result[["_METHOD_", "_DATASET_", "_CODE_", rank_type, "ICM_less_than_two"]]
                 )
             )
 
             #         # -- * Make plot how many are rmsd_≤_2å
 
             # Count the number of True and False values
-            count_data = result["rmsd_≤_2å"].value_counts().reset_index()
-            count_data.columns = ["rmsd_≤_2å", "count"]
+            count_data = result["ICM_less_than_two"].value_counts().reset_index()
+            count_data.columns = ["ICM_less_than_two", "count"]
             logger.debug(" Debug> {}".format(count_data))
 
             # Check if all values in the specified columns are True for each row
@@ -306,7 +181,7 @@ def posebusted_results_custom_rank(df, rank=3):
                 "volume_overlap_with_organic_cofactors",
                 "volume_overlap_with_inorganic_cofactors",
                 "volume_overlap_with_waters",
-                "rmsd_≤_2å",
+                "ICM_less_than_two",
             ]
             result["all_true"] = result[columns_of_interest].all(axis=1)
 
@@ -317,8 +192,10 @@ def posebusted_results_custom_rank(df, rank=3):
             # # -- * Add a percentage column
             unique_projects = curr_dataset["_CODE_"].unique()
 
-            total = len(unique_projects)
-            total_PB = len(unique_projects)
+
+            # -- * this is hard coded not a great idea, but keep for now
+            total =  85 # astex len is 85 len(unique_projects)
+            total_PB = 428 # len(unique_projects)
 
             tot_perc = (count_data["count"] / total) * 100
             tot_perc_PB = (value_counts["count"] / total_PB) * 100
@@ -333,7 +210,7 @@ def posebusted_results_custom_rank(df, rank=3):
 
             # # Reshape data to long format
             melted_data = count_data.melt(
-                id_vars="rmsd_≤_2å",
+                id_vars="ICM_less_than_two",
                 value_vars=["percentage", "PB_percentage"],
                 var_name="Type",
                 value_name="Percentage",
@@ -844,6 +721,14 @@ def make_custom_rank_plot(df, rank=3):
     plt.savefig(outputpdf)
 
 
+def icm_rmsd(posebusted_data):
+    less_than_two = posebusted_data['ICM_RMSD_IN_PLACE_'] <= 2.0
+    logger.debug(less_than_two)
+
+    posebusted_data['ICM_less_than_two'] = less_than_two
+    return posebusted_data
+
+
 @click.command()
 @click.option(
     "--input",
@@ -856,7 +741,6 @@ def make_custom_rank_plot(df, rank=3):
     "--paperdata",
     help="csv input from the posebusters paper data",
     type=click.Path(exists=True),
-    required=True,
     callback=validate_csv,
 )
 def start_program(input, paperdata):
@@ -868,54 +752,61 @@ def start_program(input, paperdata):
     try:
         df_posebusted = pd.read_csv(input)
 
-        logger.debug(" Debug> {}".format(df_posebusted))
+        # logger.debug(" Debug> {}".format(df_posebusted))
+
+
+
 
         # -- * In some cases posebuster library gives if rmsd 0.4 it gives false, when it should be true
         # -- * in other cases when ICM rmsd is 2.1, it gives that RMSD is less than 2
         # -- TODO fix it here in this script
+        df_posebusted_rmsd_fix = icm_rmsd(df_posebusted)
+        # logger.debug(" Debug> {}".format(df_posebusted_rmsd_fix ))
+
 
 
         # # -- * Top rank 1 calculations
         # df = posebusted_results_rank1(df_posebusted)
         # logger.debug(df)
-        exit(1)
+        # exit(1)
 
-        # df = posebusted_results_custom_rank(df_posebusted, rank=1)
-
-        csv_file_path = paperdata  # Path to your CSV file
-        # -- * Load Data from CSV ---
-        try:
-            df_paper = pd.read_csv(csv_file_path)
-        except FileNotFoundError:
-            print(f"Error: The file '{csv_file_path}' was not found.")
-            exit()
-        except Exception as e:
-            print(f"Error reading CSV file: {e}")
-            exit()
-
-        # -- * Join paper results with main table
-        if df_paper is not None:
-            df = pd.concat([df, df_paper])
-            logger.debug(df)
+        df = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
 
 
+        # # -- * Load Data from CSV ---
+        # try:
+        #     csv_file_path = paperdata  # Path to your CSV file
+        #     df_paper = pd.read_csv(csv_file_path)
+        # except FileNotFoundError:
+        #     print(f"Error: The file '{csv_file_path}' was not found.")
+        #     exit()
+        # except Exception as e:
+        #     print(f"Error reading CSV file: {e}")
+        #     exit()
+
+        # # -- * Join paper results with main table
+        # if df_paper is not None:
+        #     df = pd.concat([df, df_paper])
+        #     logger.debug(df)
 
 
-        # # -- * 1. Load your data
-        make_rank1_plot(df)
 
-        # -- * Calculate top 3 rank
-        df_rank3 = posebusted_results_custom_rank(df_posebusted, rank=3)
-        make_custom_rank_plot(df_rank3, rank=3)
 
-        df_rank6 = posebusted_results_custom_rank(df_posebusted, rank=6)
-        make_custom_rank_plot(df_rank6, rank=6)
+        # # # -- * 1. Load your data
+        # make_rank1_plot(df)
 
-        df_rank10 = posebusted_results_custom_rank(df_posebusted, rank=10)
-        make_custom_rank_plot(df_rank10, rank=10)
+        # # -- * Calculate top 3 rank
+        # df_rank3 = posebusted_results_custom_rank(df_posebusted, rank=3)
+        # make_custom_rank_plot(df_rank3, rank=3)
 
-        logger.info(" Info> There were no errors in making a plot")
-        exit(0)
+        # df_rank6 = posebusted_results_custom_rank(df_posebusted, rank=6)
+        # make_custom_rank_plot(df_rank6, rank=6)
+
+        # df_rank10 = posebusted_results_custom_rank(df_posebusted, rank=10)
+        # make_custom_rank_plot(df_rank10, rank=10)
+
+        # logger.info(" Info> There were no errors in making a plot")
+        # exit(0)
     except Exception as e:
         logger.warning(" Error> Processing the files {}".format(e))
         traceback.print_exc()
