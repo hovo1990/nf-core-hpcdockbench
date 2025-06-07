@@ -208,22 +208,14 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
 
             # logger.debug(" Debug> {}".format(count_data))
 
-            # # Reshape data to long format
-            melted_data = count_data.melt(
-                id_vars="ICM_less_than_two",
-                value_vars=["percentage", "PB_percentage"],
-                var_name="Type",
-                value_name="Percentage",
-            )
 
             if dataset == "astex_diverse_set":
-                temp_data_astex = [tot_perc_vals, tot_perc_PB_vals]
+                temp_data_astex = [tot_perc_vals.item(), tot_perc_PB_vals.item()]
             elif dataset == "posebusters_benchmark_set":
-                temp_data_posebuster = [tot_perc_vals, tot_perc_PB_vals]
+                temp_data_posebuster = [tot_perc_vals.item(), tot_perc_PB_vals.item()]
 
-        logger.debug(" Debug> dataset {} {}".format(dataset, melted_data))
 
-        final_list.append([realname, category] + temp_data_astex + temp_data_posebuster)
+        final_list.append([realname, category] + [rank_type] +  temp_data_astex + temp_data_posebuster)
         logger.debug(final_list)
         logger.debug(" ========== " * 10)
 
@@ -231,6 +223,7 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     final_df.columns = [
         "Method",
         "Category",
+        'Rank_type'
         "Astex_RMSD_le_2A",
         "Astex_RMSD_le_2A_PB_Valid",
         "PoseBusters_RMSD_le_2A",
