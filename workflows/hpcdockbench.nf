@@ -117,41 +117,47 @@ workflow HPCDOCKBENCH {
 
 
     // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
-    method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
-    method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
-    category_name = Channel.value("Classical")
-    icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
-                                                method_name_1, category_name)
+    // method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
+    // method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
+    // category_name = Channel.value("Classical")
+    // icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
+    //                                             method_name_1, category_name)
 
-    icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
-                                                method_name_2, category_name)
+    // icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
+    //                                             method_name_2, category_name)
 
 
 
     // // icm_vls_posebusted.view()
 
     // // // -- * Subworkflow 2: ICM RIDGE RUN
-    // icm_ridge_posebusted = ICM_RIDGE(icm_docking_projects)
+    method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
+    method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
+    category_name_gpu = Channel.value("Classical")
 
-    // // // -- * Subworkflow 3: ICM RIDGE RUN RTCNN2 missing Error> [9532] can not open '/pro/icm/icms/nnInterMod2.inm' for reading
-    // icm_ridge_rtcnn2_posebusted = ICM_RIDGE_RTCNN2(icm_docking_projects)
+    icm_ridge_posebusted_regular = ICM_RIDGE(icm_docking_projects_regular,
+                                                method_name_gpu_1, category_name_gpu)
 
 
 
-    // // -- TODO improve later so it can be toggled on or off
-    // // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted_eff_5_conf_10_regular.concat(icm_vls_posebusted_eff_5_conf_10_rborn)
-    merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // // // -- TODO improve later so it can be toggled on or off
+    // // // -- * Merge from multiple sources
+    // merged_data =icm_vls_posebusted_eff_5_conf_10_regular.concat(icm_vls_posebusted_eff_5_conf_10_rborn)
 
-    // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
-    // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
-    // // // merged_data.view()
+
+
 
     // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    // // merged_data_csv.view()
 
-    // // // // -- * Collect all data
-    collectedData = collectAllData(merged_data_csv)
+    // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
+    // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
+    // // // // merged_data.view()
+
+    // // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // // // merged_data_csv.view()
+
+    // // // // // -- * Collect all data
+    // collectedData = collectAllData(merged_data_csv)
 
     // // collectedData = collectAllData(icm_ridge_posebusted)
 

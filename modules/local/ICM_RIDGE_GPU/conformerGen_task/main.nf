@@ -279,15 +279,18 @@ process gingerTask_GPU {
     // --  * val(folder was creating issues)
     input:
         tuple val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files)
+        val(method)
+        val(category)
+
+
     output:
-        tuple val("ICM-RIDGE"), val("Classical"), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.molt")
+        tuple val(method), val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.molt"), optional: true
 
     script:
-        def r_effort= params.effort ?: 4.0
-        def i_confs =  params.conformations ?: 10
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
+        trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
                 ${ligand_struct_2D} \
                 sizelimit=600 \
