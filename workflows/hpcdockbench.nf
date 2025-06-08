@@ -135,8 +135,15 @@ workflow HPCDOCKBENCH {
     method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
     category_name_gpu = Channel.value("Classical")
 
-    icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
-                                                method_name_gpu_1, category_name_gpu)
+
+
+    // -- * Run ginger first for all compounds and track project code and stuff
+
+
+
+
+    // icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
+    //                                             method_name_gpu_1, category_name_gpu)
 
 
 
