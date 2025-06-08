@@ -268,7 +268,7 @@ process gingerTask_GPU {
             path: { "${params.outdir}/" },
             mode: params.publish_dir_mode,
             saveAs: { filename ->
-            filename.equals('versions.yml') ? null : "${params.outdir}/ICM-RIDGE/stage1_conformer_generation/ginger/${dataset_name}/${proj_id}/${filename}" }
+            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage1_conformer_generation/ginger/${dataset_name}/${proj_id}/${filename}" }
         ]
     }
 
@@ -284,9 +284,10 @@ process gingerTask_GPU {
 
 
     output:
-        tuple val(method), val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.molt"), optional: true
+        tuple val(method), val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path("ginger_${ligand_struct_2D.simpleName}.molt")
 
     script:
+        def i_version = 2
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """

@@ -38,7 +38,7 @@ include { ICM_VLS as ICM_VLS_eff_5_conf_10_regular } from '../subworkflows/local
 include { ICM_VLS as ICM_VLS_eff_5_conf_10_rborn } from '../subworkflows/local/ICM_VLS'
 
 
-include { ICM_RIDGE } from '../subworkflows/local/ICM_RIDGE'
+include { ICM_RIDGE as ICM_RIDGE_regular } from '../subworkflows/local/ICM_RIDGE'
 
 
 
@@ -135,7 +135,7 @@ workflow HPCDOCKBENCH {
     method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
     category_name_gpu = Channel.value("Classical")
 
-    icm_ridge_posebusted_regular = ICM_RIDGE(icm_docking_projects_regular,
+    icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
                                                 method_name_gpu_1, category_name_gpu)
 
 
@@ -147,6 +147,9 @@ workflow HPCDOCKBENCH {
 
 
 
+
+
+    // -- * Enable only when RIDGE works
     // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
 
     // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted)
@@ -162,8 +165,8 @@ workflow HPCDOCKBENCH {
     // // collectedData = collectAllData(icm_ridge_posebusted)
 
 
-    // // // // -- * SStage 6: make plot test
-    plots = makePlot( collectedData)
+    // // // // // -- * SStage 6: make plot test
+    // plots = makePlot( collectedData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
