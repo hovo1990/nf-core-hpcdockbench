@@ -307,6 +307,107 @@ process gingerTask_GPU {
 
 
 
+
+// -- * Sometimes this fails, maybe for benchmark just use confGen
+process gingerTask_GPU_separate {
+
+    tag "GPU-GINGER-${proj_id}"
+
+    //-- ! something wrong with SLURM and dockScan
+    //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
+
+
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 100 ){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
+
+
+
+
+
+
+    label 'gpu_task'
+
+    cache true
+    // debug true
+
+
+
+    if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
+        container "${params.singularity_local_gpu_container}"
+        containerOptions " --nv"
+    }
+    else if (workflow.containerEngine == 'singularity' ){
+        container "${params.container_link}"
+        containerOptions " --nv"
+    }
+    else {
+        container "${params.container_link}"
+        containerOptions " --gpus all"
+    }
+
+    if (params.mount_options) {
+        if (workflow.containerEngine == 'singularity' ) {
+            containerOptions " --nv --bind ${params.mount_options}"
+        }
+        else {
+            containerOptions " --gpus all --volume ${params.mount_options}"
+        }
+    }
+
+
+
+
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+            filename.equals('versions.yml') ? null : "${params.outdir}/GPU_GINGER/${proj_id}/${filename}" }
+        ]
+    }
+
+
+
+
+
+    // --  * val(folder was creating issues)
+    input:
+        tuple val(proj_id), path(ligand_struct_2D)
+
+
+    output:
+        tuple val(proj_id), path("ginger_${ligand_struct_2D.simpleName}.molt"), optional: true
+
+    script:
+        def i_version = 2
+        def i_cpus = task.cpus
+        def i_random_seed  = params.random_seed ?: 25051990
+        """
+        trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
+                ${ligand_struct_2D} \
+                sizelimit=600 \
+                -C mnconf=50 \
+                -hydrogen \
+                ginger_${ligand_struct_2D.simpleName}.molt
+
+        """
+}
+
+
+
+
+
+
+
 //   GINGER: Generative Internal-coordinate Network Graph with Energy Refinement
 //   Usage> /pro/icm/icms/_ginger <input.sdf|.tsv|.csv> [header=no smicol=A idcol=B] <output.sdf|.molt> [<options>]
 //    maxenergy=(10.) : skip conformations with higher than 10. kcal/mole energies from the base

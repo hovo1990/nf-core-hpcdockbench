@@ -42,6 +42,8 @@ include { ICM_RIDGE as ICM_RIDGE_regular } from '../subworkflows/local/ICM_RIDGE
 
 
 
+include { gingerTask_GPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,8 +144,10 @@ workflow HPCDOCKBENCH {
     comps_for_ginger = icm_docking_projects_regular.map{ pair ->
         [pair[2], pair[5]]
     }
-    comps_for_ginger.view()
+    // comps_for_ginger.view()
 
+    gingered_compounds = gingerTask_GPU_separate(comps_for_ginger)
+    gingered_compounds.view()
 
     // icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
     //                                             method_name_gpu_1, category_name_gpu)
