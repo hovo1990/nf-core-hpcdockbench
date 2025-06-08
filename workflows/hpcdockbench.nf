@@ -139,7 +139,10 @@ workflow HPCDOCKBENCH {
 
     // -- * Run ginger first for all compounds and track project code and stuff
 
-
+    comps_for_ginger = icm_docking_projects_regular.map{ pair ->
+        [pair[2], pair[5]]
+    }
+    comps_for_ginger.view()
 
 
     // icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
