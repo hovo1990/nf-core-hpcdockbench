@@ -133,9 +133,6 @@ workflow HPCDOCKBENCH {
     // // icm_vls_posebusted.view()
 
     // // // -- * Subworkflow 2: ICM RIDGE RUN
-    method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
-    method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
-    category_name_gpu = Channel.value("Classical")
 
 
 
@@ -151,8 +148,9 @@ workflow HPCDOCKBENCH {
 
 
     // -- * After that pass it to the RIDGE pipeline where it will be merged
-
-
+    method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
+    method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
+    category_name_gpu = Channel.value("Classical")
     icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
                                                 gingered_compounds,
                                                 method_name_gpu_1,

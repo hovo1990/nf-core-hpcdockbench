@@ -176,7 +176,9 @@ process ridgeTask_GPU {
 
     // --  * val(folder was creating issues)
     input:
-        tuple val(method), val(category), val(dataset_name), val(code),  val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files), path(conformer_file)
+        tuple val(proj_id),  val(dataset_name), val(code),  path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files), path(conformer_file)
+        val(method)
+        val(category)
     output:
         tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(conformer_file), path("ridge_${proj_id}.sdf")
 

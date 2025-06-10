@@ -51,26 +51,40 @@ workflow ICM_RIDGE{
 
 
     // tasks_todo_debug =  icm_docking_projects.take(10)
-    tasks_todo_debug =  icm_docking_projects
+    // tasks_todo_debug =  icm_docking_projects
     // tasks_todo_debug.view()
 
     test = Channel.from("Hello")
+    test.view()
     // -- * Subworkflow 1: think about having a subworkflow for ICM-RIDGE GPU
 
     // -- * SStage 1: merge
+    // icm_docking_projects.view()
 
+
+    // ginger_compounds.view()
+
+
+
+
+    reordered=  icm_docking_projects.map{ pair ->
+        [pair[2], pair[0], pair[1], pair[3], pair[4], pair[5],pair[6]c]
+    }
+    // reordered.view()
+
+    combined = reordered.join(ginger_compounds)
+    // combined.view()
 
 
 
 
     // // -- * Why does Ridge generate an empty sdf file? for what purpose come on
-    // ridge_tasks = ridgeTask_GPU(tasks_todo_debug)
+    // tasks_todo_debug = combined
+    ridge_tasks = ridgeTask_GPU(tasks_todo_debug, method, category)
 
-    // // // dockScan_tasks.view()
 
     // // -- * SStage 3 V2: extract hit list as sdf files
-    // // todo_debug_export_sdf = dockscan_hitlist.take(20)
-    // todo_debug_export_sdf = dockscan_hitlist
+
 
     // exported_sdf_files = exportMFSDF(todo_debug_export_sdf )
     // // exported_sdf_files.view()
