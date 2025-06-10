@@ -40,6 +40,7 @@ workflow ICM_RIDGE{
 
     take:
     icm_docking_projects //   array: List of positional nextflow CLI args
+    ginger_compounds // gingered compounds
     method // just a string with the name of the method
     category // category type
 
@@ -56,18 +57,10 @@ workflow ICM_RIDGE{
     test = Channel.from("Hello")
     // -- * Subworkflow 1: think about having a subworkflow for ICM-RIDGE GPU
 
-    // -- * SStage 1: Perform ginger calculation (GPU)
+    // -- * SStage 1: merge
 
 
-    lig_conformers = gingerTask_GPU(tasks_todo_debug, method, category)
 
-    // -- * SStage 1-1: CPU generation of the conformers
-    // lig_conformers = confGenTask_CPU( tasks_todo_debug)
-
-
-    // -- * SStage 2: Run Ridge calculation (GPU)
-    // tasks_todo_debug =  lig_conformers.take(20)
-    tasks_todo_debug =  lig_conformers
 
 
     // // -- * Why does Ridge generate an empty sdf file? for what purpose come on

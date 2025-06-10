@@ -147,14 +147,16 @@ workflow HPCDOCKBENCH {
     // comps_for_ginger.view()
 
     gingered_compounds = gingerTask_GPU_separate(comps_for_ginger)
-    gingered_compounds.view()
+    // gingered_compounds.view()
 
 
     // -- * After that pass it to the RIDGE pipeline where it will be merged
 
 
-    // icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
-    //                                             method_name_gpu_1, category_name_gpu)
+    icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
+                                                gingered_compounds,
+                                                method_name_gpu_1,
+                                                category_name_gpu)
 
 
 
