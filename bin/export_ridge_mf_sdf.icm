@@ -187,13 +187,7 @@ for i=1,Nof(mainTable)
   delete hydrogen a_2.m//h*
   delete a_2.m//:b
 
-  # -- * just disable charges for Matching fraction
-  set charge formal a_2.m// 0
 
-
-  # -- * Trying to fix Ridge stuff
-  set bond type a_1.m//c* a_1.m//n* 2
-  set bond type a_2.m//c* a_2.m//n* 2
 
 
   # -- * Calculate RMSDs
@@ -209,6 +203,16 @@ for i=1,Nof(mainTable)
   if (Exist(curr_RMSD_superimposed)==no) then
     curr_RMSD_superimposed = -1
   endif
+
+
+
+  # -- * just disable charges for Matching fraction
+  set charge formal a_2.m// 0
+
+
+  # -- * Trying to fix Ridge stuff
+  set bond type a_1.m//c* a_1.m//n* 2
+  set bond type a_2.m//c* a_2.m//n* 2
 
   # -- * Calculate matching fraction
   findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
