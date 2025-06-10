@@ -148,6 +148,7 @@ def start_program(
         RANK_LIST_AverageScore = []
         RANK_LIST_CombinedScore = []
         RANK_LIST_corrScoreAverage = []
+        RANK_LIST_RTCNN_Ridge = []
 
 
 
@@ -177,13 +178,14 @@ def start_program(
             RANK_AverageScore = mol.GetProp("Rank_AverageScore") if mol.HasProp("Rank_AverageScore") else "-100"
             RANK_CombinedScore = mol.GetProp("Rank_CombinedScore") if mol.HasProp("Rank_CombinedScore") else "-100"
             RANK_corrScoreAverage = mol.GetProp("Rank_corrScoreAverage") if mol.HasProp("Rank_corrScoreAverage") else "-100"
-
+            RANK_RTCNN_Ridge = mol.GetProp("Rank_RTCNN_Ridge") if mol.HasProp("Rank_RTCNN_Ridge") else "-100"
 
             RANK_LIST_Score.append(RANK_Score)
             RANK_LIST_RTCNNscore.append(RANK_RTCNNscore)
             RANK_LIST_AverageScore.append(RANK_AverageScore)
             RANK_LIST_CombinedScore.append(RANK_CombinedScore)
             RANK_LIST_corrScoreAverage .append(RANK_corrScoreAverage )
+            RANK_LIST_RTCNN_Ridge.append(RANK_RTCNN_Ridge  )
 
             SCORE = mol.GetProp("Score") if mol.HasProp("Score") else "N/A"
             SCORE_LIST.append(SCORE)
@@ -242,6 +244,7 @@ def start_program(
         df["RANK_AverageScore"] = RANK_LIST_AverageScore
         df["RANK_CombinedScore"] = RANK_LIST_CombinedScore
         df["RANK_corrScoreAverage"] = RANK_LIST_corrScoreAverage
+        df["RANK_RTCNN_Ridge"] = RANK_LIST_RTCNN_Ridge
 
         df["Score"] = SCORE_LIST
         df["RTCNN_SCORE"] = RTCNN_SCORE_LIST
