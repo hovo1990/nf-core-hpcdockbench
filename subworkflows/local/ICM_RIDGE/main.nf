@@ -20,6 +20,9 @@ include { ridgeTask_GPU  } from '../../../modules/local/ICM_RIDGE_GPU/ridge_task
 // -- * Export ridge docking sdf for Posebusters
 include { exportRidgeSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_sdf'
 
+include { exportRidgeMFSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_ridge_mf_sdf'
+
+
 
 include { exportMFSDF } from '../../../modules/local/ICM_VLS/export_mf_sdf'
 
@@ -83,10 +86,10 @@ workflow ICM_RIDGE{
     ridge_tasks = ridgeTask_GPU(tasks_todo_debug, method, category)
 
     // // -- * SStage 3 V2: extract hit list as sdf files
-    // // todo_debug_export_sdf = dockscan_hitlist.take(20)
-    // todo_debug_export_sdf = dockscan_hitlist
+    // // todo_debug_export_sdf = ridge_tasks.take(20)
+    todo_debug_export_sdf = ridge_tasks
 
-    // exported_sdf_files = exportMFSDF(todo_debug_export_sdf )
+    exported_sdf_files = exportRidgeMFSDF (todo_debug_export_sdf )
     // // exported_sdf_files.view()
 
 

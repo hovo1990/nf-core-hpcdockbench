@@ -1,0 +1,322 @@
+#!/pro/icm/icms/icm64 -s
+HELP = """
+  Usage> $P -pf=<path> -pn=<proj_name> -ob=<.ob> -o=<outputfile.icb>
+    Take histlist and export to sdf
+"""
+
+if (Getarg(help)) quit HELP
+l_commands = Getarg("-v",no,delete)
+
+
+
+s_project_name = Getarg("-p","UNDEFINED",delete)
+s_sdf_session = Getarg("-i","UNDEFINED",delete)
+
+
+s_cocrystal_pose = Getarg("-ic","UNDEFINED",delete)
+s_output_file = Getarg("-o","UNDEFINED",delete)
+
+
+n_proc = Getarg("-nproc",4,delete)
+
+#-- ? very important arguments
+r_molweight_control =   Getarg("-molweight",520,delete)
+r_coefficient = Getarg("-coeff",0.1,delete)
+
+
+
+
+#-- ! mo need for that output will be in docking prokect folder
+#output_to_save_arg = Getarg("-o","UNDEFINED",delete)
+
+# check if file exists
+if(!Exist(s_cocrystal_pose read)) quit " Error_$P: file '" s_cocrystal_pose "' not found or not readable."
+if(!Exist(s_sdf_session read)) quit " Error_$P: file '" s_sdf_session"' not found or not readable."
+
+
+
+# -- * start debug part
+# quit 1
+# exit
+
+
+#-- ? End of argument section
+call _startup
+call _macro
+
+
+
+# -- * Important macro
+# -- * Calculate matching Fraction
+#### Calculate the distance of the atom pairs:
+### Eugene`s macro:
+macro findPairs as_1 as_2
+  as_1 = as_1 & a_*.*//!h*,!vt*
+  as_2 = as_2 & a_*.*//!h*,!vt*
+
+  find molecule sstructure  as_1 as_2
+
+  I_enum = Index( as_1 enumerate )
+  S_at0 = Name( as_1 )
+
+  S_at1 = Field( Field( S_out 2 "|") 3 "/" )
+  S_at2 = Field( Field( S_out 1 "|") 3 "/" )
+  I_ord = Iarray(Nof(S_at1))
+  for i=1,Nof(S_at1); I_ord[i] = Index( S_at0 S_at1[i] ); endfor
+
+  group table T S_at1 S_at2 I_ord
+
+  sort T.I_ord
+
+  for i=1,Nof( I_enum)
+    print "Comb", i
+    s_distName = "dist_" + i
+    delete $s_distName l_warn=no
+    for j=1,Nof(T.S_at1)
+      s_at1 = T.S_at1[j]
+      s_at2 = T.S_at2[I_enum[i][j]]
+      print s_at1 s_at2
+      make distance as_1 & a_*.*//$s_at1 as_2 & a_*.*//$s_at2 append name=s_distName
+    endfor
+    keep global $s_distName
+  endfor
+endmacro
+
+
+
+
+
+if (Error()) then
+  printf error " Error> could not load necessary module\n"
+  quit 1
+endif
+
+
+# #-- * this can be buggy need to fix this
+# call s_icmhome + "_startup"
+
+# exit
+
+read table mol s_sdf_session name='ridgeTable'
+
+
+
+# -- * read cocrystall table
+read table mol s_cocrystal_pose name="cocrystal_t"
+
+
+# -- * Extract the cocrystal pose for analysis
+
+if( Type( cocrystal_t.crysym ) == "sarray" ) then
+  read mol input = Sum( Sarray( cocrystal_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( cocrystal_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+else
+  parrayToMol cocrystal_t.mol [ 1 ]
+endif
+
+
+s_tableName = Trim(Name(s_icb_session),all)
+
+
+mainTable = $s_tableName
+
+
+
+# -- * This is the part it starts exporting stuff
+
+
+
+# -- TODO need to fix bonds, in some cases especially ridge stuff
+# -- * find pairs between docked_lig and crystal_lig
+print " Info> remove hydrogen atoms from the cocrystal ligand"
+strip a_1. # strip cocrystal ligand
+delete a_1. & a_*.//vt*
+delete hydrogen a_1.m//h*
+delete a_1.m//:b
+
+
+if Nof(ridgeTable) <1 then
+  printf error " Error> table is empty\n"
+  quit 1
+endif
+
+
+
+#  -- * Convert table to stck
+# parrayToMol ridgeTable.mol [ 1 ] "stack"
+
+
+i_numStack  = Nof(a_1. conf)
+
+
+# -- * split table
+split ridgeTable.mol name="mainTable"
+
+
+add column mainTable  0 name="Rank_RTCNN_Ridge"
+add column mainTable 0.0  name='ICM_RMSD_IN_PLACE_'
+add column mainTable  0.0  name='ICM_RMSD_SUPERIMPOSED_'
+add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
+
+
+
+
+for i=1,Nof(mainTable)
+  print " Info> working on molecule i is ", String(i)
+  docked_t = mainTable [i]
+
+
+  # -- * Extract the docked pose for analysis
+
+  if( Type( docked_t.crysym ) == "sarray" ) then
+    read mol input = Sum( Sarray( docked_t.mol [1t] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( docked_t.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
+  else
+    parrayToMol docked_t.mol [ 1 ]
+  endif
+
+
+  # -- * delete hydrogen from docked pose
+  strip a_2. # strip
+  delete a_2. & a_*.//vt*
+  delete hydrogen a_2.m//h*
+  delete a_2.m//:b
+
+
+
+  # -- * Calculate RMSDs
+  dock_lig = a_2.m
+  crystal_lig = a_1.m
+  curr_RMSD_in_place = Srmsd ( dock_lig crystal_lig chemical ) #-- * does not superimpose
+
+  if (Exist(curr_RMSD_in_place)==no) then
+    curr_RMSD_in_place = -1
+  endif
+
+  curr_RMSD_superimposed = Rmsd ( dock_lig crystal_lig chemical )
+  if (Exist(curr_RMSD_superimposed)==no) then
+    curr_RMSD_superimposed = -1
+  endif
+
+  # -- * Calculate matching fraction
+  findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
+
+  if (Error()) then
+    printf error " Error> Problems calculating findPairs\n"
+    quit 1
+  endif
+
+
+  errorAction="none"
+  # -- * setup
+  k=1
+  DistTab = "dist_" + k + "_tab"
+  $DistTab = Table( dist_1 distance )  # save the best findPairs output into table
+  pairdis = "pairdis_" + k # name of Rarray, where the dists will be saved for each of 10 confs, e.g."pairdis_1"
+  $pairdis = Rarray() # Rarray of dist for each of 10 confs
+  for j=1, Nof(Atom(crystal_lig)) # numbers of the atoms of the co-crystallised ligand
+    mydis = Atom(dist_1, j) # Lables for each atom pair from findPairs macro output
+    # mydis
+    numydis = Distance(mydis[1] mydis[2]) # distance between one pair of atoms
+    # numydis
+    $pairdis //= numydis # collect distances between all the pairs of atoms in Rarray, look up: $pairdis
+  endfor
+  print "pairdis final" $pairdis
+
+
+  # For debugging purposes, delete variables
+  delete pairdisone
+  delete pr
+  delete prefmatch
+  delete Fmatch
+  delete FinFmatch
+  delete AllFmatch
+
+  errorAction = "quit"
+  AllFmatch = Rarray() # collection of the calculated function (Fmatch = (SumPairs(max(1-(d/3)^2),0))/Npairs) for each docking conformation (10)
+
+  pairdisone = "pairdis_" + k # name of Rarrays, the atom dists for each of 10 confs (pairdis_1, pairdis_2, pairdis_3, and so on)
+  print "pairdisone" pairdisone
+  prefmatch = Rarray() # collection of the transformed distances (max(1-(d/3)^2),0)
+  for j=1, Nof($pairdisone)  # number of pairs in one ligand conformation (or number of ligand atoms, for example 49)
+    d = $pairdisone[j] # go though pairs one by one
+    print "d" d
+    pr = 1-(Power(d/3,2)) # calculate the formula "(1-(d/3)^2)", or 1-((d/3)*(d/3))
+    print "pr" pr
+    if pr > 0 then # select those outputs from formula "(1-(d/3)^2)" that more then 0
+      prefmatch //= pr  # collect them in Rarray
+    else
+      print "the number is less then 0"
+    endif
+  endfor
+  print "prefmatch" prefmatch
+  Fmatch = Sum(prefmatch) # get the sum of those outputs from formula "(1-(d/3)^2)" that more then 0 for one docking conformation
+  print "Summa" Fmatch
+  FinFmatch = Fmatch/Nof($pairdisone) # result of the formula (Fmatch = (SumPairs(max(1-(d/3)^2),0))/Npairs) for 1 docking conformation
+  print "FinFmatch" FinFmatch
+  AllFmatch //= FinFmatch # collection of transformed docking scores for all docking conformation (f.e. 10) for one ligand
+
+  print "AllFmatch final" AllFmatch
+
+
+  # -- * Need to modify the table column
+  mainTable.Rank_RTCNN_Ridge [i] = i
+  mainTable.ICM_RMSD_IN_PLACE_[i] = curr_RMSD_in_place
+  mainTable.ICM_RMSD_SUPERIMPOSED_[i] = curr_RMSD_superimposed
+  mainTable.ICM_MATCHING_FRACTION_[i] = AllFmatch [1]
+
+  delete a_2.
+  delete docked_t
+
+  # add column tempT String(i) name='Rank'
+  # toExport = s_project_name + "_rank_" + String(i) + '.sdf'
+  # chemSdfExport "tempT"  toExport "compress" no
+  # delete tempT
+  print " Info> worked on molecule i is ", String(i)
+  print " -----------------===========================================================----------------- "
+endfor
+
+if Nof(mainTable.ICM_MATCHING_FRACTION_) < 1 then
+  printf error " Error> the Distance column did not created "
+  quit 1
+endif
+
+
+# # -- * Now sort by Score, RTCNNscore, AverageScore, CombinedScore
+# add column mainTable  0 name="Rank_Score"
+# add column mainTable  0 name="Rank_RTCNNscore"
+# add column mainTable  0 name="Rank_AverageScore"
+# add column mainTable  0 name="Rank_CombinedScore"
+
+
+# -- * Now add extra calculation
+# exit
+
+
+
+toExport = s_output_file
+print " Info> toExport is ",toExport
+chemSdfExport "mainTable"  toExport "compress" no
+
+if (Error()) then
+  printf error " Error> Problems while exporting to sdf\n"
+  quit 1
+endif
+
+
+
+
+
+#-- * Do successful exit
+quit 0
+
+
+
+# icm/v1> load conf a_v1. 2
+# icm/v1> extractLigand a_v1. "3D" no "" no
+# icm/v1> dsChemLock_new "chem" "chem" 1 yes
+# icm/v1_1> dsChemLock_new "chem" "chem" 1 yes
+
+  # load conf a_1. i
+
+  # extractLigand a_v1. "3D" no "" no
+
+  # tempT = mainTable [i]
