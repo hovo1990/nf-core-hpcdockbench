@@ -44,7 +44,7 @@ process poseBust_update{
             path: { "${params.outdir}/" },
             mode: params.publish_dir_mode,
             saveAs: { filename ->
-            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage5_posebusted_update/${dataset_name}/${proj_id}/${filename}" }
+            filename.equals('versions.yml') ? null : "${params.outdir}/${method}/stage6_posebusted_update/${dataset_name}/${proj_id}/${filename}" }
         ]
     }
 
