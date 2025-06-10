@@ -397,6 +397,7 @@ process gingerTask_GPU_separate {
                 sizelimit=600 \
                 -C mnconf=50 \
                 -hydrogen \
+                -T \
                 ginger_${ligand_struct_2D.simpleName}.molt
 
         """

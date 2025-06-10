@@ -202,6 +202,7 @@ process ridgeTask_GPU {
                 -S \
                 -keepStack  \
                 scoreCutoff=${r_scoreCutoff} \
+                confsRescore=${i_confs} \
                 mnhits=${r_mnhits}  \
                 output=ridge_${proj_id}.sdf
 
