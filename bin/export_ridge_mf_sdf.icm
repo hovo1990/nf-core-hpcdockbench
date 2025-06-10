@@ -159,6 +159,12 @@ add column mainTable 0.0  name='ICM_RMSD_IN_PLACE_'
 add column mainTable  0.0  name='ICM_RMSD_SUPERIMPOSED_'
 add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
 
+# Debug
+# exit
+
+# -- * set bond type
+# set bond type 1 as_graph[1] as_graph[2]
+
 
 
 for i=1,Nof(mainTable)
@@ -183,6 +189,11 @@ for i=1,Nof(mainTable)
 
   # -- * just disable charges for Matching fraction
   set charge formal a_2.m// 0
+
+
+  # -- * Trying to fix Ridge stuff
+  set bond type a_1.m//c* a_1.m//n* 2
+  set bond type a_2.m//c* a_2.m//n* 2
 
 
   # -- * Calculate RMSDs
