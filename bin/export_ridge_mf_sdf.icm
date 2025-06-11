@@ -339,6 +339,7 @@ endfor
 
 
 add column mainTable (mainTable.Score+mainTable.RTCNN)/2 name='AverageScore'
+add column mainTable (mainTable.Score+mainTable.RTCNN) name='CombinedScore'
 
 sort mainTable.AverageScore
 for i=1,Nof(mainTable)

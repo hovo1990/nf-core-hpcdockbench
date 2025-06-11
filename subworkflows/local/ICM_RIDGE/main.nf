@@ -99,17 +99,17 @@ workflow ICM_RIDGE{
     // all_comb.view()
 
 
-    // pose_busted = poseBust(all_comb)
+    pose_busted = poseBust(all_comb)
 
 
-    // // -- * SStage 4 V2: update posebust data with ICM data
-    // poseBust_updated = poseBust_update(pose_busted)
-    // poseBust_updated.view()
+    // -- * SStage 4 V2: update posebust data with ICM data
+    poseBust_updated = poseBust_update(pose_busted)
+    poseBust_updated.view()
 
 
     emit:
-    posebusted_files   = test
-    // posebusted_files = poseBust_updated
+    // posebusted_files   = test
+    posebusted_files = poseBust_updated
 
 }
 
