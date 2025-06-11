@@ -160,13 +160,15 @@ add column mainTable  0.0  name='ICM_RMSD_SUPERIMPOSED_'
 add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
 
 # -- ! Debug
-exit
+# exit
 
 # -- * set bond type
 # set bond type 1 as_graph[1] as_graph[2]
 
+as_test1 = a_1.m & a_*.*//!h*,!vt*
 
 
+sort mainTable.RTCNN_Ridge
 for i=1,Nof(mainTable)
   print " Info> working on molecule i is ", String(i)
   docked_t = mainTable [i]
@@ -187,13 +189,23 @@ for i=1,Nof(mainTable)
   # delete hydrogen a_2.m//h*
   # delete a_2.m//:b
 
-  # # -- * just disable charges for Matching fraction
-  # set charge formal a_2.m// 0
+
+  # as_test2 = a_2.m & a_*.*//!h*,!vt*
+  # find molecule sstructure  as_test1 as_test2
+  # tempS = S_out
+
+  # if (Nof(tempS) != Nof(as_test1)) then
+  #   print " Info> sstructure number does not match"
+  #   # -- * just disable charges for Matching fraction
+  #   # -- In some cases it helps in others it does not
+  #   set charge formal a_2.m// 0
 
 
-  # # -- * Trying to fix Ridge stuff
-  # set bond type a_1.m//c* a_1.m//n* 2
-  # set bond type a_2.m//c* a_2.m//n* 2
+  #   # -- * Trying to fix Ridge stuff this is not a universal solution
+  #   # set bond type a_1.m//c* a_1.m//n* 2
+  #   # set bond type a_2.m//c* a_2.m//n* 2
+  # endif
+
 
 
   # -- * Calculate RMSDs
@@ -211,15 +223,17 @@ for i=1,Nof(mainTable)
   endif
 
   # -- * Calculate matching fraction
-  findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
-
-  if (Error()) then
-    printf error " Error> Problems calculating findPairs\n"
-    quit 1
-  endif
-
 
   errorAction="none"
+  # -- TODO before running do a test, if it finds all ready, then don't else change bond type and charge
+  findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
+
+  # if (Error()) then
+  #   printf error " Error> Problems calculating findPairs\n"
+  #   quit 1
+  # endif
+
+
   # -- * setup
   k=1
   DistTab = "dist_" + k + "_tab"
@@ -299,10 +313,67 @@ add column mainTable  0 name="Rank_Score"
 add column mainTable  0 name="Rank_RTCNNscore"
 add column mainTable  0 name="Rank_AverageScore"
 add column mainTable  0 name="Rank_CombinedScore"
-
+add column mainTable  0 name="Rank_corrScoreAverage"
 
 # -- * Now add extra calculation
-# exit
+sort mainTable.Score
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_Score[i] = i
+endfor
+
+
+sort mainTable.RTCNN
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_RTCNNscore[i] = i
+endfor
+
+
+
+sort mainTable.Score_Combined
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_CombinedScore[i] = i
+endfor
+
+
+add column mainTable (mainTable.Score+mainTable.RTCNN)/2 name='AverageScore'
+
+sort mainTable.AverageScore
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_AverageScore[i] = i
+endfor
+
+
+
+#-- * Function to calculate Corrected Score
+function corrScore( r_score  r_weight )  # returns strain for a given 3D chemical
+  deltaWtemp = (r_weight-r_molweight_control)
+  if deltaWtemp > 0 then
+    deltaW = deltaWtemp
+  else
+    deltaW = 0
+  endif
+  r_S = r_score + (r_coefficient * deltaW)
+  return r_S
+endfunction
+
+
+print " Info> calculate corrected score based on MolWeight"
+add column mainTable function="MolWeight(mol,'monoiso')" name="molWeight" delete format="%.3f" comment="Monoisotopic or average isotopic molecular weight from .mol [Daltons]"   nProc=nProcToUse
+
+
+add column mainTable function="corrScore(AverageScore, molWeight)" name="corrScoreAverage" index=2   # strain for every row in the table
+
+
+sort mainTable.corrScoreAverage
+for i=1,Nof(mainTable)
+  # -- * Need to modify the table column
+  mainTable.Rank_corrScoreAverage[i] = i
+endfor
+
 
 
 

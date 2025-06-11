@@ -399,12 +399,30 @@ process gingerTask_GPU_separate {
                 -C mnconf=50 \
                 -hydrogen \
                 -neutral=yes \
+                -T \
                 ginger_${ligand_struct_2D.simpleName}.molt
 
         """
 }
 
+// -- ! Older verison 3
+        // """
+        // trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
+        // ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //         ${projectDir}/bin/_ginger_custom \
+        //         ${ligand_struct_2D} \
+        //         sizelimit=600 \
+        //         -C mnconf=50 \
+        //         -hydrogen \
+        //         -T \
+        //         ginger_${ligand_struct_2D.simpleName}.molt
 
+        // """
+
+
+
+// -- ! Old version 2
+//                 -neutral=yes \
 
 // -- ! Old version
 //     script:
