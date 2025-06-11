@@ -51,6 +51,7 @@ call _macro
 #### Calculate the distance of the atom pairs:
 ### Eugene`s macro:
 macro findPairs as_1 as_2
+
   as_1 = as_1 & a_*.*//!h*,!vt*
   as_2 = as_2 & a_*.*//!h*,!vt*
 
@@ -231,6 +232,7 @@ for i=1,Nof(mainTable)
 
   errorAction="none"
   # -- TODO before running do a test, if it finds all ready, then don't else change bond type and charge
+  # -- * make error local in the macro
   findPairs dock_lig crystal_lig  # find pairs between docked and co-crystallised ligand
 
   # if (Error()) then

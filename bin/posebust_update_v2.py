@@ -238,7 +238,6 @@ def start_program(
             ICM_MATCHING_FRACTION_LIST.append(ICM_MATCHING_FRACTION_)
 
         # -- * Add RTCNN_RIDGE GPU
-        df["_RANK_Score_"] = RANK_LIST_Score
         df["RANK_Score"] = RANK_LIST_Score
         df["RANK_RTCNNscore"] = RANK_LIST_RTCNNscore
         df["RANK_AverageScore"] = RANK_LIST_AverageScore
