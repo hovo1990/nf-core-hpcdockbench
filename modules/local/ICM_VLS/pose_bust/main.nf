@@ -64,7 +64,10 @@ process poseBust{
         """
         echo "Pose busting  v${i_version}"
 
-        bust ${docked_pose_mf} -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose_mf.simpleName}_pb.csv
+        # -- * Need to clean first '!/M  CHG/' this causes issues  for ridge generated stuff
+        awk '!/M  CHG/' ${docked_pose_mf}  >| ${docked_pose_mf.simpleName}_clean.sdf
+
+        bust ${docked_pose_mf.simpleName}_clean.sdf -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose_mf.simpleName}_pb.csv
 
         # -- * Check if file is empty then exit with code 1
         if [ ! -s ${docked_pose_mf.simpleName}_pb.csv ]; then
