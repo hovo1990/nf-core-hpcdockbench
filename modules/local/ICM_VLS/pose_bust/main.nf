@@ -66,6 +66,12 @@ process poseBust{
 
         bust ${docked_pose_mf} -l ${ligand_struct} -p ${protein_struct} --outfmt csv >| ${docked_pose_mf.simpleName}_pb.csv
 
+        # -- * Check if file is empty then exit with code 1
+        if [ ! -s ${docked_pose_mf.simpleName}_pb.csv ]; then
+            echo "File ${docked_pose_mf.simpleName}_pb.csv is empty (zero bytes)."
+            exit 1
+        fi
+
         """
 }
 

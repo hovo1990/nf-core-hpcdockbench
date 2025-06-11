@@ -63,7 +63,7 @@ process exportRidgeMFSDF{
 
 
     script:
-        def i_version=6
+        def i_version=8
         """
         echo "Export docking poses as sdf file  v${i_version}"
 

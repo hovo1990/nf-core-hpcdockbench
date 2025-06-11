@@ -143,7 +143,7 @@ workflow HPCDOCKBENCH {
     }
     // comps_for_ginger.view()
 
-    tasks_todo_ging = comps_for_ginger.take(40)
+    tasks_todo_ging = comps_for_ginger.take(20)
     gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
     // gingered_compounds.view()
 
