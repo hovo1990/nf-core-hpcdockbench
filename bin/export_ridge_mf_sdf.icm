@@ -116,10 +116,10 @@ else
 endif
 
 
-s_tableName = Trim(Name(s_icb_session),all)
+# s_tableName = Trim(Name(s_sdf_session),all)
 
 
-mainTable = $s_tableName
+# mainTable = $s_tableName
 
 
 
@@ -129,11 +129,11 @@ mainTable = $s_tableName
 
 # -- TODO need to fix bonds, in some cases especially ridge stuff
 # -- * find pairs between docked_lig and crystal_lig
-print " Info> remove hydrogen atoms from the cocrystal ligand"
-strip a_1. # strip cocrystal ligand
-delete a_1. & a_*.//vt*
-delete hydrogen a_1.m//h*
-delete a_1.m//:b
+# print " Info> remove hydrogen atoms from the cocrystal ligand"
+# strip a_1. # strip cocrystal ligand
+# delete a_1. & a_*.//vt*
+# delete hydrogen a_1.m//h*
+# delete a_1.m//:b
 
 
 if Nof(ridgeTable) <1 then
@@ -159,8 +159,8 @@ add column mainTable 0.0  name='ICM_RMSD_IN_PLACE_'
 add column mainTable  0.0  name='ICM_RMSD_SUPERIMPOSED_'
 add column mainTable  0.0 name="ICM_MATCHING_FRACTION_"
 
-# Debug
-# exit
+# -- ! Debug
+exit
 
 # -- * set bond type
 # set bond type 1 as_graph[1] as_graph[2]
@@ -181,19 +181,19 @@ for i=1,Nof(mainTable)
   endif
 
 
-  # -- * delete hydrogen from docked pose
-  strip a_2. # strip
-  delete a_2. & a_*.//vt*
-  delete hydrogen a_2.m//h*
-  delete a_2.m//:b
+  # # -- * delete hydrogen from docked pose
+  # strip a_2. # strip
+  # delete a_2. & a_*.//vt*
+  # delete hydrogen a_2.m//h*
+  # delete a_2.m//:b
 
-  # -- * just disable charges for Matching fraction
-  set charge formal a_2.m// 0
+  # # -- * just disable charges for Matching fraction
+  # set charge formal a_2.m// 0
 
 
-  # -- * Trying to fix Ridge stuff
-  set bond type a_1.m//c* a_1.m//n* 2
-  set bond type a_2.m//c* a_2.m//n* 2
+  # # -- * Trying to fix Ridge stuff
+  # set bond type a_1.m//c* a_1.m//n* 2
+  # set bond type a_2.m//c* a_2.m//n* 2
 
 
   # -- * Calculate RMSDs
@@ -294,11 +294,11 @@ if Nof(mainTable.ICM_MATCHING_FRACTION_) < 1 then
 endif
 
 
-# # -- * Now sort by Score, RTCNNscore, AverageScore, CombinedScore
-# add column mainTable  0 name="Rank_Score"
-# add column mainTable  0 name="Rank_RTCNNscore"
-# add column mainTable  0 name="Rank_AverageScore"
-# add column mainTable  0 name="Rank_CombinedScore"
+# -- * Now sort by Score, RTCNNscore, AverageScore, CombinedScore
+add column mainTable  0 name="Rank_Score"
+add column mainTable  0 name="Rank_RTCNNscore"
+add column mainTable  0 name="Rank_AverageScore"
+add column mainTable  0 name="Rank_CombinedScore"
 
 
 # -- * Now add extra calculation

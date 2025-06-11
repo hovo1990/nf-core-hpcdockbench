@@ -1,0 +1,227 @@
+l_commands = no
+l_info = no
+HELP = """
+  GINGER: Generative Internal-coordinate Network Graph with Energy Refinement
+  Usage> $P <input.sdf|.tsv|.csv> [header=no smicol=A idcol=B] <output.sdf|.molt> [<options>]
+   maxenergy=(10.) : skip conformations with higher than 10. kcal/mole energies from the base
+   mnconf=(30)     : the maximal number of conformers per compound
+   sizelimit=(60)  : do not sample bigger molecules than <sizelimit> atoms
+   vicinity=(10.)  : [deg] the torsion root-mean-square deviation threshold for cluster size.
+   header=yes|no   : for TSV/CSV input reads first line as column names
+   smicol=<smi_col_name> : for TSV/CSV input name of the smiles column
+   idcol=<id_col_name>   : for TSV/CSV input name of ID column
+   sdfcompress=yes|no    : for SDF output store each conformation as a separate MOL entry (sdfcompress=no) or into CONF_LIST list field
+   -C  : set formal charges according to pKa model
+   -C  : set formal charges according to NN pKa model
+   -T  : enumerate tautomers
+   -f  : Force overwriting of the output file
+   -hydrogen : keep all hydrogen (by default only polar are kept). This option only affects on SDF output
+   -h  : Help
+   -fr=.. -to=..  from and to indexes of the database to be screened.
+
+Example:
+   icm64 $P myligs.sdf myligs.molt -f
+"""
+
+# some general settings/preparations
+if Getarg(help) quit HELP
+files = Getarg(list,delete)
+s_cmdOptions = Getarg()
+mnconfKeep     = Getarg("mnconf",       30, delete) # maximum number of conformations retained
+vicinity       = Getarg("vicinity",     10.,delete)     # minimum torsion RMSD between stack comformations
+vicCart        = Getarg("compress",     0.25,delete)    # minimum cartesian RMSD between stack comformations
+maxey          = Getarg("maxenergy",     10.,delete)     # minimum energy from base conformation
+mnAtoms        = Getarg("sizelimit",  60,delete)  # bigger molecules are not sampled
+icForce        = Getarg("-f",no,delete)
+icAutoCharge   = Getarg("-C",no,delete)
+if (Getarg("-Cn",no,delete)) then
+  MODELS.MolpKaAcid = "pKaEnsAcid"
+  MODELS.MolpKaBase = "pKaEnsBase"
+  icAutoCharge = yes
+endif
+icTautomer     = Getarg("-T",no,delete)
+fr             = Getarg("-fr",1,delete)
+to             = Getarg("-to",-1,delete)
+stride         = Getarg("-stride",-1,delete)
+l_commands     = Getarg("-V",no,delete)
+icVerboseInfo  = Getarg("-v",no,delete)
+icHeader       = Getarg("header",no delete)    # for csv/tsv input
+s_smicol       = Getarg("smicol","A" delete)   # for csv/tsv input
+s_idcol        = Getarg("idcol","" delete)    # for csv/tsv input
+icSDFCompress  = Getarg("sdfcompress",yes,delete)  # for SDF output
+icNconfAuto    = Getarg("nconfAuto",no,delete)  # auto nconf
+icHydrogen     = Getarg("-hydrogen",no,delete)
+
+
+# -- * Custom
+icNeutral     = Getarg("-neutral",no,delete)
+maxFileSizeMb  = 40000
+TOOLS.gpuThreadsPerBlock = Getarg("threads",256,delete)
+#
+if !icVerboseInfo l_warn = no
+
+if (Nof(Index(graphic))==0) quit " Error> canot find compatible CUDA device"
+
+TOOLS.idGPU = Getarg("gpuid",-1,delete)
+
+# define input/output
+if (Nof(files)<1 | Nof(files)>2 ) quit " Error> input and/or output files not specified or wrong args" + HELP
+icIndexForce = Getarg("-I",no,delete)
+if ( Getarg()!="" ) quit " Error> argument "+Getarg()+" not found "+HELP
+
+# if (Nof(files)!=2) quit HELP
+
+infile = files[1]
+outfile = Nof(files) == 2 ? files[2] : ( Name(infile) + "_" + fr + ".molt" )
+outfile_skipped = Path(outfile) + Name(outfile) + "_skipped.sdf"
+
+if Exist(outfile) & !icForce quit " Error> file " + outfile + " exists. Use -f to overwrite"
+
+delete system outfile l_warn = no
+
+delete system outfile_skipped l_warn = no
+
+if !Exist(infile) quit " Error> can not access file "+infile + HELP
+
+errorAction="none"
+read libraries
+read libraries mmff
+call _cheminfo
+#
+ixfile = Path(infile)+Name(infile)+".inx"
+if (Extension( infile ) == ".sdf"  & ( !Exist(ixfile) | icIndexForce | Newer(infile ixfile) )) then
+  printf " Info> updating index file %s\n", ixfile
+  write index mol infile ixfile
+endif
+
+i_step = 5000
+
+icSmi = no
+if (Extension( infile ) == ".sdf") then
+  read index ixfile name="ix"
+elseif  (Extension( infile ) == ".tsv" | Extension( infile ) == ".csv" | Extension( infile ) == ".cxsmiles" ) then
+  s_sep = Extension( infile ) == ".csv" ? "," : "\t"
+  read table limit=i_step separator=s_sep infile ( ! icHeader ? : header ) name="ix"
+  icSmi = yes
+  if (s_idcol=="") s_idcol = icHeader ? "id" : "B"
+  if (Type( ix.$s_smicol ) != "sarray" ) quit " Error> cannot find smiles column " + s_smicol
+  if (Type( ix.$s_idcol  ) == "unknown") quit " Error> cannot find ID column " + s_idcol
+  if (s_smicol == "mol") then
+    rename ix.$s_smicol "MOL"
+    s_smicol = "MOL"
+  endif
+else
+  quit " Error> unsupported input file extension " + Extension(infile)
+endif
+if (fr == -1) fr = 1
+if (to == -1) to = icSmi  ? 999999999999  : Nof( ix )
+nofComp = to-fr+1
+if (!icSmi) print "GINGER> " + nofComp + " compounds to process"
+
+i_step = 5000
+
+mncalls=100
+dielConst=2.
+mnconf = mnconfKeep
+nProc = Integer(Ceil(Nof(fork)*0.75))
+
+TOOLS.useGPU = yes
+
+ttt_build_conf = 0.
+ttt_total = Time()
+
+n_bad = 0
+
+for i=fr,to,i_step
+  i_fr = i
+  i_to = Min( i_fr + i_step - 1, to )
+
+  printf "GINGER> processing entries %d-%d\n", i_fr, i_to
+  ttt_batch = Time()
+
+  if (icSmi) then
+  #  t = ix [i_fr : i_to]
+    read table keep limit=(i_to-i_fr+1) separator=s_sep infile ( ! icHeader ? : header ) underline=fr-1 name="t"
+    if (l_out) break
+    if (Type(t.mol) == "sarray") rename t.mol "MOL"
+    icHeader = no
+    add column t Chemical( t.$s_smicol simple ) name="mol"
+    rename t.$s_idcol "ID"
+    s_idcol = "ID"
+    set name t.mol Sarray(t.ID)
+  else
+    read table mol ix [i_fr : i_to] name="t"
+  endif
+
+  delete hydrogen t.mol all
+  add column t Nof( t.mol atom ) name="nat"
+  if( Nof( t.nat > mnAtoms | t.nat <= 1 ) >0)then
+    printf " Skipping %d molecules larger than %d heavy atoms\n" Nof( t.nat > mnAtoms | t.nat <= 1 ) mnAtoms
+    delete t.nat > mnAtoms | t.nat <= 1
+  endif
+
+  if (icTautomer) then
+    enumerate tautomer predict t.mol name = "t_tauto" filter keep mcsTimeout=1 l_info=yes
+    t = t_tauto
+    delete t_tauto
+  endif
+  if (icAutoCharge) then
+    set charge formal auto 7.4 t.mol l_info=yes
+  endif
+
+  add column t Nof( t.mol "maxRing" ) name="mxr"
+  t_macro = t.mxr >= 7
+  delete t.mxr >= 7
+
+  ttt = Time()
+  if (Nof(t) > 0) then
+ #-- TODO hydrogen
+    if (icNeutral) then
+        print " Info> running neutral acids"
+        build conf ( icNconfAuto ? 0 : mnconf*2 ) t.mol maxey compress=vicCart minimize l_info = yes l_neutralAcids = yes
+    else
+        print " Info> running usual"
+        build conf ( icNconfAuto ? 0 : mnconf*2 ) t.mol maxey compress=vicCart minimize l_info = yes # MODELS.GingerL1 = "predincoL1_x"
+    endif
+  endif
+  if (Nof(t_macro) > 0) then
+    printf " Info> applying macrocycle fine-tuned model to %d molecules\n", Nof(t_macro)
+    build conf ( icNconfAuto ? 0 : mnconf*2 ) t_macro.mol maxey compress=vicCart minimize  MODELS.GingerL1="predincoL1_macro" MODELS.GingerL2="predincoL2_macro" l_info=yes
+    add t t_macro
+  endif
+
+  ttt_build_conf += Time()-ttt
+
+  add column t Nof( t.mol conf ) name="ncf"
+  t_bad = t.ncf == 0
+  n_bad = n_bad + Nof(t_bad)
+  delete t.ncf == 0
+
+  printf "GINGER> batch done in %.2f sec\n" Time()-ttt_batch
+
+  if (Nof(t)>0) then
+    if (Extension(outfile) == ".sdf") then
+      if (!icHydrogen) delete hydrogen t.mol conf
+      if (icSDFCompress) then
+        write table mol append t outfile
+      else
+        split t.mol name="tt"
+        write table mol append tt outfile
+        delete tt
+      endif
+    else
+      storeConfToMolt "t" outfile yes s_idcol
+    endif
+  endif
+
+  if (Nof(t_bad)>0) then
+    printf " Warning> GINGER cannot generate conformation for %d (out of %d) compounds (Stored into %s)\n", Nof(t_bad), Nof(t_bad)+Nof(t), outfile_skipped
+    printf " Info> use command below to append them to result molt\n\t%s append=yes -c -r -A -C mnconf=%d proc=%d %s %s\n" Path(macro,"_confGen") mnconf nProc outfile_skipped outfile
+    write table mol append t_bad outfile_skipped
+  endif
+endfor
+
+printf "FINISHED: Total time=%.2f sec. Build conf time=%.2f\n", Time()-ttt_total, ttt_build_conf
+
+quit
+
