@@ -82,7 +82,7 @@ workflow ICM_RIDGE{
 
 
     // // -- * Why does Ridge generate an empty sdf file? for what purpose come on
-    tasks_todo_debug = combined.take(10)
+    tasks_todo_debug = combined
     ridge_tasks = ridgeTask_GPU(tasks_todo_debug, method, category)
 
     // // -- * SStage 3 V2: extract hit list as sdf files

@@ -392,18 +392,37 @@ process gingerTask_GPU_separate {
         def i_random_seed  = params.random_seed ?: 25051990
         """
         trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+                ${projectDir}/bin/_ginger_custom \
                 ${ligand_struct_2D} \
                 sizelimit=600 \
                 -C mnconf=50 \
                 -hydrogen \
-                -T \
+                -neutral=yes \
                 ginger_${ligand_struct_2D.simpleName}.molt
 
         """
 }
 
 
+
+// -- ! Old version
+//     script:
+//         def i_version = 2
+//         def i_cpus = task.cpus
+//         def i_random_seed  = params.random_seed ?: 25051990
+//         """
+//         trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
+//         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
+//                 ${ligand_struct_2D} \
+//                 sizelimit=600 \
+//                 -C mnconf=50 \
+//                 -hydrogen \
+//                 -T \
+//                 ginger_${ligand_struct_2D.simpleName}.molt
+
+//         """
+// }
 
 
 
