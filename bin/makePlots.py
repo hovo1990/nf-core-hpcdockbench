@@ -829,26 +829,29 @@ def start_program(input, paperdata):
         # # # -- * 1. Load your data
         make_rank1_plot(df)
 
-        # # -- * Calculate top 3 rank
-        # df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
-        # df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage])
-        # make_custom_rank_plot(df_rank3, rank=3)
+        # -- * Calculate top 3 rank
+        df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
+        df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_3_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage,df_rank_3_ridgeRTCNN ])
+        make_custom_rank_plot(df_rank3, rank=3)
 
-        # # -- * Calculate top 6 rank
-        # df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
-        # df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage])
-        # make_custom_rank_plot(df_rank6, rank=6)
+        # -- * Calculate top 6 rank
+        df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
+        df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_6_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage, df_rank_6_ridgeRTCNN])
+        make_custom_rank_plot(df_rank6, rank=6)
 
-        # # -- * Calculate top 10 rank
-        # df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
-        # df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage])
-        # make_custom_rank_plot(df_rank10, rank=10)
+        # -- * Calculate top 10 rank
+        df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
+        df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_10_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage,df_rank_10_ridgeRTCNN])
+        make_custom_rank_plot(df_rank10, rank=10)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
