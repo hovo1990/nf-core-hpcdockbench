@@ -149,7 +149,10 @@ workflow HPCDOCKBENCH {
 
 
     // tasks_todo_ging_sorted.view()
-    tasks_todo_ging = tasks_todo_ging_sorted.take(20)
+    // -- ! Debug purpose
+    // tasks_todo_ging = tasks_todo_ging_sorted.take(20)
+
+     tasks_todo_ging = tasks_todo_ging_sorted
 
     // -- * Example #template #example
     // -- * https://nextflow-io.github.io/patterns/sort-filepairs-by-samplename/
