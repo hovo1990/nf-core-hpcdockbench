@@ -118,15 +118,15 @@ workflow HPCDOCKBENCH {
 
 
 
-    // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
-    // method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
-    // method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
-    // category_name = Channel.value("Classical")
-    // icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
-    //                                             method_name_1, category_name)
+    // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
+    method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
+    method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
+    category_name = Channel.value("Classical")
+    icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
+                                                method_name_1, category_name)
 
-    // icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
-    //                                             method_name_2, category_name)
+    icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
+                                                method_name_2, category_name)
 
 
 
@@ -185,12 +185,19 @@ workflow HPCDOCKBENCH {
                                                 gingered_compounds,
                                                 method_name_gpu_1,
                                                 category_name_gpu)
+    icm_ridge_posebusted_rborn = ICM_RIDGE_regular(icm_docking_projects_rborn,
+                                                gingered_compounds,
+                                                method_name_gpu_2,
+                                                category_name_gpu)
 
 
 
     // // // -- TODO improve later so it can be toggled on or off
     // // // -- * Merge from multiple sources
-    // merged_data =icm_vls_posebusted_eff_5_conf_10_regular.concat(icm_vls_posebusted_eff_5_conf_10_rborn)
+    merged_data =icm_vls_posebusted_eff_5_conf_10_regular
+                                        .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
+                                        .concat(icm_ridge_posebusted_regular )
+                                        .concat( icm_ridge_posebusted_rborn )
 
 
 
@@ -200,7 +207,7 @@ workflow HPCDOCKBENCH {
     // -- * Enable only when RIDGE works
     // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
 
-    merged_data = icm_ridge_posebusted_regular
+    // merged_data = icm_ridge_posebusted_regular
     // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
     // // // // merged_data.view()
 

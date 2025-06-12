@@ -27,10 +27,10 @@ include { exportRidgeMFSDF } from '../../../modules/local/ICM_RIDGE_GPU/export_r
 include { exportMFSDF } from '../../../modules/local/ICM_VLS/export_mf_sdf'
 
 
-include { poseBust} from '../../../modules/local/ICM_VLS/pose_bust'
+include { poseBust_Ridge} from '../../../modules/local/ICM_VLS/pose_bust'
 
 
-include { poseBust_update} from '../../../modules/local/ICM_VLS/pose_bust_update'
+include { poseBust_update_Ridge} from '../../../modules/local/ICM_VLS/pose_bust_update'
 
 
 /*
@@ -99,11 +99,11 @@ workflow ICM_RIDGE{
     // all_comb.view()
 
 
-    pose_busted = poseBust(all_comb)
+    pose_busted = poseBust_Ridge(all_comb)
 
 
     // -- * SStage 4 V2: update posebust data with ICM data
-    poseBust_updated = poseBust_update(pose_busted)
+    poseBust_updated = poseBust_update_Ridge(pose_busted)
     // poseBust_updated.view()
 
 
