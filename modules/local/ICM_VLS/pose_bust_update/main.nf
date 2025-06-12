@@ -56,7 +56,7 @@ process poseBust_update{
 
 
     output:
-        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose_mf),  path(docked_pose_clean), path(docked_pose_pb), path("${docked_pose_pb.simpleName}_up.csv")
+        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose_mf),  path(docked_pose_pb), path("${docked_pose_pb.simpleName}_up.csv")
 
 
     script:
@@ -66,11 +66,11 @@ process poseBust_update{
 
 
         # -- * Run python script to append extra info for absolute data
-        python ${projectDir}/bin/posebust_update_v2.py --input=${docked_pose_clean} \
+        python ${projectDir}/bin/posebust_update_v2.py --input=${docked_pose_pb} \
                                                     --dataset=${dataset_name} \
                                                     --prot=${protein_struct} \
                                                     --lig=${ligand_struct} \
-                                                    --dock=${docked_pose_mf} \
+                                                    --dock=${docked_pose_clean} \
                                                     --code=${code} \
                                                     --proj=${proj_id} \
                                                     --method=${method} \

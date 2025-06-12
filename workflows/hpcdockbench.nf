@@ -143,7 +143,36 @@ workflow HPCDOCKBENCH {
     }
     // comps_for_ginger.view()
 
-    tasks_todo_ging = comps_for_ginger.take(20)
+    tasks_todo_ging_sorted = comps_for_ginger
+                                    .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+                                    .flatMap()
+
+
+    tasks_todo_ging_sorted.view()
+    tasks_todo_ging = tasks_todo_ging_sorted.take(20)
+
+    // -- * Example #template #example
+    // -- * https://nextflow-io.github.io/patterns/sort-filepairs-by-samplename/
+    // channelT = Channel.of(
+    //         ['b', 'pb', 'haha'],
+    //         ['a', 'pa', 'haha']
+    //     )
+
+
+
+    // channelT
+    //     // Sort the channel elements based on the first object of each tuple,
+    //     // that is, the sample name, and convert to a channel with a single
+    //     // element which is a list of tuples
+    //     .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+    //     // flatten the single-element channel to a channel with as many elements
+    //     // as there are samples, which is the original structure provided by
+    //     // fromFilePairs
+    //     .flatMap()
+    //     // View the channel elements by printing it to the screen
+    //     .view()
+
+
     gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
     // gingered_compounds.view()
 
