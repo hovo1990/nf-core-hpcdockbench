@@ -70,7 +70,7 @@ process poseBust_update{
                                                     --dataset=${dataset_name} \
                                                     --prot=${protein_struct} \
                                                     --lig=${ligand_struct} \
-                                                    --dock=${docked_pose_clean} \
+                                                    --dock=${docked_pose_mf} \
                                                     --code=${code} \
                                                     --proj=${proj_id} \
                                                     --method=${method} \
