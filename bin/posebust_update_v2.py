@@ -174,6 +174,7 @@ def start_program(
 
             # -- * TODO add the appropriate RANKS
             RANK_Score = mol.GetProp("Rank_Score") if mol.HasProp("Rank_Score") else "-100"
+            logger.debug( "COME ON {}".format(RANK_Score))
             RANK_RTCNNscore = mol.GetProp("Rank_RTCNNscore") if mol.HasProp("Rank_RTCNNscore") else "-100"
             RANK_AverageScore = mol.GetProp("Rank_AverageScore") if mol.HasProp("Rank_AverageScore") else "-100"
             RANK_CombinedScore = mol.GetProp("Rank_CombinedScore") if mol.HasProp("Rank_CombinedScore") else "-100"
@@ -237,7 +238,10 @@ def start_program(
             )
             ICM_MATCHING_FRACTION_LIST.append(ICM_MATCHING_FRACTION_)
 
+
+
         # -- * Add RTCNN_RIDGE GPU
+        logger.debug("DEBUG {}".format(RANK_LIST_Score))
         df["RANK_Score"] = RANK_LIST_Score
         df["RANK_RTCNNscore"] = RANK_LIST_RTCNNscore
         df["RANK_AverageScore"] = RANK_LIST_AverageScore

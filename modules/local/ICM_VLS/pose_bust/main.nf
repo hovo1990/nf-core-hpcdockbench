@@ -56,7 +56,7 @@ process poseBust{
 
 
     output:
-        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose_mf), path("${docked_pose_mf.simpleName}_pb.csv")
+        tuple val(method),val(category),val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct),  path(docked_pose_mf), path("${docked_pose_mf.simpleName}_clean.sdf"), path("${docked_pose_mf.simpleName}_pb.csv")
 
 
     script:
