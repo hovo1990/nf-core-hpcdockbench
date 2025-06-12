@@ -39,7 +39,7 @@ include { ICM_VLS as ICM_VLS_eff_5_conf_10_rborn } from '../subworkflows/local/I
 
 
 include { ICM_RIDGE as ICM_RIDGE_regular } from '../subworkflows/local/ICM_RIDGE'
-
+include { ICM_RIDGE as ICM_RIDGE_rborn } from '../subworkflows/local/ICM_RIDGE'
 
 
 include { gingerTask_GPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
@@ -185,7 +185,7 @@ workflow HPCDOCKBENCH {
                                                 gingered_compounds,
                                                 method_name_gpu_1,
                                                 category_name_gpu)
-    icm_ridge_posebusted_rborn = ICM_RIDGE_regular(icm_docking_projects_rborn,
+    icm_ridge_posebusted_rborn = ICM_RIDGE_rborn(icm_docking_projects_rborn,
                                                 gingered_compounds,
                                                 method_name_gpu_2,
                                                 category_name_gpu)
