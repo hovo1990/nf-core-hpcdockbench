@@ -43,7 +43,7 @@ include { ICM_RIDGE as ICM_RIDGE_rborn } from '../subworkflows/local/ICM_RIDGE'
 
 
 include { gingerTask_GPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
-
+include { confGenTask_CPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,6 +177,8 @@ workflow HPCDOCKBENCH {
 
 
     gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
+
+    confGened_compounds  = confGenTask_CPU_separate(tasks_todo_ging)
     // gingered_compounds.view()
 
 

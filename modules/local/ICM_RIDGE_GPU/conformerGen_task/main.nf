@@ -306,7 +306,89 @@ process gingerTask_GPU {
 
 // -- * All important code below here
 
+// -- * Original for Ridge
+process confGenTask_CPU_separate {
 
+    tag "CPU-confGen-${proj_id}"
+    //-- ! something wrong with SLURM and dockScan
+    //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
+
+
+    // maxRetries 5
+    // errorStrategy {
+    //     if (task.exitStatus >= 100 ){
+    //         sleep(Math.pow(2, task.attempt) * 15 as long);
+    //         'retry'
+    //     } else {
+    //         'terminate'
+    //     }
+    // }
+
+
+
+
+
+    label 'low_cpu_debug'
+
+    cache true
+    // debug true
+
+
+
+    if ( workflow.containerEngine == 'singularity' && params.singularity_use_local_file  ) {
+        container "${params.singularity_local_cpu_container}"
+    }
+    else if (workflow.containerEngine == 'singularity' ){
+        container "${params.container_link}"
+    }
+    else {
+        container "${params.container_link}"
+    }
+
+    if (params.mount_options) {
+        if (workflow.containerEngine == 'singularity' ) {
+            containerOptions "  --bind ${params.mount_options}"
+        }
+        else {
+            containerOptions " --volume ${params.mount_options}"
+        }
+    }
+
+
+
+
+    if (params.save_intermediate) {
+
+         publishDir = [
+            path: { "${params.outdir}/" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename ->
+             filename.equals('versions.yml') ? null : "${params.outdir}/CPU_confGen/${proj_id}/${filename}" }
+        ]
+    }
+
+
+
+    // --  * val(folder was creating issues)
+    input:
+        tuple val(proj_id), path(ligand_struct_2D)
+
+    output:
+        tuple val(proj_id), path("confGen_${ligand_struct_2D.simpleName}.molt"), optional: true
+
+
+    script:
+        def r_effort= params.effort ?: 4.0
+        def i_confs =  params.conformations ?: 10
+        def i_cpus = task.cpus
+        def i_random_seed  = params.random_seed ?: 25051990
+        """
+        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+             effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
+             proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
+
+        """
+}
 
 // -- * Sometimes this fails, maybe for benchmark just use confGen
 process gingerTask_GPU_separate {
