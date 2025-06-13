@@ -136,19 +136,27 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
             realname = method
 
         for dataset in tqdm(unique_datasets):
+            logger.debug("---" * 20)
             curr_dataset = curr_method[curr_method["_DATASET_"] == dataset]
             logger.debug(" DEBUG> dataset {}, method {}".format(dataset, method))
             logger.debug(" DEBUG> curr_dataset df is {}".format(curr_dataset))
 
             logger.debug( " Debug> rank_type {} and rank {}".format(rank_type,rank))
 
-            logger.debug("===" * 20)
+
 
     #         logger.debug(" Debug> Curr method is {}".format(method))
 
     #         logger.debug(" Debug> Curr category  is {}".format(category))
 
-            top_rank_custom = curr_dataset[curr_dataset[rank_type].isin(one_based_range(rank))]
+            # -- * don't keep those that have a -100
+            curr_dataset_temp = curr_dataset[curr_dataset[rank_type]>-100]
+            if len(curr_dataset_temp) < 1:
+                continue
+
+            logger.debug( " Debug curr_dataset_temp > {}".format(curr_dataset_temp))
+
+            top_rank_custom = curr_dataset_temp [curr_dataset_temp[rank_type].isin(one_based_range(rank))]
             top_rank_custom.sort_values(by=["_CODE_", rank_type], inplace=True)
             # logger.debug(
             #     " Debug> {}".format(
@@ -161,20 +169,20 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
             result = top_rank_custom[top_rank_custom["ICM_less_than_two"]].drop_duplicates(
                 subset="_CODE_", keep="first"
             )
-            # # logger.debug(" Debug> {}".format(result))
+            logger.debug(" Debug less than two> {}".format(result))
 
-            logger.debug(
-                " Debug> {}".format(
-                    result[["_METHOD_", "_DATASET_", "_CODE_", rank_type, "ICM_less_than_two"]]
-                )
-            )
+            # logger.debug(
+            #     " Debug> icm less than two {}".format(
+            #         result[["_METHOD_", "_DATASET_", "_CODE_", rank_type, "ICM_less_than_two"]]
+            #     )
+            # )
 
-            #         # -- * Make plot how many are rmsd_≤_2å
+    #         #         # -- * Make plot how many are rmsd_≤_2å
 
             # Count the number of True and False values
             count_data = result["ICM_less_than_two"].value_counts().reset_index()
             count_data.columns = ["ICM_less_than_two", "count"]
-            logger.debug(" Debug> {}".format(count_data))
+            logger.debug(" Debug count_data> {}".format(count_data))
 
             # Check if all values in the specified columns are True for each row
             columns_of_interest = [
@@ -225,11 +233,13 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
                 total = 428
                 total_PB = 428
 
-            # total =  len(unique_projects) # 85 # astex len is 85 len(unique_projects)
-            # total_PB =  len(unique_projects) #428 # len(unique_projects)
+    #         # total =  len(unique_projects) # 85 # astex len is 85 len(unique_projects)
+    #         # total_PB =  len(unique_projects) #428 # len(unique_projects)
 
             tot_perc = (count_data["count"] / total) * 100
             tot_perc_PB = (value_counts["count"] / total_PB) * 100
+            logger.debug(" Debug> tot_perc is {}".format(tot_perc))
+            logger.debug(" Debug> tot_perc_PB is {}".format(tot_perc_PB))
             count_data["percentage"] = tot_perc
             count_data["PB_percentage"] = tot_perc_PB
             tot_perc_vals = tot_perc.values[0]
@@ -798,31 +808,34 @@ def start_program(input, paperdata):
         df_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
         df_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNNscore')
         df_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_corrScoreAverage')
-        # df_ridgeRTCNN= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNN_Ridge')
 
 
-        df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage])
+        df_ridgeRTCNN= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNN_Ridge')
+        logger.debug(" Debug df> {}".format(df_ridgeRTCNN))
+
+
+        df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage, df_ridgeRTCNN])
         logger.debug( " Debug> df is {}".format(df))
 
         logger.debug (" Debug> writing debug table")
         df.to_csv("test_debug_table.csv", index=False)
 
 
-        # -- * Load Data from CSV ---
-        try:
-            csv_file_path = paperdata  # Path to your CSV file
-            df_paper = pd.read_csv(csv_file_path)
-        except FileNotFoundError:
-            print(f"Error: The file '{csv_file_path}' was not found.")
-            exit()
-        except Exception as e:
-            print(f"Error reading CSV file: {e}")
-            exit()
+        # # -- * Load Data from CSV ---
+        # try:
+        #     csv_file_path = paperdata  # Path to your CSV file
+        #     df_paper = pd.read_csv(csv_file_path)
+        # except FileNotFoundError:
+        #     print(f"Error: The file '{csv_file_path}' was not found.")
+        #     exit()
+        # except Exception as e:
+        #     print(f"Error reading CSV file: {e}")
+        #     exit()
 
-        # -- * Join paper results with main table
-        if df_paper is not None:
-            df = pd.concat([df, df_paper])
-            logger.debug(df)
+        # # -- * Join paper results with main table
+        # if df_paper is not None:
+        #     df = pd.concat([df, df_paper])
+        #     logger.debug(df)
 
 
 
