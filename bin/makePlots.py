@@ -132,6 +132,10 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
             realname = 'ICM-Ridge(GPU)\nRank: {}'.format(rank_name)
         elif method == 'ICM_RIDGE_GPU_rborn':
             realname = 'ICM-Ridge(GPU)\nRBorn\nRank: {}'.format(rank_name)
+        elif method == 'ICM_RIDGE_GPU_confGen_regular':
+            realname = 'ICM-Ridge(GPU)\nconfGen\nRank: {}'.format(rank_name)
+        elif method == 'ICM_RIDGE_GPU_confGen_rborn':
+            realname = 'ICM-Ridge(GPU)\nconfGen+RBorn\nRank: {}'.format(rank_name)
         else:
             realname = method
 
