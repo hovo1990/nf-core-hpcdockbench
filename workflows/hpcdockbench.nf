@@ -41,6 +41,11 @@ include { ICM_VLS as ICM_VLS_eff_5_conf_10_rborn } from '../subworkflows/local/I
 include { ICM_RIDGE as ICM_RIDGE_regular } from '../subworkflows/local/ICM_RIDGE'
 include { ICM_RIDGE as ICM_RIDGE_rborn } from '../subworkflows/local/ICM_RIDGE'
 
+include { ICM_RIDGE as ICM_RIDGE_confGen_regular } from '../subworkflows/local/ICM_RIDGE'
+include { ICM_RIDGE as ICM_RIDGE_confGen_rborn } from '../subworkflows/local/ICM_RIDGE'
+
+
+
 
 include { gingerTask_GPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
 include { confGenTask_CPU_separate } from '../modules/local/ICM_RIDGE_GPU/conformerGen_task'
@@ -195,6 +200,19 @@ workflow HPCDOCKBENCH {
                                                 method_name_gpu_2,
                                                 category_name_gpu)
 
+
+    // -- * Test using confGen for output
+    method_name_gpu_3 = Channel.value("ICM_RIDGE_GPU_confGen_regular")
+    method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
+
+    icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
+                                                confGened_compounds
+                                                method_name_gpu_3,
+                                                category_name_gpu)
+    icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
+                                                confGened_compounds
+                                                method_name_gpu_4,
+                                                category_name_gpu)
 
 
     // // // -- TODO improve later so it can be toggled on or off
