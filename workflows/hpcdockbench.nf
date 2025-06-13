@@ -206,11 +206,11 @@ workflow HPCDOCKBENCH {
     method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
 
     icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
-                                                confGened_compounds
+                                                confGened_compounds,
                                                 method_name_gpu_3,
                                                 category_name_gpu)
     icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
-                                                confGened_compounds
+                                                confGened_compounds,
                                                 method_name_gpu_4,
                                                 category_name_gpu)
 
@@ -221,6 +221,8 @@ workflow HPCDOCKBENCH {
                                         .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
                                         .concat(icm_ridge_posebusted_regular )
                                         .concat( icm_ridge_posebusted_rborn )
+                                        .concat(icm_ridge_posebusted_confGen_regular )
+                                        .concat(icm_ridge_posebusted_confGen_rborn)
 
 
 
