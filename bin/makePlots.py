@@ -271,11 +271,22 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     ]
     logger.debug(final_df)
 
-    if len(final_df) < 1:
+    # Columns to check
+    cols_to_check = [ "Astex_RMSD_le_2A",
+        "Astex_RMSD_le_2A_PB_Valid",
+        "PoseBusters_RMSD_le_2A",
+        "PoseBusters_RMSD_le_2A_PB_Valid",]
+
+    # Select rows where all of the specified columns are not 0
+    filtered_df = final_df[(final_df[cols_to_check] != 0).all(axis=1)]
+
+
+
+    if len(filtered_df ) < 1:
         logger.warning(" Error> The table is empty, that is not good")
         exit(1)
 
-    return final_df
+    return filtered_df
 
 
 def make_rank1_plot(df, bar_width=0.2):
@@ -333,7 +344,7 @@ def make_rank1_plot(df, bar_width=0.2):
     x = np.arange(N)  # the label locations
 
 
-    fig, ax = plt.subplots(figsize=(22, 8))  # Adjust figure size as needed
+    fig, ax = plt.subplots(figsize=(30, 8))  # Adjust figure size as needed
 
     # --- Plotting Bars ---
     # Astex bars
@@ -821,21 +832,21 @@ def start_program(input, paperdata):
         df.to_csv("test_debug_table.csv", index=False)
 
 
-        # # -- * Load Data from CSV ---
-        # try:
-        #     csv_file_path = paperdata  # Path to your CSV file
-        #     df_paper = pd.read_csv(csv_file_path)
-        # except FileNotFoundError:
-        #     print(f"Error: The file '{csv_file_path}' was not found.")
-        #     exit()
-        # except Exception as e:
-        #     print(f"Error reading CSV file: {e}")
-        #     exit()
+        # -- * Load Data from CSV ---
+        try:
+            csv_file_path = paperdata  # Path to your CSV file
+            df_paper = pd.read_csv(csv_file_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{csv_file_path}' was not found.")
+            exit()
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+            exit()
 
-        # # -- * Join paper results with main table
-        # if df_paper is not None:
-        #     df = pd.concat([df, df_paper])
-        #     logger.debug(df)
+        # -- * Join paper results with main table
+        if df_paper is not None:
+            df = pd.concat([df, df_paper])
+            logger.debug(df)
 
 
 
