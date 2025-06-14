@@ -348,7 +348,11 @@ def make_rank1_plot(df, bar_width=0.2):
     x = np.arange(N)  # the label locations
 
 
-    fig, ax = plt.subplots(figsize=(30, 8))  # Adjust figure size as needed
+    # Dynamic figsize calculation
+    scale_factor = 10  # Tweak this if needed
+    fig_width = max(N * bar_width * scale_factor, 20)  # Minimum width of 6 inches
+    fig_height = 10
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     # --- Plotting Bars ---
     # Astex bars
