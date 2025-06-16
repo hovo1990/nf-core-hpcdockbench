@@ -32,10 +32,45 @@ call _startup
 read table separator="," input_csv_arg  name="mainT"
 
 # -- * Rename columns
+rename mainT.A "Project"
+rename mainT.B "Dataset"
+rename mainT.C "Code"
+rename mainT.D "Structure"
+rename mainT.E "Ligand"
+rename mainT.F "Ligand_ICM_2D"
+
+
+# -- * Read molecules from Ligand and Ligand_ICM_2D
+for i in Nof(mainT) then
+    lig_sdf = mainT.Ligand [i]
+    lig_2d_sdf = mainT.Ligand_ICM_2D [i]
+
+    read table mol lig_sdf  name="temp_lig"
+    read table mol lig_2d_sdf  name="temp_2d_lig"
+
+    add column temp_lig temp_2d_lig.mol  name='lig_2D'
+    add column temp_lig temp_2d_lig.sel  name='lig_sel_name'
+
+    # to rotate by common substructure so it will be easier to see what is going on
+    find sstructure result.mol
+
+
+
+    T_common.mol[1]
+    common_mol = T_common.mol[1]
+
+
+
+    select chemical result.mol_query common_mol rotate
+    select chemical result.mol common_mol rotate
+    select chemical result.mol2D  common_mol rotate
 
 
 
 
+endofr
+
+# -- * Save as sdf file
 write table mol append mainT s_output_file
 
 
