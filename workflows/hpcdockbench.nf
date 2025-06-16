@@ -26,7 +26,7 @@ include { prepIcmProject_RBORN } from '../modules/local/prep_icm_project'
 include { prepIcmProject_Regular } from '../modules/local/prep_icm_project'
 
 
-include { ligandViz } from '../modules/local/ligand_viz'
+include { ligandsViz } from '../modules/local/ligands_viz'
 
 
 include { makePlot} from '../modules/local/make_plot'
@@ -141,6 +141,7 @@ workflow HPCDOCKBENCH {
         .collectFile { it.toString() + "\n" }  // Collect as a string with newline
     tasks_todo_viz_sorted_csv.view()
 
+    ligands_to_viz = ligandsViz(tasks_todo_viz_sorted_csv)
 
     // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
     // method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
