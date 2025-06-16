@@ -47,9 +47,16 @@ process ligandsViz {
         }
     }
 
-    if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage5_ligandViz", mode: 'copy', overwrite: true
-    }
+
+
+    publishDir = [
+        path: { "${params.outdir}/" },
+        mode: params.publish_dir_mode,
+        saveAs: { filename ->
+        filename.equals('versions.yml') ? null : "${params.outdir}/stage5_ligandViz/${filename}" }
+    ]
+
+
 
 
 
@@ -58,7 +65,7 @@ process ligandsViz {
 
 
     output:
-        path("ligandViz.sdf")
+        tuple path("ligandsViz.sdf"), path("ligandsViz.icb")
 
 
     script:
@@ -70,7 +77,8 @@ process ligandsViz {
             ${params.icm_exec ?: "${params.icm_home}/icm64"} \
                 ${projectDir}/bin/ligandsViz.icm \
                     -i=${csv_file} \
-                    -o=ligandViz.sdf
+                    -o=ligandsViz.sdf \
+                    -ob=ligandsViz.icb
 
         """
 

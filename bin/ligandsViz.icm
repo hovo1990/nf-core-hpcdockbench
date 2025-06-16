@@ -12,6 +12,7 @@ l_commands = Getarg("-v",no,delete)
 
 input_csv_arg = Getarg("-i","UNDEFINED",delete)
 s_output_file = Getarg("-o","UNDEFINED",delete)
+s_output_binary_file = Getarg("-ob","UNDEFINED",delete)
 
 n_proc = Getarg("-nproc",4,delete)
 
@@ -41,7 +42,8 @@ rename mainT.F "Ligand_ICM_2D"
 
 
 # -- * Read molecules from Ligand and Ligand_ICM_2D
-for i in Nof(mainT) then
+for i=1,Nof(mainT) then
+    print " Info> working on ", String(i)
     lig_sdf = mainT.Ligand [i]
     lig_2d_sdf = mainT.Ligand_ICM_2D [i]
 
@@ -91,17 +93,24 @@ for i in Nof(mainT) then
     move temp_2d_lig.Dataset 5
     move temp_2d_lig.Project 6
 
+    if i==1 then
+      rename temp_2d_lig Name(Name("mainTab" simple),unique)
+    else
+      add mainTab temp_2d_lig
+    endif
 
-    # -- * clean
-    delete toSel pdbObj ligObj common_mol temp_back temp_2d_back  temp_2d_lig temp_lig T_common
 
+    # -- * cleanc
+    delete toSel pdbObj ligObj common_mol temp_back temp_2d_back temp_lig temp_2d_lig temp_lig T_common
+    print " ---------------------- "
 endfor
 
 # -- * Save as sdf file
-write table mol append mainT s_output_file
+write table mol append mainTab s_output_file
 
 
 # -- * Also save as icb
+write binary mainTab s_output_binary_file
 
 
 
