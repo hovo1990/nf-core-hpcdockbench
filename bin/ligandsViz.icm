@@ -26,161 +26,18 @@ call _startup
 # call _dockScan
 
 
-quit 1
-# exit
-
-
-# -- * Start of the project
-CovDocName = s_projID
-
-
-
-Doc_Proj_Name = CovDocName
-NameGene = s_projID
-
-#-- * read pocketome session file
-# openFile input_protein_arg 0 yes no no no " append"
-
-read pdb  input_protein_arg  sstructure
-
-
-
-#-- * Get object to work with
-
-objToWork  = a_1.
-objName = Name(objToWork)[1]
-
-
-
-
-
-# -- ? cKIT_HUMAN_1pkg_noncov
-Dirinp = NameGene
-
-
-# -- ! Read ligand here
-
-read table mol input_ligand_arg name="dataChem"
-
-
-# -- ? Convert to 3d molecule
-
-if( Type( dataChem.crysym ) == "sarray" ) then
-    read mol input = Sum( Sarray( dataChem.mol [1] ) + Sarray(Nof(1),"> <crysym>\\n") + Sarray( dataChem.crysym [1] ) + Sarray(Nof(1),"\\n\\n") , "$$$$\\n" )
-else
-    parrayToMol dataChem.mol [ 1 ]
-endif
-
-ligObj = a_2.m
-
-# -- * Extract as 2D drawing
-extractLigand ligObj  "2D" no "" no
-
-
-# -- * save ligand 2D drawing as sdf
-lig_save_name =  s_projID + "_2D_ligand.sdf"
-write table mol chem  lig_save_name
-
-
-
-# -- * Optimize object before preparation, if more than 10 chains
-# exit
-print " Info> number of amino acids before optimization is ", Nof(a_1.A/)
-# if Nof(a_1.A/) > 1000 then
-#   to_keep = Res(Sphere(ligObj a_1.* 15.0 ) 10)
-#   to_delete = a_1.* & !to_keep
-#   delete Res(to_delete)
-# endif
-
-# -- * Optimize docking object
-print " Info> optimizing object for docking"
-to_keep = Select(Res(Sphere(ligObj a_1.* 15.0 )), 10)
-to_delete = a_1.* & !to_keep
-delete Res(to_delete)
-print " Info> number of amino acids after optimiziation is ", Nof(a_1.A/)
-
-# -- TODO
-# -- * Template how to select at least 10 aminoacids in the gap
-# preSel = Select(Res(bindpock_pre)  10 )
-
-
-if (Error()) then
-  printf error " Error> Could not trim objects for Docking project preparation\n"
-  quit 1
-endif
-
-
-
-
-# -- * Now select pocket
-Dirinp = NameGene
-pocketSel = Sphere(ligObj a_1.A 5. )   # objToWork  & Select(a_*./ pocketIDtoUse )
-bindpock = String(pocketSel name)
-
-
-
-#-- * Create Unix dir for project prep
-
-print "------------------------------------------------"
-print "Dirinp ->" Dirinp
-print "------------------------------------------------"
-print "Type of Dirinp ->"
-Type(Dirinp)
-print "------------------------------------------------"
-
-##-- * Create dir
-unix mkdir $Dirinp
-
-##-- * Set directory to the individual project
-set directory "./" + Dirinp
-
-
-
-
-
-#-- * Add fields to object
-set field name='pdb' objToWork Name(objToWork)[1]
-set field name='resolution' objToWork Resolution(objToWork)[1]
-set field name='projectFolder' objToWork Dirinp
-set field name="bindingPock" objToWork bindpock
-set field name="geneName" objToWork NameGene
-set field name="dockProjectName" objToWork Dirinp
-
-#exit
-
-#-- ! Preparation part 2:
-
-
-
-# -- ? To convert to icm object and assign secondary structure:
-
-convertObject a_$objName. no yes yes no yes yes no "water=tight "
-assign sstructure a_A
-
-
-# -- ? Open ligand and reaction files (need to be automate) - Done:
-
-
-#-- ! 5 - Too big pocket
-SelecForDock = pocketSel
-
-#-- ! Prepare docking project
-currentDockProj.data[8] = "yes"  # ????
-tempsel = SelecForDock & a_$objName. ## old version -> tempsel = PocketSelection & a_$InputPdb. ##
-
-CovDocName = Dirinp
 # quit 1
+# exit
 
-# -- * enable enhanced born
-if rborn_arg==yes then
-  dock2SetupReceptor CovDocName a_$objName. tempsel no  "enhancedBorn"
-else
-  dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
-endif
-# -- * Old version
-# dock2SetupReceptor CovDocName a_$objName. tempsel no no ? "enhancedBorn" : "none"
-if( currentDockProj.l_readyReceptor ) dock5CalcMaps CovDocName 0.5 4.0 no # оменять тут чуток  have changed
-currentDockProj.data[1] = CovDocName
+read table separator="," input_csv_arg  name="mainT"
+
+# -- * Rename columns
+
+
+
+
+write table mol append mainT s_output_file
+
 
 
 if (Error()) then
