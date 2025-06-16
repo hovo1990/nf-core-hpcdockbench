@@ -26,6 +26,8 @@ include { prepIcmProject_RBORN } from '../modules/local/prep_icm_project'
 include { prepIcmProject_Regular } from '../modules/local/prep_icm_project'
 
 
+include { ligandViz } from '../modules/local/ligand_viz'
+
 
 include { makePlot} from '../modules/local/make_plot'
 
