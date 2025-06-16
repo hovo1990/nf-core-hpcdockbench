@@ -123,15 +123,32 @@ workflow HPCDOCKBENCH {
 
 
 
-    // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
-    method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
-    method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
-    category_name = Channel.value("Classical")
-    icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
-                                                method_name_1, category_name)
+    // -- ! For debugging purposes
+    comps_for_viz = icm_docking_projects_regular.map{ pair ->
+        [pair[2], pair[0], pair[1], pair[3], pair[4], pair[5]]
+    }
+    // comps_for_ginger.view()
 
-    icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
-                                                method_name_2, category_name)
+    tasks_todo_viz_sorted = comps_for_viz
+                                    .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+                                    .flatMap()
+    // tasks_todo_viz_sorted.view()
+
+    // -- * Now collect as csv file
+    tasks_todo_viz_sorted_csv = tasks_todo_viz_sorted.map { row -> row.join(',') }  // Convert tuple to CSV format
+        .collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    tasks_todo_viz_sorted_csv.view()
+
+
+    // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
+    // method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
+    // method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
+    // category_name = Channel.value("Classical")
+    // icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
+    //                                             method_name_1, category_name)
+
+    // icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
+    //                                             method_name_2, category_name)
 
 
 
@@ -143,21 +160,22 @@ workflow HPCDOCKBENCH {
 
     // -- * Run ginger first for all compounds and track project code and stuff
 
-    comps_for_ginger = icm_docking_projects_regular.map{ pair ->
-        [pair[2], pair[5]]
-    }
-    // comps_for_ginger.view()
+    // comps_for_ginger = icm_docking_projects_regular.map{ pair ->
+    //     [pair[2], pair[5]]
+    // }
+    // // comps_for_ginger.view()
 
-    tasks_todo_ging_sorted = comps_for_ginger
-                                    .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
-                                    .flatMap()
+    // tasks_todo_ging_sorted = comps_for_ginger
+    //                                 .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+    //                                 .flatMap()
 
 
-    // tasks_todo_ging_sorted.view()
-    // -- ! Debug purpose
-    // tasks_todo_ging = tasks_todo_ging_sorted.take(20)
+    // // tasks_todo_ging_sorted.view()
+    // // -- ! Debug purpose
+    // // tasks_todo_ging = tasks_todo_ging_sorted.take(20)
 
-     tasks_todo_ging = tasks_todo_ging_sorted
+    // tasks_todo_ging = tasks_todo_ging_sorted
+    // tasks_todo_ging.view()
 
     // -- * Example #template #example
     // -- * https://nextflow-io.github.io/patterns/sort-filepairs-by-samplename/
