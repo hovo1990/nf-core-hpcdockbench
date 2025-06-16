@@ -181,72 +181,76 @@ workflow HPCDOCKBENCH {
     //     .view()
 
 
-    gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
-
-    confGened_compounds  = confGenTask_CPU_separate(tasks_todo_ging)
-    // gingered_compounds.view()
-
-
-    // -- * After that pass it to the RIDGE pipeline where it will be merged
-    method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
-    method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
-    category_name_gpu = Channel.value("Classical")
-    icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
-                                                gingered_compounds,
-                                                method_name_gpu_1,
-                                                category_name_gpu)
-    icm_ridge_posebusted_rborn = ICM_RIDGE_rborn(icm_docking_projects_rborn,
-                                                gingered_compounds,
-                                                method_name_gpu_2,
-                                                category_name_gpu)
-
-
-    // -- * Test using confGen for output
-    method_name_gpu_3 = Channel.value("ICM_RIDGE_GPU_confGen_regular")
-    method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
-
-    icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
-                                                confGened_compounds,
-                                                method_name_gpu_3,
-                                                category_name_gpu)
-    icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
-                                                confGened_compounds,
-                                                method_name_gpu_4,
-                                                category_name_gpu)
-
-
-    // // // -- TODO improve later so it can be toggled on or off
-    // // // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted_eff_5_conf_10_regular
-                                        .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
-                                        .concat(icm_ridge_posebusted_regular )
-                                        .concat( icm_ridge_posebusted_rborn )
-                                        .concat(icm_ridge_posebusted_confGen_regular )
-                                        .concat(icm_ridge_posebusted_confGen_rborn)
 
 
 
 
+    // gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
+
+    // confGened_compounds  = confGenTask_CPU_separate(tasks_todo_ging)
+    // // gingered_compounds.view()
 
 
-    // -- * Enable only when RIDGE works
+    // // -- * After that pass it to the RIDGE pipeline where it will be merged
+    // method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
+    // method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
+    // category_name_gpu = Channel.value("Classical")
+    // icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
+    //                                             gingered_compounds,
+    //                                             method_name_gpu_1,
+    //                                             category_name_gpu)
+    // icm_ridge_posebusted_rborn = ICM_RIDGE_rborn(icm_docking_projects_rborn,
+    //                                             gingered_compounds,
+    //                                             method_name_gpu_2,
+    //                                             category_name_gpu)
+
+
+    // // -- * Test using confGen for output
+    // method_name_gpu_3 = Channel.value("ICM_RIDGE_GPU_confGen_regular")
+    // method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
+
+    // icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
+    //                                             confGened_compounds,
+    //                                             method_name_gpu_3,
+    //                                             category_name_gpu)
+    // icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
+    //                                             confGened_compounds,
+    //                                             method_name_gpu_4,
+    //                                             category_name_gpu)
+
+
+    // // // // -- TODO improve later so it can be toggled on or off
+    // // // // -- * Merge from multiple sources
+    // merged_data =icm_vls_posebusted_eff_5_conf_10_regular
+    //                                     .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
+    //                                     .concat(icm_ridge_posebusted_regular )
+    //                                     .concat( icm_ridge_posebusted_rborn )
+    //                                     .concat(icm_ridge_posebusted_confGen_regular )
+    //                                     .concat(icm_ridge_posebusted_confGen_rborn)
+
+
+
+
+
+
+    // // -- * Enable only when RIDGE works
+    // // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+
+    // // merged_data = icm_ridge_posebusted_regular
+    // // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
+    // // // // // merged_data.view()
+
     // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // // // merged_data_csv.view()
 
-    // merged_data = icm_ridge_posebusted_regular
-    // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
-    // // // // merged_data.view()
+    // // // // // -- * Collect all data
+    // collectedData = collectAllData(merged_data_csv)
 
-    merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    // // merged_data_csv.view()
-
-    // // // // -- * Collect all data
-    collectedData = collectAllData(merged_data_csv)
-
-    // collectedData = collectAllData(icm_ridge_posebusted)
+    // // collectedData = collectAllData(icm_ridge_posebusted)
 
 
-    // // // // -- * SStage 6: make plot test
-    plots = makePlot( collectedData)
+    // // // // // -- * SStage 6: make plot test
+    // plots = makePlot( collectedData)
 
 
     // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
