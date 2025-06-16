@@ -48,30 +48,60 @@ for i in Nof(mainT) then
     read table mol lig_sdf  name="temp_lig"
     read table mol lig_2d_sdf  name="temp_2d_lig"
 
-    add column temp_lig temp_2d_lig.mol  name='lig_2D'
-    add column temp_lig temp_2d_lig.sel  name='lig_sel_name'
+    temp_back = temp_lig
+    temp_2d_back = temp_2d_lig
+    delete temp_2d_back.name
+    delete temp_2d_back.comment
+    delete temp_2d_back.sel
+
+    add temp_back temp_2d_back
 
     # to rotate by common substructure so it will be easier to see what is going on
-    find sstructure result.mol
+    find sstructure temp_back.mol
 
 
 
-    T_common.mol[1]
+    # T_common.mol[1]
     common_mol = T_common.mol[1]
 
 
+    # add column temp_lig temp_2d_lig.mol  name='lig_2D'
+    # add column temp_lig temp_2d_lig.sel  name='lig_sel_name'
+    add column temp_2d_lig  Chemical(Smiles(temp_lig.mol))  name='lig_original'
 
-    select chemical result.mol_query common_mol rotate
-    select chemical result.mol common_mol rotate
-    select chemical result.mol2D  common_mol rotate
+    # -- * now works
+    select chemical temp_2d_lig.mol common_mol rotate
+    select chemical temp_2d_lig.lig_original common_mol rotate
+
+    # -- * Add ligand pdb page
+    toSel = temp_2d_lig.name
+    pdbObj = Split(toSel[1] , '_')[1]
+    ligObj = Split(toSel[1] , '_')[2]
+    add column temp_2d_lig  pdbObj name='PDB_ID'
+    add column temp_2d_lig  ligObj name='LIG_ID'
+    set format temp_2d_lig.PDB_ID "<a href=https://www.rcsb.org/structure/%1>  %1\n</a>" name="" color=''  comment = "Open PDB bank page of the structure"
+    set format temp_2d_lig.LIG_ID "<a href=https://www.rcsb.org/ligand/%1>  %1\n</a>" name="" color=''  comment = "Open PDB bank page of the ligand"
+
+    # -- * Add data from original data table
+    add column temp_2d_lig mainT.Dataset[i] name='Dataset'
+    add column temp_2d_lig mainT.Project[i] name='Project'
+    move temp_2d_lig.lig_original 2
+    move temp_2d_lig.PDB_ID 3
+    move temp_2d_lig.LIG_ID 4
+    move temp_2d_lig.Dataset 5
+    move temp_2d_lig.Project 6
 
 
+    # -- * clean
+    delete toSel pdbObj ligObj common_mol temp_back temp_2d_back  temp_2d_lig temp_lig T_common
 
-
-endofr
+endfor
 
 # -- * Save as sdf file
 write table mol append mainT s_output_file
+
+
+# -- * Also save as icb
 
 
 
