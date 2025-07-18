@@ -4,7 +4,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.container_link = "docker.io/hgrabski/hpcdockbench:latest"
+// params.container_link = "docker.io/hgrabski/hpcdockbench:latest"
+
+
+
 params.benchmark_dataset = "https://zenodo.org/records/8278563/files/posebusters_paper_data.zip"
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'

@@ -63,6 +63,23 @@ nextflow run nf-core/hpcdockbench \
    --outdir <OUTDIR>
 ```
 
+
+## How to run using docker profile
+```bash
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+
+nextflow run main.nf \
+   -resume \
+   -profile docker \
+   --outdir ~/hpc_dock_bench_docker \
+   --icm_home $ICM_HOME
+
+
+```
+
+
+
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
