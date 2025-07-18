@@ -98,179 +98,178 @@ workflow HPCDOCKBENCH {
 
 
 
-    // -- * bigger debug sample
-    // tasks_todo_debug = tasks_todo.take(20)
+    // // -- * bigger debug sample
+    // // tasks_todo_debug = tasks_todo.take(20)
 
-    tasks_todo_debug = tasks_todo
-    // tasks_todo_debug.view()
-
-
-
-
-    // -- * Stage 5: Prepare docking projects
-    // -- TODO for debug purposes test out only 8F4J_PHO
-    // -- * #template
-
-
-    // tasks_todo_debug = tasks_todo_debug.filter { it[1]== '8F4J_PHO' }
-
-
-    // -- ! #change exclude this example
-    // -- * need to sort tasks_todo_debug
-
-    tasks_todo_debug_rborn = tasks_todo_debug.filter { it[1] != '8F4J_PHO' }
-    tasks_todo_debug_regular = tasks_todo_debug
-
-    // tasks_todo_debug.view()
-
-    icm_docking_projects_rborn = prepIcmProject_RBORN(tasks_todo_debug_rborn)
-    icm_docking_projects_regular = prepIcmProject_Regular(tasks_todo_debug_regular)
+    // tasks_todo_debug = tasks_todo
+    // // tasks_todo_debug.view()
 
 
 
-    // -- ! For debugging purposes
-    comps_for_viz = icm_docking_projects_regular.map{ pair ->
-        [pair[2], pair[0], pair[1], pair[3], pair[4], pair[5]]
-    }
-    // comps_for_ginger.view()
 
-    tasks_todo_viz_sorted = comps_for_viz
-                                    .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
-                                    .flatMap()
-    // tasks_todo_viz_sorted.view()
+    // // -- * Stage 5: Prepare docking projects
+    // // -- TODO for debug purposes test out only 8F4J_PHO
+    // // -- * #template
 
-    // -- * Now collect as csv file
-    tasks_todo_viz_sorted_csv = tasks_todo_viz_sorted.map { row -> row.join(',') }  // Convert tuple to CSV format
-        .collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    tasks_todo_viz_sorted_csv.view()
 
-    ligands_to_viz = ligandsViz(tasks_todo_viz_sorted_csv)
+    // // tasks_todo_debug = tasks_todo_debug.filter { it[1]== '8F4J_PHO' }
 
-    // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
-    method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
-    method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
-    category_name = Channel.value("Classical")
-    icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
-                                                method_name_1, category_name)
 
-    icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
-                                                method_name_2, category_name)
+    // // -- ! #change exclude this example
+    // // -- * need to sort tasks_todo_debug
+
+    // tasks_todo_debug_rborn = tasks_todo_debug.filter { it[1] != '8F4J_PHO' }
+    // tasks_todo_debug_regular = tasks_todo_debug
+
+    // // tasks_todo_debug.view()
+
+    // icm_docking_projects_rborn = prepIcmProject_RBORN(tasks_todo_debug_rborn)
+    // icm_docking_projects_regular = prepIcmProject_Regular(tasks_todo_debug_regular)
 
 
 
-    // icm_vls_posebusted.view()
+    // // -- ! For debugging purposes
+    // comps_for_viz = icm_docking_projects_regular.map{ pair ->
+    //     [pair[2], pair[0], pair[1], pair[3], pair[4], pair[5]]
+    // }
+    // // comps_for_ginger.view()
 
-    // // -- * Subworkflow 2: ICM RIDGE RUN
+    // tasks_todo_viz_sorted = comps_for_viz
+    //                                 .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+    //                                 .flatMap()
+    // // tasks_todo_viz_sorted.view()
+
+    // // -- * Now collect as csv file
+    // tasks_todo_viz_sorted_csv = tasks_todo_viz_sorted.map { row -> row.join(',') }  // Convert tuple to CSV format
+    //     .collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // tasks_todo_viz_sorted_csv.view()
+
+    // ligands_to_viz = ligandsViz(tasks_todo_viz_sorted_csv)
+
+    // // -- * Subworkflow 1: ICM VLS RUN, effort: 4.0, conf: 10 rborn enabled
+    // method_name_1 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_regular")
+    // method_name_2 = Channel.value("ICM_VLS_CPU_eff_5_conf_10_rborn")
+    // category_name = Channel.value("Classical")
+    // icm_vls_posebusted_eff_5_conf_10_regular = ICM_VLS_eff_5_conf_10_regular(icm_docking_projects_regular,
+    //                                             method_name_1, category_name)
+
+    // icm_vls_posebusted_eff_5_conf_10_rborn= ICM_VLS_eff_5_conf_10_rborn(icm_docking_projects_rborn,
+    //                                             method_name_2, category_name)
 
 
 
-    // -- * Run ginger first for all compounds and track project code and stuff
-    if (params.useGPU) {
+    // // icm_vls_posebusted.view()
 
-        comps_for_ginger = icm_docking_projects_regular.map{ pair ->
-            [pair[2], pair[5]]
-        }
-        // comps_for_ginger.view()
-
-        tasks_todo_ging_sorted = comps_for_ginger
-                                        .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
-                                        .flatMap()
+    // // // -- * Subworkflow 2: ICM RIDGE RUN
 
 
-        // tasks_todo_ging_sorted.view()
-        // -- ! Debug purpose
-        // tasks_todo_ging = tasks_todo_ging_sorted.take(20)
 
-        tasks_todo_ging = tasks_todo_ging_sorted
-        // tasks_todo_ging.view()
+    // // -- * Run ginger first for all compounds and track project code and stuff
+    // if (params.useGPU) {
+
+    //     comps_for_ginger = icm_docking_projects_regular.map{ pair ->
+    //         [pair[2], pair[5]]
+    //     }
+    //     // comps_for_ginger.view()
+
+    //     tasks_todo_ging_sorted = comps_for_ginger
+    //                                     .toSortedList( { a, b -> a[0] <=> b[0] } ) // <=> is an operator for comparison
+    //                                     .flatMap()
 
 
+    //     // tasks_todo_ging_sorted.view()
+    //     // -- ! Debug purpose
+    //     // tasks_todo_ging = tasks_todo_ging_sorted.take(20)
+
+    //     tasks_todo_ging = tasks_todo_ging_sorted
+    //     // tasks_todo_ging.view()
 
 
 
 
 
-        gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
-
-        confGened_compounds  = confGenTask_CPU_separate(tasks_todo_ging)
-        // gingered_compounds.view()
 
 
-        // -- * After that pass it to the RIDGE pipeline where it will be merged
-        method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
-        method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
-        category_name_gpu = Channel.value("Classical")
-        icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
-                                                    gingered_compounds,
-                                                    method_name_gpu_1,
-                                                    category_name_gpu)
-        icm_ridge_posebusted_rborn = ICM_RIDGE_rborn(icm_docking_projects_rborn,
-                                                    gingered_compounds,
-                                                    method_name_gpu_2,
-                                                    category_name_gpu)
+    //     gingered_compounds = gingerTask_GPU_separate(tasks_todo_ging)
+
+    //     confGened_compounds  = confGenTask_CPU_separate(tasks_todo_ging)
+    //     // gingered_compounds.view()
 
 
-        // -- * Test using confGen for output
-        method_name_gpu_3 = Channel.value("ICM_RIDGE_GPU_confGen_regular")
-        method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
-
-        icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
-                                                    confGened_compounds,
-                                                    method_name_gpu_3,
-                                                    category_name_gpu)
-        icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
-                                                    confGened_compounds,
-                                                    method_name_gpu_4,
-                                                    category_name_gpu)
-    }
-
-    // // // -- TODO improve later so it can be toggled on or off
-    // // // -- * Merge from multiple sources
-    merged_data =icm_vls_posebusted_eff_5_conf_10_regular
-                                        .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
+    //     // -- * After that pass it to the RIDGE pipeline where it will be merged
+    //     method_name_gpu_1 = Channel.value("ICM_RIDGE_GPU_regular")
+    //     method_name_gpu_2 = Channel.value("ICM_RIDGE_GPU_rborn")
+    //     category_name_gpu = Channel.value("Classical")
+    //     icm_ridge_posebusted_regular = ICM_RIDGE_regular(icm_docking_projects_regular,
+    //                                                 gingered_compounds,
+    //                                                 method_name_gpu_1,
+    //                                                 category_name_gpu)
+    //     icm_ridge_posebusted_rborn = ICM_RIDGE_rborn(icm_docking_projects_rborn,
+    //                                                 gingered_compounds,
+    //                                                 method_name_gpu_2,
+    //                                                 category_name_gpu)
 
 
+    //     // -- * Test using confGen for output
+    //     method_name_gpu_3 = Channel.value("ICM_RIDGE_GPU_confGen_regular")
+    //     method_name_gpu_4 = Channel.value("ICM_RIDGE_GPU_confGen_rborn")
 
-    if (params.useGPU) {
-        merged_data = merged_data
-                                        .concat(icm_ridge_posebusted_regular )
-                                        .concat( icm_ridge_posebusted_rborn )
-                                        .concat(icm_ridge_posebusted_confGen_regular )
-                                        .concat(icm_ridge_posebusted_confGen_rborn)
-    }
+    //     icm_ridge_posebusted_confGen_regular = ICM_RIDGE_confGen_regular(icm_docking_projects_regular,
+    //                                                 confGened_compounds,
+    //                                                 method_name_gpu_3,
+    //                                                 category_name_gpu)
+    //     icm_ridge_posebusted_confGen_rborn = ICM_RIDGE_confGen_rborn(icm_docking_projects_rborn,
+    //                                                 confGened_compounds,
+    //                                                 method_name_gpu_4,
+    //                                                 category_name_gpu)
+    // }
+
+    // // // // -- TODO improve later so it can be toggled on or off
+    // // // // -- * Merge from multiple sources
+    // merged_data =icm_vls_posebusted_eff_5_conf_10_regular
+    //                                     .concat(icm_vls_posebusted_eff_5_conf_10_rborn)
 
 
 
+    // if (params.useGPU) {
+    //     merged_data = merged_data
+    //                                     .concat(icm_ridge_posebusted_regular )
+    //                                     .concat( icm_ridge_posebusted_rborn )
+    //                                     .concat(icm_ridge_posebusted_confGen_regular )
+    //                                     .concat(icm_ridge_posebusted_confGen_rborn)
+    // }
 
 
-    // -- * Enable only when RIDGE works
+
+
+
+    // // -- * Enable only when RIDGE works
+    // // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+
+    // // merged_data = icm_ridge_posebusted_regular
+    // // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
+    // // // // // merged_data.view()
+
     // merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
+    // // // merged_data_csv.view()
 
-    // merged_data = icm_ridge_posebusted_regular
-    // // // // merged_data =icm_vls_posebusted.concat(icm_ridge_posebusted).concat(icm_ridge_rtcnn2_posebusted)
-    // // // // merged_data.view()
+    // // // // // -- * Collect all data
+    // collectedData = collectAllData(merged_data_csv)
 
-    merged_data_csv =     merged_data.map { row -> row.join(',') }.collectFile { it.toString() + "\n" }  // Collect as a string with newline
-    // // merged_data_csv.view()
-
-    // // // // -- * Collect all data
-    collectedData = collectAllData(merged_data_csv)
-
-    // collectedData = collectAllData(icm_ridge_posebusted)
+    // // collectedData = collectAllData(icm_ridge_posebusted)
 
 
-    // // // // -- * SStage 6: make plot test
-    plots = makePlot( collectedData)
-
-
-    // -- * Subworkflow 2: think about having a subworkflow for ICM-RIDGE GPU
+    // // // // // -- * SStage 6: make plot test
+    // plots = makePlot( collectedData)
 
 
 
-    // -- * Subworkflow 3: make a plot for astex and posebuster benchmark set
+
+
+
 
     //
-    // Collate and save software versions
+    // -- * Collate and save software versions
     //
     softwareVersionsToYAML(ch_versions)
         .collectFile(
