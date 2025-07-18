@@ -8,7 +8,7 @@
 
 
 
-params.benchmark_dataset = "https://zenodo.org/records/8278563/files/posebusters_paper_data.zip"
+// params.benchmark_dataset = "https://zenodo.org/records/8278563/files/posebusters_paper_data.zip"
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
