@@ -107,7 +107,10 @@ def start_program(input,correction):
 
         logger.debug(directory_lists)
 
-
+        # -- * Perform correction based on ids
+        df_correct = pd.read_csv(correction,header=None)
+        df_correct.columns = ['CODE']
+        logger.debug(df_correct)
 
         # -- * find all subfolders
         for i in directory_lists:
@@ -121,14 +124,19 @@ def start_program(input,correction):
             temp_p = [p.name for p in subfolders_temp ]
             temp_df.insert(1, 'CODE',temp_p)
             file_save = "{}.csv".format(i[0])
+
+            # -- * Keep only for posebusters, that are in the corrected list
+            # logger.debug(i[0])
+            if (i[0] == 'posebusters_benchmark_set'):
+                temp_df =  temp_df[temp_df['CODE'].isin(df_correct['CODE'])]
+
             temp_df.to_csv(file_save,index=False)
             logger.debug(temp_df)
             logger.debug(" ========== ")
 
 
 
-        # -- * Perform correction based on ids
-        exit(1)
+
 
 
 
