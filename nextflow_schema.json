@@ -65,6 +65,24 @@
                     "default": false,
                     "description": "Save intermediate results or not. Default: false",
                     "hidden": false
+                },
+                "container_link": {
+                    "type": "string",
+                    "default": "docker.io/hgrabski/hpc_dock_bench:latest",
+                    "description": "Container image to use",
+                    "errorMessage": "Could not retrieve image from DockerHub to use for the pipeline"
+                },
+                "benchmark_dataset": {
+                    "type": "string",
+                    "default": "https://zenodo.org/records/8278563/files/posebusters_paper_data.zip",
+                    "description": "PoseBusters benchmark dataset link",
+                    "errorMessage": "Could not download the PB dataset"
+                },
+                "benchmark_pb_correction": {
+                    "type": "string",
+                    "default": "https://github.com/maabuu/posebusters/files/14516485/posebusters_pdb_ccd_ids.txt",
+                    "description": "PoseBusters benchmark dataset corrected list",
+                    "errorMessage": "Could not download the PB dataset correction file"
                 }
             }
         },

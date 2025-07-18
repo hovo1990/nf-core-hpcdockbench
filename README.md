@@ -79,6 +79,21 @@ nextflow run main.nf \
 ```
 
 
+## How to run using singularity profile
+```bash
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+export NXF_SINGULARITY_CACHEDIR=
+
+nextflow run main.nf \
+   -resume \
+   -profile singularity \
+   --outdir ~/hpc_dock_bench_singularity \
+   --icm_home $ICM_HOME
+
+
+```
+
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
