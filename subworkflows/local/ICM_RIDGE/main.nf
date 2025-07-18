@@ -57,8 +57,8 @@ workflow ICM_RIDGE{
     // tasks_todo_debug =  icm_docking_projects
     // tasks_todo_debug.view()
 
-    test = Channel.from("Hello")
-    test.view()
+    // test = Channel.from("Hello")
+    // test.view()
     // -- * Subworkflow 1: think about having a subworkflow for ICM-RIDGE GPU
 
     // -- * SStage 1: merge

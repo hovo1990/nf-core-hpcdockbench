@@ -47,7 +47,7 @@ workflow ICM_VLS{
 
     main:
     // -- * Debug purposes
-    test = Channel.from("Hello")
+    // test = Channel.from("Hello")
 
     // -- * Subworkflow 1: think about having a subworkflow for ICM-VLS CPU
 
