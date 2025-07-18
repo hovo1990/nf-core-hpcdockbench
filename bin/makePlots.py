@@ -234,11 +234,11 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
                 total = 85
                 total_PB = 85
             elif dataset == "posebusters_benchmark_set":
-                total = 428
-                total_PB = 428
+                total = 308
+                total_PB = 308
 
     #         # total =  len(unique_projects) # 85 # astex len is 85 len(unique_projects)
-    #         # total_PB =  len(unique_projects) #428 # len(unique_projects)
+    #         # total_PB =  len(unique_projects) #308 # len(unique_projects)
 
             tot_perc = (count_data["count"] / total) * 100
             tot_perc_PB = (value_counts["count"] / total_PB) * 100
