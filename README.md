@@ -116,6 +116,8 @@ nextflow run main.nf \
 ```bash
 export ICM_HOME=/pro/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
+export SINGULARITY_CACHEDIR="/scratch/$USER/hpc_dock_bench"
+
 
 nextflow run main.nf \
    -resume \
