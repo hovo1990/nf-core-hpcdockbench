@@ -110,7 +110,7 @@ nextflow run main.nf \
 
 ```
 
-## How to run on a basic Slurm Cluster
+## How to run on a basic Slurm Cluster with GPU enabled
 
 
 ```bash
@@ -120,6 +120,7 @@ export NFX_OPTS="-Xms=512m -Xmx=4g"
 nextflow run main.nf \
    -resume \
    -profile ablab \
+   --useGPU true \
    --outdir ~/a/hpc_dock_bench_ablab \
    --icm_home $ICM_HOME \
    --mount_options "/home/$USER,/mnt/nfsa/pro:/pro:rw,/mnt/nfsa/data:/data:rw,/mnt/nfsa/users:/users:rw,/mnt/nfsa/lab:/lab:rw,/home/opt/tmp:/home/opt/tmp:rw"

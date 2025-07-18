@@ -205,7 +205,7 @@
                 },
                 "useGPU": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Use NVIDIA GPUs for calculation",
                     "hidden": false
                 },
