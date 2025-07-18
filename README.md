@@ -79,7 +79,7 @@ nextflow run main.nf \
 ```
 
 
-## How to run using singularity profile
+## How to run using Singularity profile
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
@@ -89,6 +89,22 @@ nextflow run main.nf \
    -resume \
    -profile singularity \
    --outdir ~/hpc_dock_bench_singularity \
+   --icm_home $ICM_HOME
+
+
+```
+
+### To Save intermediate results for Singularity/Apptainer run
+```bash
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+export NXF_SINGULARITY_CACHEDIR=
+
+nextflow run main.nf \
+   -resume \
+   -profile singularity \
+   --outdir ~/hpc_dock_bench_singularity \
+   --save_intermediate true \
    --icm_home $ICM_HOME
 
 

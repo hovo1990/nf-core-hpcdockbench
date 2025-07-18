@@ -81,7 +81,7 @@ workflow HPCDOCKBENCH {
     // -- * Stage 3: Separate folders into separate channels
     collectedFile =    unpacked_folders.map { row -> row.join('\n') }  // Convert tuple to CSV format
                 .collectFile { it.toString() + "\n" }
-    // collectedFile.view()
+    collectedFile.view()
 
 
     // -- * Stage 4: Use python to filter astex and posebuster folders
