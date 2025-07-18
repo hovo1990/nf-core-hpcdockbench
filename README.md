@@ -123,6 +123,7 @@ nextflow run main.nf \
    --useGPU true \
    --outdir ~/a/hpc_dock_bench_ablab \
    --icm_home $ICM_HOME \
+   --save_intermediate true \
    --mount_options "/home/$USER,/mnt/nfsa/pro:/pro:rw,/mnt/nfsa/data:/data:rw,/mnt/nfsa/users:/users:rw,/mnt/nfsa/lab:/lab:rw,/home/opt/tmp:/home/opt/tmp:rw"
 
 
