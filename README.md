@@ -83,7 +83,7 @@ nextflow run main.nf \
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
-export NXF_SINGULARITY_CACHEDIR=
+
 
 nextflow run main.nf \
    -resume \
@@ -98,7 +98,7 @@ nextflow run main.nf \
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
-export NXF_SINGULARITY_CACHEDIR=
+
 
 nextflow run main.nf \
    -resume \
@@ -109,6 +109,25 @@ nextflow run main.nf \
 
 
 ```
+
+## How to run on a Slurm Cluster
+
+
+```bash
+export ICM_HOME=/pro/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+
+nextflow run main.nf \
+   -resume \
+   -profile ablab \
+   --outdir ~/a/dockFinalVersion \
+   --icm_home $ICM_HOME \
+   --mount_options "/home/$USER,/mnt/nfsa/pro:/pro:rw,/mnt/nfsa/data:/data:rw,/mnt/nfsa/users:/users:rw,/mnt/nfsa/lab:/lab:rw,/home/opt/tmp:/home/opt/tmp:rw"
+
+
+```
+
+
 
 
 > [!WARNING]
