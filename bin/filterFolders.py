@@ -71,7 +71,14 @@ def validate_csv(ctx, param, value):
     required=True,
     callback=validate_csv,
 )
-def start_program(input):
+@click.option(
+    "--correction",
+    help="posebusters correct pdb ids",
+    type=click.Path(exists=True),
+    required=True,
+
+)
+def start_program(input,correction):
     test = 1
 
     logger.info(" Info>  input {}".format(input))
@@ -121,7 +128,7 @@ def start_program(input):
 
 
         # -- * Perform correction based on ids
-
+        exit(1)
 
 
 

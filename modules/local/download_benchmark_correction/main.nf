@@ -1,11 +1,7 @@
 
-//-- * Example: https://github.com/nf-core/sarek/blob/5cc30494a6b8e7e53be64d308b582190ca7d2585/modules/nf-core/gawk/main.nf#L6
-process filterFolders{
-
+process downloadBenchmarkCorrection{
 
     label 'low_cpu'
-
-
 
 
 
@@ -30,25 +26,30 @@ process filterFolders{
         }
     }
 
+
+
+
+    label "process_low"
+
     if (params.save_intermediate) {
-        publishDir "${params.outdir}/stage3_filtered_folders_csv", mode: 'copy', overwrite: true
+        publishDir "${params.outdir}/stage1_5_download_benchmark_correction", mode: 'copy', overwrite: true
     }
 
 
 
 
-    input:
-        tuple path(input),path(corrected_pb)
+    // input:
+    //     path(input)
 
     output:
-        path("*.csv")
+        path("posebusters_pdb_ccd_ids.txt")
 
 
     script:
-        def i_version=1
-    """
-        python ${projectDir}/bin/filterFolders.py   --input=${input} --correction=${corrected_pb}
-    """
+        def i_version=2
+        """
+            wget ${params.benchmark_pb_correction}
+        """
 }
 
 

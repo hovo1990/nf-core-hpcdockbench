@@ -18,6 +18,8 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_dock
 // -- * Custom modules
 include { downloadBenchmarkDataset} from '../modules/local/download_benchmark_dataset'
 
+include { downloadBenchmarkCorrection } from '../modules/local/download_benchmark_correction'
+
 
 include { unzipDataset} from '../modules/local/unzip_dataset'
 
@@ -74,6 +76,11 @@ workflow HPCDOCKBENCH {
     // -- * Stage 1: Download Posebusters paper dataset https://zenodo.org/records/8278563/files/posebusters_paper_data.zip?download=1
     download_benchmark_dataset =  downloadBenchmarkDataset()
 
+    // -- * Stage 1-5: Download PB correction that removes crystallographic contacts
+    download_benchmark_correction = downloadBenchmarkCorrection()
+    // download_benchmark_correction.view()
+
+
     // -- * Stage 2: Unzip the benchmark dataset
     unpacked_folders = unzipDataset(download_benchmark_dataset)
     // unpacked_folders.view()
@@ -81,11 +88,13 @@ workflow HPCDOCKBENCH {
     // -- * Stage 3: Separate folders into separate channels
     collectedFile =    unpacked_folders.map { row -> row.join('\n') }  // Convert tuple to CSV format
                 .collectFile { it.toString() + "\n" }
-    collectedFile.view()
+    // collectedFile.view()
 
+    // -- * Update with corrected pdb structures
+    to_filter = collectedFile.combine(download_benchmark_correction )
 
     // -- * Stage 4: Use python to filter astex and posebuster folders
-    filtered_files = filterFolders(collectedFile)
+    filtered_files = filterFolders( to_filter )
     // filtered_files.view()
 
     filtered_flatten = filtered_files.flatten()
