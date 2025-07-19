@@ -201,6 +201,7 @@ for i=fr,to,i_step
 
   if (Nof(t)>0) then
     if (Extension(outfile) == ".sdf") then
+      modify t.mol fix charge
       if (!icHydrogen) delete hydrogen t.mol conf
       if (icSDFCompress) then
         write table mol append t outfile
