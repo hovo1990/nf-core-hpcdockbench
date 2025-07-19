@@ -3,6 +3,7 @@
 process ridgeTask_GPU {
 
     tag "GPU-RIDGE-${proj_id}"
+    errorStrategy 'ignore'
 
     //-- ! something wrong with SLURM and dockScan
     //-- * in some cases dockScan can lead to segmentation fault, thus ignore those ones
