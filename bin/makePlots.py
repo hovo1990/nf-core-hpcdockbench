@@ -448,12 +448,12 @@ def make_rank1_plot(df, bar_width=0.2):
             facecolor="white",
             edgecolor=coral_color,
             hatch="////",
-            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$",
+            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$",
         ),
         Patch(
             facecolor=coral_color,
             edgecolor="grey",
-            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
         ),
     ]
 
@@ -685,12 +685,12 @@ def make_custom_rank_plot(df, rank=3):
             facecolor="white",
             edgecolor=coral_color,
             hatch="////",
-            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$",
+            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$",
         ),
         Patch(
             facecolor=coral_color,
             edgecolor="grey",
-            label=r"PoseBusters Benchmark set (428) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
         ),
     ]
 
