@@ -17,8 +17,7 @@ Options:
   gpuid=<i_gpu_id>   : use specific GPU (default -1)
   scoreCutoff=<score>: accept ligs with score better than <score> Default: -25
   clashWeight=<r_value> : clash penalty weight (default 20.)
-  clashScale=<r_value> : clash
-van der Waals scale (default 0.82)
+  clashScale=<r_value> : clash van der Waals scale (default 0.82)
   threads=<i_threadsPerBlock> : GPU threads per block (default 256)
   mnhits=<N>         : maximum number of top scored output hits (default: 20K, 0: disable)
   -s                 : 'smooth' maps
@@ -326,7 +325,8 @@ if (Sum(T.has_conf) == 0) then
   endfor
 endif
 
-
+# main loop
+i_docked = 0
 for ifi=1,Nof(T)
 
   s_opt = ""
@@ -529,17 +529,17 @@ if Nof(T_docked) < 1 then
   quit 1
 endif
 
+
 rename T_docked $s_resTab
 
 if (Extension(s_outputName) == ".icb") then
   set property display $s_resTab
   write binary delete $s_resTab s_outputName l_info=yes
 elseif (Extension(s_outputName) == ".sdf") then
+  modify $s_resTab.mol fix charge  # fact charge -> int charge
   write table mol delete $s_resTab s_outputName l_info=yes
 endif
 
 
 printf " Info> finished docking %d compounds. %d number of hits stored into %s\n", i_dockSize, i_docked, s_outputName
 quit
-
-

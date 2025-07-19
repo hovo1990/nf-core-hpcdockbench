@@ -78,7 +78,7 @@ process ridgeTask_GPU {
         tuple val(method),val(category), val(dataset_name), val(code), val(proj_id), path(protein_struct), path(ligand_struct), path(ligand_struct_2D),  path(proj_files),  path(conformer_file), path("ridge_${proj_id}.sdf")
 
     script:
-        def i_version = 2
+        def i_version = 4
         def r_effort= params.effort ?: 4.0
         def i_confs =  params.conformations ?: 10
         def i_cpus = task.cpus
