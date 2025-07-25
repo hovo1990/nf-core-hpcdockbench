@@ -293,7 +293,9 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
     return filtered_df
 
 
-def make_rank1_plot(df, bar_width=0.2):
+def make_rank1_plot(df, bar_width=0.2,
+                    output = "output_Benchmark.svg",
+                    outputpdf = "output_Benchmark.pdf"):
     # -- * To make text editable
     # Optional: specify a font that Inkscape can recognize (e.g., Arial, Times New Roman)
     plt.rcParams.update(
@@ -526,8 +528,6 @@ def make_rank1_plot(df, bar_width=0.2):
     )  # Optional: Add a main title
     fig.tight_layout(rect=[0, 0.05, 1, 1])
 
-    output = "output_Benchmark.svg"
-    outputpdf = "output_Benchmark.pdf"
 
     plt.savefig(output)
 
@@ -862,6 +862,21 @@ def start_program(input, paperdata):
 
         # # # -- * 1. Load your data
         make_rank1_plot(df)
+
+
+        to_keep_list = ['ICM-VLS(CPU)\nRank: CorrAvScore','ICM-Ridge(GPU)\nRank: CorrAvScore']
+        to_keep_df = df[df['Method'].isin(to_keep_list)]
+
+        if df_paper is not None:
+            to_keep_df = pd.concat([to_keep_df, df_paper])
+            logger.debug(to_keep_df)
+
+        # -- * Make journal plot
+        make_rank1_plot(to_keep_df,
+                    output = "output_Manuscript_Benchmark.svg",
+                    outputpdf = "output_Manuscript_Benchmark.pdf")
+
+
 
         # -- * Calculate top 3 rank
         df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
