@@ -513,11 +513,13 @@ def make_rank1_plot(df, bar_width=0.2,
             hatch="",
             label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$",
         ),
-        Patch(
-            facecolor=pb_valid_color,
-            edgecolor="grey",
-            label=r"PB-Valid",
-        ),
+        # Patch(
+        #     facecolor=pb_valid_color,
+        #     edgecolor="grey",
+        #     linewidth=0.1,  # thinner border
+        #     label=r"PoseBusters-valid poses",
+        # ),
+        Line2D([0], [0], color=pb_valid_color, lw=2, label=r"PoseBusters-valid poses"),
         # Patch(
         #     facecolor=coral_color,
         #     edgecolor="grey",
