@@ -439,7 +439,7 @@ def make_rank1_plot(df, bar_width=0.2,
             continue
         elif v<10:
             val = v + 1.5
-            horizontal_padding=0.01
+            horizontal_padding=0.025
         else:
             val = v-1.5
             horizontal_padding=0
