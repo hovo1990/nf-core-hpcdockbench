@@ -590,7 +590,7 @@ def make_rank1_plot(df, bar_width=0.2,
 
     # --- Final Touches ---
     plt.title(
-        "Performance Benchmark", fontsize=14, pad=20
+        "Docking Performance Benchmark", fontsize=14, pad=20
     )  # Optional: Add a main title
     fig.tight_layout(rect=[0, 0.05, 1, 1])
 
