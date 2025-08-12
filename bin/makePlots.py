@@ -308,8 +308,13 @@ def make_rank1_plot(df, bar_width=0.2,
 
     # --- Configuration ---
 
-    teal_color = "#80CBC4"  # A light teal
-    coral_color = "#FFAB91"  # A light coral
+    # teal_color = "#80CBC4"  # A light teal
+    # coral_color = "#FFAB91"  # A light coral
+
+    teal_color = "#03AD15"  # A light teal
+    coral_color = "#0012FF"  # A light coral
+    pb_valid_color="#FF0000"
+
 
     if df.empty:
         print("Error: The dataframe is empty.")
@@ -385,7 +390,17 @@ def make_rank1_plot(df, bar_width=0.2,
         # Draw a horizontal line on the bar
         ax.hlines(v, i - 1.5* bar_width , i-0.5*bar_width, colors='red', linestyle='-', linewidth=3)
         # Add a text label next to the line
-        # ax.text(bar_positions[i] + 1.5 * bar_width, v, f'  {v}', va='center', color='red')
+        non_pb_val = astex_rmsd_le_2A[i]
+
+        if non_pb_val ==v:
+            continue
+        elif v<10:
+            val = v + 1.5
+        else:
+            val = v-1.5
+
+
+        ax.text(bar_positions[i] - 1.5 * bar_width, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
 
 
     # bars2 = ax.bar(
@@ -415,7 +430,16 @@ def make_rank1_plot(df, bar_width=0.2,
         # Draw a horizontal line on the bar
         ax.hlines(v, i , i+bar_width, colors='red', linestyle='-', linewidth=3)
         # Add a text label next to the line
-        # ax.text(bar_positions[i] + 1.5 * bar_width, v, f'  {v}', va='center', color='red')
+        non_pb_val = posebusters_rmsd_le_2A[i]
+
+        if non_pb_val ==v:
+            continue
+        elif v<10:
+            val = v + 1.5
+        else:
+            val = v-1.5
+
+        ax.text(bar_positions[i], val, f'{v:.1f}%', va='center', color='red',fontsize=9)
 
     # bars4 = ax.bar(
     #     x + 1.5 * bar_width,
@@ -441,14 +465,14 @@ def make_rank1_plot(df, bar_width=0.2,
                             textcoords="offset points",
                             ha="center",
                             va="bottom",
-                            fontsize=6,
+                            fontsize=9,
                         )
 
     # add_bar_labels([bars1, bars2, bars3, bars4])
     add_bar_labels([bars1,  bars3 ])
 
     # --- Axis Labels and Ticks ---
-    ax.set_ylabel("Percentage of predictions", fontsize=12)
+    ax.set_ylabel("Percentage of Correct Predictions", fontsize=12)
     ax.set_xticks(x)
     ax.set_xticklabels(
         methods, rotation=0, ha="center", fontsize=10
@@ -470,43 +494,48 @@ def make_rank1_plot(df, bar_width=0.2,
         Patch(
             facecolor="white",
             edgecolor=teal_color,
-            hatch="////",
+            hatch="",
             label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$",
         ),
-        Patch(
-            facecolor=teal_color,
-            edgecolor="grey",
-            label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$ & PB-Valid",
-        ),
+        # Patch(
+        #     facecolor=teal_color,
+        #     edgecolor="grey",
+        #     label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+        # ),
         Patch(
             facecolor="white",
             edgecolor=coral_color,
-            hatch="////",
+            hatch="",
             label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$",
         ),
         Patch(
-            facecolor=coral_color,
+            facecolor=pb_valid_color,
             edgecolor="grey",
-            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+            label=r"PB-Valid",
         ),
+        # Patch(
+        #     facecolor=coral_color,
+        #     edgecolor="grey",
+        #     label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+        # ),
     ]
 
     ordered_handles = [
         legend_handles_list[0],
         legend_handles_list[1],  # RMSD <= 2A
         legend_handles_list[2],
-        legend_handles_list[3],  # RMSD <= 2A & PB-Valid
+        # legend_handles_list[3],  # RMSD <= 2A & PB-Valid
     ]
 
     leg = ax.legend(
         handles=ordered_handles,
-        ncol=2,
+        ncol=1,
         loc="upper right",
         handlelength=2,
         handletextpad=0.8,
         labelspacing=0.7,
         columnspacing=2.5,
-        fontsize=9,
+        fontsize=14,
         frameon=True,
         edgecolor="lightgrey",
     )
