@@ -322,9 +322,6 @@ def make_rank1_plot(df, bar_width=0.2,
     posebusters_rmsd_le_2A = df["PoseBusters_RMSD_le_2A"].tolist()
     posebusters_rmsd_le_2A_pb_valid = df["PoseBusters_RMSD_le_2A_PB_Valid"].tolist()
     categories_series = df["Category"]
-    # logger.debug( astex_rmsd_le_2A )
-
-    # exit()
 
     # Determine category definitions (start and end indices for each category)
     # Assumes methods are grouped by category in the CSV
@@ -360,71 +357,43 @@ def make_rank1_plot(df, bar_width=0.2,
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     # --- Plotting Bars ---
-    # -- * Astex bars
+    # Astex bars
     bars1 = ax.bar(
-        x - 1 * bar_width,
+        x - 1.5 * bar_width,
         astex_rmsd_le_2A,
         bar_width,
         label="Astex RMSD $\le 2\mathring{A}$",
         color="white",  # White box
-        hatch="",  # Hatch pattern
+        hatch="////",  # Hatch pattern
         edgecolor=teal_color,  # Teal-colored hatch lines
-        linewidth=2
+    )
+    bars2 = ax.bar(
+        x - 0.5 * bar_width,
+        astex_rmsd_le_2A_pb_valid,
+        bar_width,
+        label="Astex RMSD $\le 2\mathring{A}$ & PB-Valid",
+        color=teal_color,
+        edgecolor="grey",
     )
 
-    bar_positions= x
-    width = bar_width
-
-    test = x - 1.5 * bar_width
-    logger.debug(f"test is {test}")
-    logger.debug(f"bar_positions is {bar_positions}")
-
-    # Plot a horizontal line for each value
-    for i, v in enumerate(astex_rmsd_le_2A_pb_valid):
-        logger.debug(f"{i} {v} {bar_width} ")
-        # Draw a horizontal line on the bar
-        ax.hlines(v, i - 1.5* bar_width , i-0.5*bar_width, colors='red', linestyle='-', linewidth=3)
-        # Add a text label next to the line
-        # ax.text(bar_positions[i] + 1.5 * bar_width, v, f'  {v}', va='center', color='red')
-
-
-    # bars2 = ax.bar(
-    #     x - 0.5 * bar_width,
-    #     astex_rmsd_le_2A_pb_valid,
-    #     bar_width,
-    #     label="Astex RMSD $\le 2\mathring{A}$ & PB-Valid",
-    #     color=teal_color,
-    #     edgecolor="grey",
-    # )
-
-    # -- * PoseBusters bars
+    # PoseBusters bars
     bars3 = ax.bar(
         x + 0.5 * bar_width,
         posebusters_rmsd_le_2A,
         bar_width,
         label="PoseBusters RMSD $\le 2\mathring{A}$",
         color="white",  # White box
-        hatch="",  # Hatch pattern
+        hatch="////",  # Hatch pattern
         edgecolor=coral_color,  # Teal-colored hatch lines
-        linewidth=2
     )
-
-    # Plot a horizontal line for each value
-    for i, v in enumerate(posebusters_rmsd_le_2A_pb_valid):
-        logger.debug(f"{i} {v} {bar_width} ")
-        # Draw a horizontal line on the bar
-        ax.hlines(v, i , i+bar_width, colors='red', linestyle='-', linewidth=3)
-        # Add a text label next to the line
-        # ax.text(bar_positions[i] + 1.5 * bar_width, v, f'  {v}', va='center', color='red')
-
-    # bars4 = ax.bar(
-    #     x + 1.5 * bar_width,
-    #     posebusters_rmsd_le_2A_pb_valid,
-    #     bar_width,
-    #     label="PoseBusters RMSD $\le 2\mathring{A}$ & PB-Valid",
-    #     color=coral_color,
-    #     edgecolor="grey",
-    # )
+    bars4 = ax.bar(
+        x + 1.5 * bar_width,
+        posebusters_rmsd_le_2A_pb_valid,
+        bar_width,
+        label="PoseBusters RMSD $\le 2\mathring{A}$ & PB-Valid",
+        color=coral_color,
+        edgecolor="grey",
+    )
 
     # --- Adding Percentage Labels on Bars ---
     def add_bar_labels(bars_list):
@@ -444,8 +413,7 @@ def make_rank1_plot(df, bar_width=0.2,
                             fontsize=6,
                         )
 
-    # add_bar_labels([bars1, bars2, bars3, bars4])
-    add_bar_labels([bars1,  bars3 ])
+    add_bar_labels([bars1, bars2, bars3, bars4])
 
     # --- Axis Labels and Ticks ---
     ax.set_ylabel("Percentage of predictions", fontsize=12)
