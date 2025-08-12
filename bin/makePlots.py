@@ -396,11 +396,14 @@ def make_rank1_plot(df, bar_width=0.2,
             continue
         elif v<10:
             val = v + 1.5
+            horizontal_padding=1.4
         else:
             val = v-1.5
+            horizontal_padding=1.5
 
 
-        ax.text(bar_positions[i] - 1.5 * bar_width, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
+
+        ax.text(bar_positions[i] - horizontal_padding * bar_width, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
 
 
     # bars2 = ax.bar(
@@ -436,10 +439,12 @@ def make_rank1_plot(df, bar_width=0.2,
             continue
         elif v<10:
             val = v + 1.5
+            horizontal_padding=0.01
         else:
             val = v-1.5
+            horizontal_padding=0
 
-        ax.text(bar_positions[i], val, f'{v:.1f}%', va='center', color='red',fontsize=9)
+        ax.text(bar_positions[i]+ horizontal_padding, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
 
     # bars4 = ax.bar(
     #     x + 1.5 * bar_width,
