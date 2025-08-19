@@ -1,6 +1,6 @@
 repository_type: pipeline
 
-nf_core_version: 3.2.1
+nf_core_version: 3.2.2
 
 lint:
   files_unchanged:
@@ -8,14 +8,14 @@ lint:
     - assets/sendmail_template.txt
     - .github/CONTRIBUTING.md
     - assets/sendmail_template.txt
-  multiqc_config: false
-  files_exist:
-    - conf/igenomes.config
-    - conf/igenomes_ignored.config
-    - assets/multiqc_config.yml
-    - conf/igenomes.config
-    - conf/igenomes_ignored.config
-    - assets/multiqc_config.yml
+  # multiqc_config: false
+  # files_exist:
+  #   - conf/igenomes.config
+  #   - conf/igenomes_ignored.config
+  #   - assets/multiqc_config.yml
+  #   - conf/igenomes.config
+  #   - conf/igenomes_ignored.config
+  #   - assets/multiqc_config.yml
 
 template:
   org: nf-core
