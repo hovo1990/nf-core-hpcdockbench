@@ -8,6 +8,7 @@ lint:
     - assets/sendmail_template.txt
     - .github/CONTRIBUTING.md
     - assets/sendmail_template.txt
+
   # multiqc_config: false
   # files_exist:
   #   - conf/igenomes.config
