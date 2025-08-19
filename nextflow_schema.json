@@ -224,7 +224,7 @@
                 "effort": {
                     "type": "number",
                     "description": "ICM effort to perform docking. Default: 4.0",
-                    "default": 4.0,
+                    "default": 5.0,
                     "hidden": false
                 },
                 "conformations": {
