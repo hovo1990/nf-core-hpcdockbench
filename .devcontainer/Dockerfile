@@ -2,15 +2,15 @@
 # Runtime image is smaller than the devel/build image
 FROM ubuntu:22.04
 LABEL authors="Hovakim Grabski" \
-        description="Docker image containing all software requirements for the nf-core/quickflow pipeline development"
+        description="Docker image containing all software requirements for the nf-core/hpc_dock_benchflow pipeline development"
 
 
 # Set up environment variables
 ENV MAMBA_ROOT_PREFIX="/opt/micromamba/"
 ENV MAMBA="${MAMBA_ROOT_PREFIX}/bin/micromamba"
-ENV ENV_NAME="quick"
+ENV ENV_NAME="hpc_dock_bench"
 ENV LC_ALL="C"
-ENV PATH="/opt/micromamba/envs/quick/bin:${PATH}"
+ENV PATH="/opt/micromamba/envs/hpc_dock_bench/bin:${PATH}"
 ENV LC_ALL="C"
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -48,10 +48,10 @@ RUN updatedb
 # RUN /bin/bash -c "source /opt/micromamba/etc/profile.d/mamba.sh && micromamba activate ${ENV_NAME}"
 # RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
 
-# Manually run steps from quick.rc
-# ENV QUICK_INSTALL /src/QUICK/install
-# ENV QUICK_BASIS $QUICK_INSTALL/basis
-# ENV PATH $PATH:$QUICK_INSTALL/bin
+# Manually run steps from hpc_dock_bench.rc
+# ENV hpc_dock_bench_INSTALL /src/hpc_dock_bench/install
+# ENV hpc_dock_bench_BASIS $hpc_dock_bench_INSTALL/basis
+# ENV PATH $PATH:$hpc_dock_bench_INSTALL/bin
 
 # -- * Create a new user
 RUN useradd -ms /bin/bash vscode
@@ -106,9 +106,9 @@ RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core
 
 RUN  $MAMBA shell init --shell bash --root-prefix=$MAMBA_ROOT_PREFIX
 
-ENV ENV_NAME="quick"
+ENV ENV_NAME="hpc_dock_bench"
 ENV LC_ALL="C"
-ENV PATH="/opt/micromamba/envs/quick/bin:${PATH}"
+ENV PATH="/opt/micromamba/envs/hpc_dock_bench/bin:${PATH}"
 ENV LC_ALL="C"
 
 
@@ -117,10 +117,10 @@ RUN echo "micromamba activate ${ENV_NAME}" >> ~/.bashrc
 
 # /opt/micromamba//bin/micromamba
 
-# # Copy the compiled quick runtimes, leaving behind extra build dependencies & reducing image size
+# # Copy the compiled hpc_dock_bench runtimes, leaving behind extra build dependencies & reducing image size
 # COPY --from=base-mpi-cuda-12.0.1 /src /src
 
-# WORKDIR /src/QUICK/install
+# WORKDIR /src/hpc_dock_bench/install
 
 
 # test nfcore lint  nf-core pipelines lint
