@@ -602,7 +602,7 @@ def make_rank1_plot(df, bar_width=0.2,
     plt.savefig(outputpdf)
 
 
-def make_custom_rank_plot(df, rank=3):
+def make_custom_rank_plot(df, rank=3, bar_width=0.2):
     # -- * To make text editable
     # Optional: specify a font that Inkscape can recognize (e.g., Arial, Times New Roman)
     plt.rcParams.update(
@@ -615,8 +615,9 @@ def make_custom_rank_plot(df, rank=3):
 
     # --- Configuration ---
 
-    teal_color = "#80CBC4"  # A light teal
-    coral_color = "#FFAB91"  # A light coral
+    teal_color = "#03AD15"  # A light teal
+    coral_color = "#0012FF"  # A light coral
+    pb_valid_color="#FF0000"
 
     if df.empty:
         print("Error: The dataframe is empty.")
@@ -652,51 +653,107 @@ def make_custom_rank_plot(df, rank=3):
 
     logger.debug(" Debug> category def is {}".format(category_definitions))
 
-    # --- Setup for Plotting (derived from loaded data) ---
+# --- Setup for Plotting (derived from loaded data) ---
     N = len(methods)
     x = np.arange(N)  # the label locations
-    bar_width = 0.15  # the width of the bars
 
-    fig, ax = plt.subplots(figsize=(40, 8))  # Adjust figure size as needed
+
+    # Dynamic figsize calculation
+    scale_factor = 10  # Tweak this if needed
+    fig_width = max(N * bar_width * scale_factor, 20)  # Minimum width of 6 inches
+    fig_height = 10
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     # --- Plotting Bars ---
-    # Astex bars
+    # -- * Astex bars
     bars1 = ax.bar(
-        x - 1.5 * bar_width,
+        x - 1 * bar_width,
         astex_rmsd_le_2A,
         bar_width,
         label="Astex RMSD $\le 2\mathring{A}$",
         color="white",  # White box
-        hatch="////",  # Hatch pattern
+        hatch="",  # Hatch pattern
         edgecolor=teal_color,  # Teal-colored hatch lines
-    )
-    bars2 = ax.bar(
-        x - 0.5 * bar_width,
-        astex_rmsd_le_2A_pb_valid,
-        bar_width,
-        label="Astex RMSD $\le 2\mathring{A}$ & PB-Valid",
-        color=teal_color,
-        edgecolor="grey",
+        linewidth=2
     )
 
-    # PoseBusters bars
+    bar_positions= x
+    width = bar_width
+
+    test = x - 1.5 * bar_width
+    logger.debug(f"test is {test}")
+    logger.debug(f"bar_positions is {bar_positions}")
+
+    # Plot a horizontal line for each value
+    for i, v in enumerate(astex_rmsd_le_2A_pb_valid):
+        logger.debug(f"{i} {v} {bar_width} ")
+        # Draw a horizontal line on the bar
+        ax.hlines(v, i - 1.5* bar_width , i-0.5*bar_width, colors='red', linestyle='-', linewidth=3)
+        # Add a text label next to the line
+        non_pb_val = astex_rmsd_le_2A[i]
+
+        if non_pb_val ==v:
+            continue
+        elif v<10:
+            val = v + 1.5
+            horizontal_padding=1.4
+        else:
+            val = v-1.5
+            horizontal_padding=1.5
+
+
+
+        ax.text(bar_positions[i] - horizontal_padding * bar_width, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
+
+
+    # bars2 = ax.bar(
+    #     x - 0.5 * bar_width,
+    #     astex_rmsd_le_2A_pb_valid,
+    #     bar_width,
+    #     label="Astex RMSD $\le 2\mathring{A}$ & PB-Valid",
+    #     color=teal_color,
+    #     edgecolor="grey",
+    # )
+
+    # -- * PoseBusters bars
     bars3 = ax.bar(
         x + 0.5 * bar_width,
         posebusters_rmsd_le_2A,
         bar_width,
         label="PoseBusters RMSD $\le 2\mathring{A}$",
         color="white",  # White box
-        hatch="////",  # Hatch pattern
+        hatch="",  # Hatch pattern
         edgecolor=coral_color,  # Teal-colored hatch lines
+        linewidth=2
     )
-    bars4 = ax.bar(
-        x + 1.5 * bar_width,
-        posebusters_rmsd_le_2A_pb_valid,
-        bar_width,
-        label="PoseBusters RMSD $\le 2\mathring{A}$ & PB-Valid",
-        color=coral_color,
-        edgecolor="grey",
-    )
+
+    # Plot a horizontal line for each value
+    for i, v in enumerate(posebusters_rmsd_le_2A_pb_valid):
+        logger.debug(f"{i} {v} {bar_width} ")
+        # Draw a horizontal line on the bar
+        ax.hlines(v, i , i+bar_width, colors='red', linestyle='-', linewidth=3)
+        # Add a text label next to the line
+        non_pb_val = posebusters_rmsd_le_2A[i]
+
+        if non_pb_val ==v:
+            continue
+        elif v<10:
+            val = v + 1.5
+            horizontal_padding=0.025
+        else:
+            val = v-1.5
+            horizontal_padding=0
+
+        ax.text(bar_positions[i]+ horizontal_padding, val, f'{v:.1f}%', va='center', color='red',fontsize=9)
+
+    # bars4 = ax.bar(
+    #     x + 1.5 * bar_width,
+    #     posebusters_rmsd_le_2A_pb_valid,
+    #     bar_width,
+    #     label="PoseBusters RMSD $\le 2\mathring{A}$ & PB-Valid",
+    #     color=coral_color,
+    #     edgecolor="grey",
+    # )
 
     # --- Adding Percentage Labels on Bars ---
     def add_bar_labels(bars_list):
@@ -713,13 +770,14 @@ def make_custom_rank_plot(df, rank=3):
                             textcoords="offset points",
                             ha="center",
                             va="bottom",
-                            fontsize=6,
+                            fontsize=9,
                         )
 
-    add_bar_labels([bars1, bars2, bars3, bars4])
+    # add_bar_labels([bars1, bars2, bars3, bars4])
+    add_bar_labels([bars1,  bars3 ])
 
     # --- Axis Labels and Ticks ---
-    ax.set_ylabel("Percentage of predictions", fontsize=12)
+    ax.set_ylabel("Percentage of Correct Predictions", fontsize=12)
     ax.set_xticks(x)
     ax.set_xticklabels(
         methods, rotation=0, ha="center", fontsize=10
@@ -741,44 +799,50 @@ def make_custom_rank_plot(df, rank=3):
         Patch(
             facecolor="white",
             edgecolor=teal_color,
-            hatch="////",
+            hatch="",
             label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$",
         ),
-        Patch(
-            facecolor=teal_color,
-            edgecolor="grey",
-            label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$ & PB-Valid",
-        ),
+        # Patch(
+        #     facecolor=teal_color,
+        #     edgecolor="grey",
+        #     label=r"Astex Diverse set (85) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+        # ),
         Patch(
             facecolor="white",
             edgecolor=coral_color,
-            hatch="////",
+            hatch="",
             label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$",
         ),
-        Patch(
-            facecolor=coral_color,
-            edgecolor="grey",
-            label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
-        ),
+        # Patch(
+        #     facecolor=pb_valid_color,
+        #     edgecolor="grey",
+        #     linewidth=0.1,  # thinner border
+        #     label=r"PoseBusters-valid poses",
+        # ),
+        Line2D([0], [0], color=pb_valid_color, lw=2, label=r"PoseBusters-valid poses"),
+        # Patch(
+        #     facecolor=coral_color,
+        #     edgecolor="grey",
+        #     label=r"PoseBusters Benchmark set (308) RMSD $\leq 2\mathring{A}$ & PB-Valid",
+        # ),
     ]
 
     ordered_handles = [
         legend_handles_list[0],
         legend_handles_list[1],  # RMSD <= 2A
         legend_handles_list[2],
-        legend_handles_list[3],  # RMSD <= 2A & PB-Valid
+        # legend_handles_list[3],  # RMSD <= 2A & PB-Valid
     ]
 
     leg = ax.legend(
         handles=ordered_handles,
-        ncol=2,
-        loc="upper left",
-        # bbox_to_anchor=(1.01, 1),
+        ncol=1,
+        loc="upper right",
         handlelength=2,
         handletextpad=0.8,
         labelspacing=0.7,
         columnspacing=2.5,
-        fontsize=9,
+        fontsize=14,
         frameon=True,
         edgecolor="lightgrey",
     )
@@ -890,7 +954,7 @@ def start_program(input, paperdata):
         # logger.debug(df)
         # exit(1)
 
-        # -- * for debug > /mnt/nfsa/users/hovakim/a/Projects/hpc_dock_bench/work/6c/91679886b7a9765a44ca1f43746aca
+        # -- * for debug > /home/hovakim/a/Projects/hpc_dock_bench/work/a8/578abd6ef423b4915f4134af30b0c0
 
         df_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_Score')
         df_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNNscore')
@@ -946,29 +1010,29 @@ def start_program(input, paperdata):
 
 
 
-        # # -- * Calculate top 3 rank
-        # df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
-        # df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank_3_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNN_Ridge')
-        # df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage,df_rank_3_ridgeRTCNN ])
-        # make_custom_rank_plot(df_rank3, rank=3)
+        # -- * Calculate top 3 rank
+        df_rank_3_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_Score')
+        df_rank_3_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_3_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_3_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=3 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank3 = pd.concat([df_rank_3_Score, df_rank_3_RTCNNscore, df_rank_3_corrScoreAverage,df_rank_3_ridgeRTCNN ])
+        make_custom_rank_plot(df_rank3, rank=3)
 
-        # # -- * Calculate top 6 rank
-        # df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
-        # df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank_6_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNN_Ridge')
-        # df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage, df_rank_6_ridgeRTCNN])
-        # make_custom_rank_plot(df_rank6, rank=6)
+        # -- * Calculate top 6 rank
+        df_rank_6_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_Score')
+        df_rank_6_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_6_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_6_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=6 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank6 = pd.concat([df_rank_6_Score, df_rank_6_RTCNNscore, df_rank_6_corrScoreAverage, df_rank_6_ridgeRTCNN])
+        make_custom_rank_plot(df_rank6, rank=6)
 
-        # # -- * Calculate top 10 rank
-        # df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
-        # df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
-        # df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
-        # df_rank_10_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNN_Ridge')
-        # df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage,df_rank_10_ridgeRTCNN])
-        # make_custom_rank_plot(df_rank10, rank=10)
+        # -- * Calculate top 10 rank
+        df_rank_10_Score = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_Score')
+        df_rank_10_RTCNNscore = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNNscore')
+        df_rank_10_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_corrScoreAverage')
+        df_rank_10_ridgeRTCNN = posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=10 ,rank_type = 'RANK_RTCNN_Ridge')
+        df_rank10 = pd.concat([df_rank_10_Score, df_rank_10_RTCNNscore, df_rank_10_corrScoreAverage,df_rank_10_ridgeRTCNN])
+        make_custom_rank_plot(df_rank10, rank=10)
 
         logger.info(" Info> There were no errors in making a plot")
         exit(0)
