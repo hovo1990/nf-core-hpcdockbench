@@ -26,8 +26,8 @@ template:
   version: 1.0.0dev
   force: true
   outdir: .
-  skip_features:
-    - igenomes
-    - multiqc
-    - fastqc
+  # skip_features:
+  #   - igenomes
+  #   - multiqc
+  #   - fastqc
   is_nfcore: true
