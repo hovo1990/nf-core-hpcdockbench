@@ -83,6 +83,12 @@
                     "default": "https://github.com/maabuu/posebusters/files/14516485/posebusters_pdb_ccd_ids.txt",
                     "description": "PoseBusters benchmark dataset corrected list",
                     "errorMessage": "Could not download the PB dataset correction file"
+                },
+                "input": {
+                    "type": "string",
+                    "default": null,
+                    "description": "nf-core lint requires but for this pipeline there is no need",
+                    "errorMessage": "dummy value"
                 }
             }
         },
