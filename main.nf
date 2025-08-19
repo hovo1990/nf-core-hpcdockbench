@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/dockbench
+    nf-core/hpcdockbench
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/dockbench
-    Website: https://nf-co.re/dockbench
-    Slack  : https://nfcore.slack.com/channels/dockbench
+    Github : https://github.com/nf-core/hpcdockbench
+    Website: https://nf-co.re/hpcdockbench
+    Slack  : https://nfcore.slack.com/channels/hpcdockbench
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,9 +15,22 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { DOCKBENCH  } from './workflows/dockbench'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_dockbench_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_dockbench_pipeline'
+include { HPCDOCKBENCH  } from './workflows/hpcdockbench'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_hpcdockbench_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_hpcdockbench_pipeline'
+include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_hpcdockbench_pipeline'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GENOME PARAMETER VALUES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// TODO nf-core: Remove this line if you don't need a FASTA file
+//   This is an example of how to use getGenomeAttribute() to fetch parameters
+//   from igenomes.config using `--genome`
+params.fasta = getGenomeAttribute('fasta')
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -27,7 +40,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_dock
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFCORE_DOCKBENCH {
+workflow NFCORE_HPCDOCKBENCH {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -37,9 +50,11 @@ workflow NFCORE_DOCKBENCH {
     //
     // WORKFLOW: Run pipeline
     //
-    DOCKBENCH (
+    HPCDOCKBENCH (
         samplesheet
     )
+    emit:
+    multiqc_report = HPCDOCKBENCH.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +80,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_DOCKBENCH (
+    NFCORE_HPCDOCKBENCH (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
@@ -78,6 +93,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
+        NFCORE_HPCDOCKBENCH.out.multiqc_report
     )
 }
 
