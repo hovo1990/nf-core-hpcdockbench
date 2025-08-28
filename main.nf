@@ -87,11 +87,11 @@ workflow {
     // println params.container_link
 
     // def container_to_use = pickContainer(glibc)
-    println params.container_link
+    // println params.container_link
 
-    // NFCORE_HPCDOCKBENCH (
-    //     // PIPELINE_INITIALISATION.out.samplesheet
-    // )
+    NFCORE_HPCDOCKBENCH (
+        // PIPELINE_INITIALISATION.out.samplesheet
+    )
 
 
     // SUBWORKFLOW: Run completion tasks
