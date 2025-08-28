@@ -1,6 +1,6 @@
 # Runtime image is smaller than the devel/build image
-# FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04 AS mpi-cuda-12.0.1
 FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
 LABEL authors="Hovakim Grabski" \
         description="Docker image containing all software requirements for the nf-core/hpc_dock_bench pipeline GPU ICM-RIDGE"
 
