@@ -53,7 +53,8 @@ def greet(name) {
 
 
 
-
+// -- * Why create this function?
+// -- * https://apptainer.org/docs/user/main/gpu.html
 // Function to choose the "highest compatible" container
 String pickContainer(String glibc) {
     def containerCandidates = [
