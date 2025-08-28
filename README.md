@@ -84,7 +84,7 @@ nextflow run main.nf \
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
-
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 
 nextflow run main.nf \
    -resume \
