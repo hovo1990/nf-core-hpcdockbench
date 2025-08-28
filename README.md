@@ -66,6 +66,7 @@ nextflow run nf-core/hpcdockbench \
 
 ## How to run using docker profile
 ```bash
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
 

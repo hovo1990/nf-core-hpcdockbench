@@ -47,6 +47,30 @@ workflow NFCORE_HPCDOCKBENCH {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+def greet(name) {
+    return "Hello, ${name}!"
+}
+
+
+
+
+// Function to choose the "highest compatible" container
+String pickContainer(String glibc) {
+    def containerCandidates = [
+            '2.27': 'docker.io/hgrabski/hpc_dock_bench:gpu-18.04', // glibc 2.27
+            '2.31': 'docker.io/hgrabski/hpc_dock_bench:gpu-20.04', // glibc 2.31
+            '2.35': 'docker.io/hgrabski/hpc_dock_bench:gpu-22.04', // glibc 2.35
+            '2.39': 'docker.io/hgrabski/hpc_dock_bench:gpu-24.04'  // glibc 2.39
+        ]
+
+
+    def v = new BigDecimal(glibc)
+    if (v >= 2.39) return containerCandidates['2.39']
+    if (v >= 2.35) return containerCandidates['2.35']
+    if (v >= 2.31) return containerCandidates['2.31']
+    return containerCandidates['2.27']  // fallback for older hosts
+}
+
 workflow {
 
     main:
@@ -64,10 +88,26 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_HPCDOCKBENCH (
-        // PIPELINE_INITIALISATION.out.samplesheet
-    )
-    //
+    // -- * Custom parameter definition
+    // Detect host glibc version from wrapper (fallback = 2.31)
+    def glibc = System.getenv('NXF_GLIBC_VERSION') ?: '2.31'
+
+
+    // println containerCandidates
+
+    // -- * debug
+    // log.info greet('Nextflow')
+
+
+
+    container_link = pickContainer(glibc)
+    println container_link
+
+    // NFCORE_HPCDOCKBENCH (
+    //     // PIPELINE_INITIALISATION.out.samplesheet
+    // )
+
+
     // SUBWORKFLOW: Run completion tasks
     //
     PIPELINE_COMPLETION (
