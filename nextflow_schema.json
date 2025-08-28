@@ -66,6 +66,12 @@
                     "description": "Save intermediate results or not. Default: false",
                     "hidden": false
                 },
+                "smart_container": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Determine automatically which container to use. Default: true",
+                    "hidden": false
+                },
                 "container_link": {
                     "type": "string",
                     "default": "docker.io/hgrabski/hpc_dock_bench:latest",
