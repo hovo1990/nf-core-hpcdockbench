@@ -97,7 +97,6 @@ nextflow run main.nf \
    --outdir ~/hpc_dock_bench_singularity \
    --icm_home $ICM_HOME
 
-
 ```
 
 
@@ -117,20 +116,20 @@ nextflow run main.nf \
 
 ```
 
-## How to run on a basic Slurm Cluster with GPU enabled
+## How to run on a basic Slurm Cluster with GPU enabled RIDGE
 
 
 ```bash
 export ICM_HOME=/pro/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
 export SINGULARITY_CACHEDIR="/scratch/$USER/hpc_dock_bench"
-
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 
 nextflow run main.nf \
    -resume \
    -profile ablab \
    --useGPU true \
-   --outdir ~/a/hpc_dock_bench_ablab \
+   --outdir ~/a/hpc_dock_bench_slurm_singularity \
    --icm_home $ICM_HOME \
    --save_intermediate true \
    --mount_options "/home/$USER,/mnt/nfsa/pro:/pro:rw,/mnt/nfsa/data:/data:rw,/mnt/nfsa/users:/users:rw,/mnt/nfsa/lab:/lab:rw,/home/opt/tmp:/home/opt/tmp:rw"
