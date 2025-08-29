@@ -98,18 +98,7 @@ nextflow run main.nf \
 
 ```
 
-## Example on how to run on different environments
 
-### Local machine
-
-[Local machine](docs/Local/README.md)
-
-
-### NAIRR Pilot resources
-
-[SDSC Expanse](docs/HPC/Expanse/README.md)
-
-[JetStream2](docs/HPC/JetStream2/README.md)
 
 #### How to run on a basic Slurm Cluster with GPU enabled RIDGE
 
@@ -165,6 +154,20 @@ nextflow run main.nf \
 
 ```
 
+## Example on how to run on different environments
+
+### Local machine
+
+[Local machine](docs/Local/README.md)
+
+
+### HPC resources
+
+[SDSC Expanse](docs/HPC/Expanse/README.md)
+
+[Aznavour Supercomputer](docs/HPC/Aznavour/README.md)
+
+[JetStream2](docs/HPC/JetStream2/README.md)
 
 
 

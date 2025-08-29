@@ -40,15 +40,19 @@ trap _term TERM
 
 # Run the pipeline
 
-
+export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
-/home/$USER/pro/nextflow -C ~/pro/hpc/pipeline/cpu_dockScan_slurm/nextflow.config  \
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
+/home/$USER/pro/nextflow  \
     run -profile aznavour \
-    ~/pro/hpc/pipeline/cpu_dockScan_slurm/cpu_dockScan_slurm.nf \
-    -params-file ~/pip/11_03_2024_p_full_dock/config.yml \
+    $HPCDOCKBENCH/main.nf \
     -resume \
-    -with-singularity true  \
-    -with-trace -N hovakim.grabski@gmail.com  & pid=$!
+   --outdir ~/a/hpc_dock_bench_slurm_singularity \
+   --icm_home $ICM_HOME \
+   --save_intermediate true \
+   --mount_options "/home/$USER" \
+    -N hovakim.grabski@gmail.com  \
+     & pid=$!
 
 
 # Wait for the pipeline to finish
