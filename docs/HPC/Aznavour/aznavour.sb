@@ -1,0 +1,59 @@
+#!/bin/bash
+#SBATCH --job-name="nf_dockScan_pipboy"
+#SBATCH --output="nf_dockScan_pipboy.%j.%N.out"
+#SBATCH --partition=compute
+###SBATCH --partition=debug
+#SBATCH --export=ALL
+#SBATCH -t 96:00:00
+####SBATCH -t 00:20:00
+#SBATCH --mem 2000M
+#SBATCH --cpus-per-task=2
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+
+##  Load module file(s) into the shell environment
+
+module purge
+module load apptainer
+module load java
+# module load nextflow
+##  just perform some basic unix commands
+
+# Configure bash
+set -euo pipefail
+
+
+
+# Setup trap function to be run when canceling the pipeline job. It will pass the SIGTERM signal
+# to Nextflow to let it kill all jobs launched by the pipeline.
+
+_term() {
+    echo "Caught SIGTERM signal!"
+    kill -s SIGTERM $pid
+    wait $pid
+}
+
+# Configures the script to execute the _term function when the script receives a SIGTERM signal. T
+# for properly stopping the pipeline and cleaning up resources if the job is canceled.
+
+trap _term TERM
+
+# Run the pipeline
+
+
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+/home/$USER/pro/nextflow -C ~/pro/hpc/pipeline/cpu_dockScan_slurm/nextflow.config  \
+    run -profile aznavour \
+    ~/pro/hpc/pipeline/cpu_dockScan_slurm/cpu_dockScan_slurm.nf \
+    -params-file ~/pip/11_03_2024_p_full_dock/config.yml \
+    -resume \
+    -with-singularity true  \
+    -with-trace -N hovakim.grabski@gmail.com  & pid=$!
+
+
+# Wait for the pipeline to finish
+echo "Waiting for ${pid}"
+wait $pid
+
+# Return 0 exit-status if everything went well
+exit 0
