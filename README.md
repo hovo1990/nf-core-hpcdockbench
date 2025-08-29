@@ -64,7 +64,7 @@ nextflow run nf-core/hpcdockbench \
 ```
 
 
-## How to run using docker profile
+## How to run using docker profile (needs seperate licensing)
 ```bash
 export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 export ICM_HOME=~/soft/icm/icms
@@ -78,6 +78,24 @@ nextflow run main.nf \
 
 
 ```
+
+
+## How to run using docker profile and GPU Ridge (needs seperate licensing)
+```bash
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+
+nextflow run main.nf \
+   -resume \
+   -profile docker \
+   --useGPU true \
+   --outdir ~/hpc_dock_bench_docker \
+   --icm_home $ICM_HOME
+
+
+```
+
 
 
 ## How to run using Singularity profile
