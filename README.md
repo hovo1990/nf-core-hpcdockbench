@@ -33,24 +33,6 @@
 
 ## Usage
 
-> [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
-
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
 
 Now, you can run the pipeline using:
 
@@ -65,10 +47,10 @@ nextflow run nf-core/hpcdockbench \
 
 
 
-# Recommended way to run is using Apptainer or Singularity
+### Recommended way to run is using Apptainer or Singularity
 
 
-## How to run using Singularity profile
+####  How to run using Singularity profile
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
@@ -84,7 +66,7 @@ nextflow run main.nf \
 ```
 
 
-## How to run using Singularity profile with GPU enabled RIDGE
+#### How to run using Singularity profile with GPU enabled RIDGE
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
@@ -100,7 +82,7 @@ nextflow run main.nf \
 ```
 
 
-### To Save intermediate results for Singularity/Apptainer run
+#### To Save intermediate results for Singularity/Apptainer run
 ```bash
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
@@ -116,7 +98,7 @@ nextflow run main.nf \
 
 ```
 
-## How to run on a basic Slurm Cluster with GPU enabled RIDGE
+#### How to run on a basic Slurm Cluster with GPU enabled RIDGE
 
 
 ```bash
@@ -138,7 +120,7 @@ nextflow run main.nf \
 ```
 
 
-## How to run using docker profile (needs seperate licensing)
+#### How to run using docker profile (requires seperate licensing)
 ```bash
 export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 export ICM_HOME=~/soft/icm/icms
@@ -154,7 +136,7 @@ nextflow run main.nf \
 ```
 
 
-## How to run using docker profile and GPU Ridge (needs seperate licensing)
+#### How to run using docker profile and GPU Ridge (requires seperate licensing)
 ```bash
 export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 export ICM_HOME=~/soft/icm/icms
