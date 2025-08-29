@@ -15,7 +15,7 @@ ENV LC_ALL="C"
 ENV DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -y \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends\
     openmpi-bin \
     openmpi-common \
     libopenmpi-dev \
@@ -51,7 +51,8 @@ RUN apt-get update -y \
     unzip \
     tar \
     gzip \
-    curl
+    curl \
+     && rm -rf /var/lib/apt/lists/*
 
 
 # -- * Install mamba
