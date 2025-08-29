@@ -58,44 +58,14 @@ Now, you can run the pipeline using:
 
 ```bash
 nextflow run nf-core/hpcdockbench \
-   -profile <docker/singularity/.../institute> \
+   -profile <singularity/docker/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
 ```
 
 
-## How to run using docker profile (needs seperate licensing)
-```bash
-export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
-export ICM_HOME=~/soft/icm/icms
-export NFX_OPTS="-Xms=512m -Xmx=4g"
 
-nextflow run main.nf \
-   -resume \
-   -profile docker \
-   --outdir ~/hpc_dock_bench_docker \
-   --icm_home $ICM_HOME
-
-
-```
-
-
-## How to run using docker profile and GPU Ridge (needs seperate licensing)
-```bash
-export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
-export ICM_HOME=~/soft/icm/icms
-export NFX_OPTS="-Xms=512m -Xmx=4g"
-
-nextflow run main.nf \
-   -resume \
-   -profile docker \
-   --useGPU true \
-   --outdir ~/hpc_dock_bench_docker \
-   --icm_home $ICM_HOME
-
-
-```
-
+# Recommended way to run is using Apptainer or Singularity
 
 
 ## How to run using Singularity profile
@@ -112,6 +82,24 @@ nextflow run main.nf \
 
 
 ```
+
+
+## How to run using Singularity profile with GPU enabled RIDGE
+```bash
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
+
+nextflow run main.nf \
+   -resume \
+   -profile singularity \
+   --useGPU true \
+   --outdir ~/hpc_dock_bench_singularity \
+   --icm_home $ICM_HOME
+
+
+```
+
 
 ### To Save intermediate results for Singularity/Apptainer run
 ```bash
@@ -151,7 +139,37 @@ nextflow run main.nf \
 ```
 
 
+## How to run using docker profile (needs seperate licensing)
+```bash
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
 
+nextflow run main.nf \
+   -resume \
+   -profile docker \
+   --outdir ~/hpc_dock_bench_docker \
+   --icm_home $ICM_HOME
+
+
+```
+
+
+## How to run using docker profile and GPU Ridge (needs seperate licensing)
+```bash
+export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
+export ICM_HOME=~/soft/icm/icms
+export NFX_OPTS="-Xms=512m -Xmx=4g"
+
+nextflow run main.nf \
+   -resume \
+   -profile docker \
+   --useGPU true \
+   --outdir ~/hpc_dock_bench_docker \
+   --icm_home $ICM_HOME
+
+
+```
 
 
 
