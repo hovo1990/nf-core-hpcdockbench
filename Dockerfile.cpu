@@ -13,64 +13,38 @@ ENV PATH="/opt/micromamba/envs/hpcdockbench/bin:${PATH}"
 ENV LC_ALL="C"
 ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN apt-get update -y \
-    && apt-get install -y \
-    openmpi-bin \
-    openmpi-common \
-    libopenmpi-dev \
-    graphviz \
-    curl \
-    bzip2 \
-    mlocate \
-    locate \
-    bash \
-    gawk \
-    sed \
-    graphviz texlive-xetex pymol firefox bash \
-    libgl1 \
-    libtiff-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libglib2.0-0 \
-    libxext6 \
-    libsm6 \
-    libxext-dev \
-    libxrender1 \
-    libzmq3-dev \
-    libc6 \
-    libxmu6 \
-    libasound2 \
-    libxrender-dev \
-    libfontconfig \
-    libgomp1 \
-    locate \
-    libxmu6 \
-    ncdu \
-    wget \
-    unzip \
-    tar \
-    gzip \
-    curl
+# -------------------------------
+# -- * Install system dependencies including OpenGL (without Firefox/PyMOL/TextLive)
+# -------------------------------
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        bash sed gawk wget gzip unzip tar ncdu curl graphviz pymol \
+        libgl1 libglu1-mesa libgl1-mesa-glx \
+        libxext6 libxrender1 libxmu6 libxi6 libxinerama1 \
+        libfontconfig libasound2 libgomp1 libsm6 \
+        openmpi-bin libopenmpi-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 
-# -- * Install mamba
-RUN mkdir -p ${MAMBA_ROOT_PREFIX}
-WORKDIR ${MAMBA_ROOT_PREFIX}
+# -------------------------------
+# -- * Install micromamba
+# -------------------------------
+RUN mkdir -p $MAMBA_ROOT_PREFIX && \
+    curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj -C $MAMBA_ROOT_PREFIX bin/micromamba
 
-RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest  | tar -xvj bin/micromamba
-# RUN source ${HOME}/.bashrc
 
-RUN $MAMBA create -n $ENV_NAME -c conda-forge --yes \
-    'python==3.11' \
-    'pip' \
-    'uv'   && \
-    "${MAMBA}" clean --all -f -y
-
-RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core posebusters tqdm loguru seaborn pandas fs
+# -------------------------------
+# -- * Create conda environment and install Python packages
+# -------------------------------
+RUN $MAMBA create -n $ENV_NAME -c conda-forge --yes python=3.11 pip uv && \
+    $MAMBA clean --all -f -y && \
+    $MAMBA run -n $ENV_NAME pip install --no-cache-dir click nf-core posebusters tqdm loguru seaborn pandas fs
 
 
 
-# -- * activate mamba environment
+# -------------------------------
+# -- * Update locate database
+# -------------------------------
 RUN updatedb
 # RUN /bin/bash -c "source /opt/micromamba/etc/profile.d/mamba.sh && micromamba activate ${ENV_NAME}"
 # RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
