@@ -164,11 +164,16 @@ nextflow run main.nf \
 
 ### HPC resources
 
+
+#### NAIRR Pilot resources
 [SDSC Expanse](docs/HPC/Expanse/README.md)
 
-[Aznavour Supercomputer](docs/HPC/Aznavour/README.md)
-
 [JetStream2](docs/HPC/JetStream2/README.md)
+
+
+#### General
+
+[Aznavour Supercomputer](docs/HPC/Aznavour/README.md)
 
 
 
