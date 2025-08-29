@@ -216,23 +216,16 @@ git clone  https://github.com/hovo1990/nf-core-hpcdockbench.git
 
 ```bash
 export HPCDOCKBENCH=$(pwd)/nf-core-hpcdockbench
-export PATH=$hpcdockbench:$PATH
-```
-
-### 6.3 Set Up the Test Run Environment
-
-```bash
-cd ~
-mkdir -p hpcdockbench-test-run
-cp -R nf-core-hpcdockbench/docs/Local hpcdockbench-test-run/
-cd hpcdockbench-test-run/Local
+export PATH=$HPCDOCKBENCH:$PATH
 ```
 
 
 
-### 6.5 Run the Workflow using Docker
 
-### 6.5.1 Setting up Java options
+
+### 6.4 Run the Workflow using Docker
+
+### 6.4.1 Setting up Java options
 
 ```bash
 export NFX_OPTS="-Xms=512m -Xmx=4g"
@@ -244,9 +237,11 @@ export NFX_OPTS="-Xms=512m -Xmx=4g"
 4. -Xmx=4g: Sets the maximum memory allocation for the JVM to 4 gigabytes.
 
 
-### 6.5.2 Run pipeline using Apptainer/Singularity
+### 6.4.2 Run pipeline using Apptainer/Singularity
 
 ```bash
+export NXF_SINGULARITY_CACHEDIR=$SINGIMAGES
+export NXF_APPTAINER_CACHEDIR=$SINGIMAGES
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
 export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
@@ -266,17 +261,11 @@ nextflow run $HPCDOCKBENCH/main.nf \
 
 
 
-### 6.6 Run the Workflow using Docker (requires separate license for ICM-PRO)
+### 6.5 Run the Workflow using Docker (requires separate license for ICM-PRO)
 
 
-```bash
-export NXF_SINGULARITY_CACHEDIR=$SINGIMAGES
-export NXF_APPTAINER_CACHEDIR=$SINGIMAGES
-
-```
 
 ```bash
-export NFX_OPTS="-Xms=512m -Xmx=4g"
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
 export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
