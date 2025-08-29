@@ -73,7 +73,7 @@ process dockScanMakeHitList{
 
         #-- * this works
         #ls -l .
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        ${params.icm_home}/icm64 \
         ${projectDir}/bin/dockScan_makehitlist.icm \
                 -pf="." \
                 -pn=${proj_id} \

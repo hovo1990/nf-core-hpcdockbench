@@ -74,7 +74,7 @@ process ligandsViz {
         // -- * #template #example #conditional
         // -- * use this only for one case
         """
-            ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+            ${params.icm_home}/icm64 \
                 ${projectDir}/bin/ligandsViz.icm \
                     -i=${csv_file} \
                     -o=ligandsViz.sdf \
@@ -87,7 +87,7 @@ process ligandsViz {
         //     """
         //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
         //         cp  -r ${folder}/* .
-        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //         ${params.icm_home}/icm64 \
         //             ${projectDir}/bin/icm_prep_dock_project.icm \
         //                 -icode=${code} \
         //                 -il=${code}_ligand.sdf  \
@@ -98,7 +98,7 @@ process ligandsViz {
         //     """
         //         trap 'if [[ \$? == 251 ]]; then echo OK; exit 0; fi' EXIT
         //         cp  -r ${folder}/* .
-        //         ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        //         ${params.icm_home}/icm64 \
         //             ${projectDir}/bin/dockScan_prep_dock_project.icm \
         //                 -i=${code}_protein.pdb \
         //                 -il=${code}_ligand.sdf  \

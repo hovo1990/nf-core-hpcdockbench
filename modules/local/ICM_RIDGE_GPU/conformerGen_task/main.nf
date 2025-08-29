@@ -71,7 +71,7 @@ process confGenTask_RTCNN2_CPU {
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+        ${params.icm_home}/icm64 ${params.icm_home}/_confGen \
              effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
              proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
@@ -154,7 +154,7 @@ process confGenTask_CPU {
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+        ${params.icm_home}/icm64 ${params.icm_home}/_confGen \
              effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
              proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
@@ -162,7 +162,7 @@ process confGenTask_CPU {
 }
 
 
-        // ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+        // ${params.icm_home}/icm64 ${params.icm_home}/_confGen \
         //      effort=10.0 torlimit=50 sizelimit=600 \
         //      -V -c -r -A  mnconf=50 \
         //      proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
@@ -292,7 +292,7 @@ process gingerTask_GPU {
         def i_random_seed  = params.random_seed ?: 25051990
         """
         trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
+        ${params.icm_home}/icm64 ${params.icm_home}/_ginger \
                 ${ligand_struct_2D} \
                 sizelimit=600 \
                 -C mnconf=50 \
@@ -383,7 +383,7 @@ process confGenTask_CPU_separate {
         def i_cpus = task.cpus
         def i_random_seed  = params.random_seed ?: 25051990
         """
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_confGen" } \
+        ${params.icm_home}/icm64 ${params.icm_home}/_confGen \
              effort=10.0 torlimit=50 sizelimit=600 mnconf=50 -hydrogen\
              proc=${i_cpus} ${ligand_struct_2D} confGen_${ligand_struct_2D.simpleName}.molt
 
@@ -474,8 +474,8 @@ process gingerTask_GPU_separate {
         def i_random_seed  = params.random_seed ?: 25051990
         """
         trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
-                ${params.script ?: "${params.icm_home}/_ginger" }  \
+        ${params.icm_home}/icm64 \
+                ${params.icm_home}/_ginger \
                 ${ligand_struct_2D} \
                 sizelimit=600 \
                 -C mnconf=50 \
@@ -495,7 +495,7 @@ process gingerTask_GPU_separate {
 // -- ! Older verison 3
         // """
         // trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
-        // ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        // ${params.icm_home}/icm64 \
         //         ${projectDir}/bin/_ginger_custom \
         //         ${ligand_struct_2D} \
         //         sizelimit=600 \
@@ -518,7 +518,7 @@ process gingerTask_GPU_separate {
 //         def i_random_seed  = params.random_seed ?: 25051990
 //         """
 //         trap 'if [[ \$? == 1 ]]; then echo " Ginger GPU Failed, but continue"; exit 0; fi' EXIT
-//         ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_ginger" } \
+//         ${params.icm_home}/icm64 ${params.icm_home}/_ginger\
 //                 ${ligand_struct_2D} \
 //                 sizelimit=600 \
 //                 -C mnconf=50 \

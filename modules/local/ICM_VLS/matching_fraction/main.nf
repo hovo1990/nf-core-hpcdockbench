@@ -67,7 +67,7 @@ process matchingFraction{
         echo "matching Fraction  v-${i_version}"
 
         # -- * Run ICM script to calculate RMSD and matching fraction
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} \
+        ${params.icm_home}/icm64 \
         ${projectDir}/bin/matching_fraction.icm \
                 -ic=${ligand_struct} \
                 -id=${docked_pose} \

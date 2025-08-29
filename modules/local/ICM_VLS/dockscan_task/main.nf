@@ -88,7 +88,7 @@ process dockScanTask {
         #-- * this works
         # ls -l .
 
-        ${params.icm_exec ?: "${params.icm_home}/icm64"} ${params.script ?: "${params.icm_home}/_dockScan" } \
+        ${params.icm_home}/icm64 ${params.icm_home}/_dockScan  \
                 proc=${i_cpus} \
                 -s  -a  -S \
                 confs=${i_confs} \
