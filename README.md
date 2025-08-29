@@ -122,7 +122,7 @@ export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
 
 nextflow run main.nf \
    -resume \
-   -profile bslurm \
+   -profile slurm \
    --useGPU true \
    --outdir ~/a/hpc_dock_bench_slurm_singularity \
    --icm_home $ICM_HOME \

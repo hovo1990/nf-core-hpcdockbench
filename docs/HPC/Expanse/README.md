@@ -100,8 +100,8 @@ git clone https://github.com/hovo1990/nf-core-hpcdockbench.git
 ```bash
 export MAINPATH=/expanse/lustre/projects/$EXPANSEPROJECT/$USERNAME/
 export SINGIMAGES=$MAINPATH/singularity_images
-export hpcdockbench=$MAINPATH/nf-core-hpcdockbench
-export PATH=$hpcdockbench:$PATH
+export HPCDOCKBENCH=$MAINPATH/nf-core-hpcdockbench
+export PATH=$HPCDOCKBENCH:$PATH
 ```
 
 
@@ -110,13 +110,9 @@ export PATH=$hpcdockbench:$PATH
 ### modify batch script
 
 ```
-sed -i "s|<<SINGIMAGES>>|${SINGIMAGES}|g" config.yml
+sed -i "s|<<EXPANSEPROJECT>>|${EXPANSEPROJECT}|g" expanse.sb
 ```
 
-### Step 5: Run the Workflow
-```bash
-bash expanse.sb
-```
 
 ## 4. Run the Pipeline in Batch Mode
 

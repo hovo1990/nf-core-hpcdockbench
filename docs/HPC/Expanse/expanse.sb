@@ -30,7 +30,12 @@ export NXF_APPTAINER_CACHEDIR=$SINGIMAGES
 $NEXTFLOW  \
     run -profile expanse \
     $HPCDOCKBENCH/main.nf \
-    -params-file config.yml  \
     --project $EXPANSEPROJECT \
     -resume \
-    -N $YOUREMAIL
+    -N $YOUREMAIL \
+   --useGPU true \
+   --outdir /expanse/lustre/projects/$EXPANSEPROJECT/$USERNAME/hpc_dock_bench_slurm_singularity \
+   --icm_home $ICM_HOME \
+   --save_intermediate true \
+   --mount_options "/home/$USER,/expanse/lustre/projects/$EXPANSEPROJECT/$USERNAME"
+
