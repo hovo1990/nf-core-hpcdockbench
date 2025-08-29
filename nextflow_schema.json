@@ -95,6 +95,11 @@
                     "default": null,
                     "description": "nf-core lint requires but for this pipeline there is no need",
                     "errorMessage": "dummy value"
+                },
+                "project": {
+                    "type": "string",
+                    "description": "Project name on SLURM based HPC cluster",
+                    "default": null
                 }
             }
         },
