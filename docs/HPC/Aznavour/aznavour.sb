@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name="nf_dockScan_pipboy"
-#SBATCH --output="nf_dockScan_pipboy.%j.%N.out"
+#SBATCH --job-name="nf_hpcdockbench"
+#SBATCH --output="nf_hpcdockbench_pipboy.%j.%N.out"
 #SBATCH --partition=compute
 ###SBATCH --partition=debug
 #SBATCH --export=ALL
@@ -47,7 +47,7 @@ export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
     run -profile aznavour \
     $HPCDOCKBENCH/main.nf \
     -resume \
-   --outdir ~/a/hpc_dock_bench_slurm_singularity \
+   --outdir ~/hpc_dock_bench_slurm_singularity \
    --icm_home $ICM_HOME \
    --save_intermediate true \
    --mount_options "/home/$USER" \
