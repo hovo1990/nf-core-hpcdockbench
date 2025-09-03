@@ -1,54 +1,26 @@
 # -- * Stage 1: Builder
-# FROM mambaorg/micromamba AS builder
-
-# The build-stage image:
-FROM continuumio/miniconda3 AS builder
+FROM mambaorg/micromamba AS builder
 
 ENV ENV_NAME="hpcdockbench"
-# ENV MAMBA="micromamba"
+ENV MAMBA="micromamba"
 ENV LC_ALL="C"
 
 # RUN micromamba create -y -p /opt/env -f /environment.yml && \
 #     micromamba clean --all --yes
 
-# -- * Setuop environment
-RUN conda create -n hpcdockbench -c conda-forge --yes \
+RUN micromamba create -n hpcdockbench -c conda-forge --yes \
     'python==3.11' \
     'uv'   && \
-    conda clean --all -f -y && \
-    conda  run -n hpcdockbench uv pip install --no-cache click posebusters tqdm loguru seaborn pandas numpy fs && \
-    conda clean --all -f -y
+    micromamba clean --all -f -y && \
+    micromamba  run -n hpcdockbench uv pip install click posebusters tqdm loguru seaborn pandas numpy fs && \
+    micromamba clean --all -f -y
 
-
-
-
-
-
-# -- * Link: https://pythonspeed.com/articles/conda-docker-image-size/
-# -- * Link: https://medium.com/@phattharaphonr/optimizing-docker-image-size-for-deep-learning-models-a-comprehensive-guide-56599bc53af0
-# -- * Install conda-pack:
-RUN  conda install -c conda-forge conda-pack
-
-
-RUN apt-get update -y \
-    && apt-get install -y \
-    binutils
 
 # -- * Cleanup unnecessary files
-RUN find /opt/conda/envs/hpcdockbench -type d -name '__pycache__' -exec rm -rf {} + && \
+RUN find /opt/conda/envs/hpcdockbench -type f -name '*.pyc' -delete && \
+    find /opt/conda/envs/hpcdockbench -type d -name '__pycache__' -exec rm -rf {} + && \
     find /opt/conda/envs/hpcdockbench -type f -name '*.a' -delete && \
     find /opt/conda/envs/hpcdockbench -type f -name '*.js.map' -delete
-
-
-# Use conda-pack to create a standalone enviornment
-# in /venv:
-RUN conda-pack -n hpcdockbench -o /tmp/env.tar && \
-  mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
-  rm /tmp/env.tar
-
-# We've put venv in same path it'll be in final image,
-# so now fix up paths:
-RUN /venv/bin/conda-unpack
 
 
 # -- * Stage 2: Main
@@ -94,14 +66,5 @@ RUN apt-get update -y \
 
 
 
-# COPY --from=builder /opt/conda/envs/hpcdockbench  /opt/env
-
-# COPY --from=builder /tmp/hpcdockbench.tar.gz /opt/
-# RUN mkdir /opt/env && tar -xzf /opt/hpcdockbench.tar.gz -C /opt/env --strip-components=1 && rm /opt/hpcdockbench.tar.gz
-
-# -- * Copy /venv from the previous stage:
-COPY --from=builder /venv /venv
-ENV PATH=/venv/bin:$PATH
-
-# -- * activate  environment
-RUN updatedb
+COPY --from=builder /opt/conda/envs/hpcdockbench  /opt/env
+ENV PATH=/opt/env/bin:$PATH
