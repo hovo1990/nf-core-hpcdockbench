@@ -1,5 +1,5 @@
 # Runtime image is smaller than the devel/build image
-FROM nvidia/cuda:12.6.3-cudnn-runtime-ubuntu20.04
+FROM nvidia/cuda:12.6.3-runtime-ubuntu20.04
 
 LABEL authors="Hovakim Grabski" \
         description="Docker image containing all software requirements for the nf-core/hpc_dock_bench pipeline GPU ICM-RIDGE"
