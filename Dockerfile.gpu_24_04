@@ -16,17 +16,13 @@ ENV DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -y \
     && apt-get install -y \
-    openmpi-bin \
-    openmpi-common \
-    libopenmpi-dev \
-    graphviz \
     curl \
     bzip2 \
     locate \
     bash \
     gawk \
     sed \
-    graphviz texlive-xetex pymol firefox bash \
+    bash \
                  libgl1 \
                 libtiff-dev \
                 libjpeg-dev \
@@ -34,6 +30,7 @@ RUN apt-get update -y \
                 libglib2.0-0 \
                 libxext6 \
                 libsm6 \
+                libasound2t64 \
                 libxext-dev \
                 libxrender1 \
                 libzmq3-dev \
