@@ -137,8 +137,8 @@ workflow HPCDOCKBENCH {
     // tasks_todo_debug.view()
 
     // // -- ? DEBUG ON
-    // tasks_todo_debug_rborn = tasks_todo_debug_rborn.take(3)
-    // tasks_todo_debug_regular = tasks_todo_debug_regular.take(3)
+    // tasks_todo_debug_rborn = tasks_todo_debug_rborn.take(5)
+    // tasks_todo_debug_regular = tasks_todo_debug_regular.take(5)
 
 
 
