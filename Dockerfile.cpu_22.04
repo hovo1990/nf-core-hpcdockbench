@@ -66,5 +66,7 @@ RUN apt-get update -y \
 
 
 
-COPY --from=builder /opt/conda/envs/hpcdockbench  /opt/env
-ENV PATH=/opt/env/bin:$PATH
+COPY --from=builder /opt/conda/envs/hpcdockbench  /opt/conda/envs/hpcdockbench
+ENV PATH=/opt/conda/envs/hpcdockbench/bin:$PATH
+
+RUN updatedb
