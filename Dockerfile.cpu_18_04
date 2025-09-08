@@ -1,0 +1,75 @@
+
+# -- * Stage 2: Main
+FROM ubuntu:18.04
+LABEL authors="Hovakim Grabski" \
+        description="Docker image containing all software requirements for the nf-core/hpc_dock_bench pipeline GPU ICM-RIDGE"
+
+
+# Set up environment variables
+ENV MAMBA_ROOT_PREFIX="/opt/micromamba/"
+ENV MAMBA="${MAMBA_ROOT_PREFIX}/bin/micromamba"
+ENV ENV_NAME="hpcdockbench"
+ENV LC_ALL="C"
+ENV PATH="/opt/micromamba/envs/hpcdockbench/bin:${PATH}"
+ENV LC_ALL="C"
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt-get update -y \
+    && apt-get install -y \
+    curl \
+    bzip2 \
+    mlocate \
+    locate \
+    bash \
+    gawk \
+    sed \
+    bash \
+    libgl1 \
+    libtiff-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libglib2.0-0 \
+    libxext6 \
+    libsm6 \
+    libxext-dev \
+    libxrender1 \
+    libzmq3-dev \
+    libc6 \
+    libxmu6 \
+    libasound2 \
+    libxrender-dev \
+    libfontconfig \
+    libgomp1 \
+    locate \
+    libxmu6 \
+    ncdu \
+    wget \
+    unzip \
+    tar \
+    gzip \
+    curl
+
+
+# -- * Install mamba
+RUN mkdir -p ${MAMBA_ROOT_PREFIX}
+WORKDIR ${MAMBA_ROOT_PREFIX}
+
+RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest  | tar -xvj bin/micromamba
+# RUN source ${HOME}/.bashrc
+
+RUN $MAMBA create -n $ENV_NAME -c conda-forge --yes \
+    'python==3.11' \
+    'pip' \
+    'uv'   && \
+    "${MAMBA}" clean --all -f -y
+
+RUN    $MAMBA  run -n $ENV_NAME uv pip install click nf-core posebusters tqdm loguru seaborn pandas fs
+
+
+
+# -- * activate mamba environment
+RUN updatedb
+# RUN /bin/bash -c "source /opt/micromamba/etc/profile.d/mamba.sh && micromamba activate ${ENV_NAME}"
+# RUN echo "source activate ${ENV_NAME}" > ~/.bashrc
+
+# -- * Manually run steps from hpcdockbench.rc

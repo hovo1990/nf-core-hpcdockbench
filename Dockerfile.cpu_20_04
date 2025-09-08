@@ -1,0 +1,72 @@
+# -- * Stage 1: Builder
+FROM mambaorg/micromamba AS builder
+
+ENV ENV_NAME="hpcdockbench"
+ENV MAMBA="micromamba"
+ENV LC_ALL="C"
+
+# RUN micromamba create -y -p /opt/env -f /environment.yml && \
+#     micromamba clean --all --yes
+
+RUN micromamba create -n hpcdockbench -c conda-forge --yes \
+    'python==3.11' \
+    'uv'   && \
+    micromamba clean --all -f -y && \
+    micromamba  run -n hpcdockbench uv pip install click posebusters tqdm loguru seaborn pandas numpy fs && \
+    micromamba clean --all -f -y
+
+
+# -- * Cleanup unnecessary files
+RUN find /opt/conda/envs/hpcdockbench -type f -name '*.pyc' -delete && \
+    find /opt/conda/envs/hpcdockbench -type d -name '__pycache__' -exec rm -rf {} + && \
+    find /opt/conda/envs/hpcdockbench -type f -name '*.a' -delete && \
+    find /opt/conda/envs/hpcdockbench -type f -name '*.js.map' -delete
+
+
+# -- * Stage 2: Main
+FROM ubuntu:20.04
+
+ENV ENV_NAME="hpcdockbench"
+ENV MAMBA="micromamba"
+ENV LC_ALL="C"
+
+RUN apt-get update -y \
+    && apt-get install -y \
+    bzip2 \
+    mlocate \
+    locate \
+    bash \
+    gawk \
+    sed \
+    libgl1 \
+    libtiff-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libglib2.0-0 \
+    libxext6 \
+    libsm6 \
+    libxext-dev \
+    libxrender1 \
+    libzmq3-dev \
+    libc6 \
+    libxmu6 \
+    libasound2 \
+    libxrender-dev \
+    libfontconfig \
+    libgomp1 \
+    locate \
+    libxmu6 \
+    ncdu \
+    wget \
+    unzip \
+    tar \
+    gzip \
+    curl \
+         && rm -rf /var/lib/apt/lists/*
+
+
+
+COPY --from=builder /opt/conda/envs/hpcdockbench  /opt/conda/envs/hpcdockbench
+ENV PATH=/opt/conda/envs/hpcdockbench/bin:$PATH
+
+RUN updatedb
