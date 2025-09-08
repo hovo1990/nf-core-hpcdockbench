@@ -29,10 +29,10 @@ process prepIcmProject_RBORN {
         // containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
         // containerOptions " --gpus all"
     }
 
@@ -137,10 +137,10 @@ process prepIcmProject_Regular {
         // containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
         // containerOptions " --gpus all"
     }
 

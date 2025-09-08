@@ -35,11 +35,11 @@ process ridgeTask_GPU {
         containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --nv"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --gpus all"
     }
 

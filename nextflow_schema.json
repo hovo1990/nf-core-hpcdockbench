@@ -72,10 +72,16 @@
                     "description": "Determine automatically which container to use. Default: true",
                     "hidden": false
                 },
-                "container_link": {
+                "container_gpu_link": {
                     "type": "string",
-                    "default": "docker.io/hgrabski/hpc_dock_bench:latest",
-                    "description": "Container image to use",
+                    "default": "docker.io/hgrabski/hpc_dock_bench:gpu-22.04",
+                    "description": "Container image to use for GPU usage",
+                    "errorMessage": "Could not retrieve image from DockerHub to use for the pipeline"
+                },
+                "container_cpu_link": {
+                    "type": "string",
+                    "default": "docker.io/hgrabski/hpc_dock_bench:cpu-22.04",
+                    "description": "Container image to use for CPU usage",
                     "errorMessage": "Could not retrieve image from DockerHub to use for the pipeline"
                 },
                 "benchmark_dataset": {

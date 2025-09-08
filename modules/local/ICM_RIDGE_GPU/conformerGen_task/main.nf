@@ -29,10 +29,10 @@ process confGenTask_RTCNN2_CPU {
         container "${params.singularity_local_cpu_container}"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
 
     if (params.mount_options) {
@@ -112,10 +112,10 @@ process confGenTask_CPU {
         container "${params.singularity_local_cpu_container}"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
 
     if (params.mount_options) {
@@ -242,11 +242,11 @@ process gingerTask_GPU {
         containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --nv"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --gpus all"
     }
 
@@ -339,10 +339,10 @@ process confGenTask_CPU_separate {
         container "${params.singularity_local_cpu_container}"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_cpu_link}"
     }
 
     if (params.mount_options) {
@@ -426,11 +426,11 @@ process gingerTask_GPU_separate {
         containerOptions " --nv"
     }
     else if (workflow.containerEngine == 'singularity' ){
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --nv"
     }
     else {
-        container "${params.container_link}"
+        container "${params.container_gpu_link}"
         containerOptions " --gpus all"
     }
 
