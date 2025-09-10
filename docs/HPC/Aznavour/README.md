@@ -85,9 +85,14 @@ export HPCDOCKBENCH=~/nf-core-hpcdockbench
 export PATH=$HPCDOCKBENCH:$PATH
 ```
 
+## 4.1 Run pipeline in tmux
+
+```bash
+bash aznavour.sb
+```
 
 
-## 4. Run the Pipeline in Batch Mode
+## 4.2 Run the Pipeline in Batch Mode
 
 To submit the job in batch mode instead of interactive mode:
 
