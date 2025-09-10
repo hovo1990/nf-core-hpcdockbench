@@ -39,6 +39,12 @@ _term() {
 trap _term TERM
 
 # Run the pipeline
+mkdir -p /tmp/${USER}/apptainer
+mkdir -p /tmp/${USER}/apptainer/tmp
+
+export APPTAINER_CACHEDIR="/tmp/${USER}/apptainer"
+export APPTAINER_MKSQUASHFS_PROCS=8
+export APPTAINER_TMPDIR="/tmp/${USER}/apptainer/tmp"
 export NEXTFLOW=/home/$USER/nextflow
 export PATH=$NEXTFLOW:$PATH
 export ICM_HOME=~/soft/icm/icms
