@@ -23,7 +23,7 @@ module load java
 ```bash
 cd ~
 curl -s https://get.nextflow.io | bash
-export NEXTFLOW=$(pwd)/nextflow
+export NEXTFLOW=/home/$USER/nextflow
 export PATH=$NEXTFLOW:$PATH
 ```
 
@@ -88,6 +88,7 @@ export PATH=$HPCDOCKBENCH:$PATH
 ## 4.1 Run pipeline in tmux
 
 ```bash
+cd $HPCDOCKBENCH/docs/HPC/Aznavour/
 bash aznavour.sb
 ```
 

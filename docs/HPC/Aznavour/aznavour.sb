@@ -39,7 +39,7 @@ _term() {
 trap _term TERM
 
 # Run the pipeline
-export NEXTFLOW=$(pwd)/nextflow
+export NEXTFLOW=/home/$USER/nextflow
 export PATH=$NEXTFLOW:$PATH
 export ICM_HOME=~/soft/icm/icms
 export NFX_OPTS="-Xms=512m -Xmx=4g"
