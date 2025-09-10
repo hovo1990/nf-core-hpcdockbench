@@ -51,7 +51,7 @@ export NXF_GLIBC_VERSION=$(ldd --version | head -n1 | awk '{print $NF}')
    --icm_home $ICM_HOME \
    --save_intermediate true \
    --mount_options "/home/$USER" \
-    -N hovakim.grabski@gmail.com  \
+    -N $YOUREMAIL  \
      & pid=$!
 
 

@@ -70,7 +70,7 @@ module load java
 ### Step 3: Clone the Pipeline Repository
 
 ```
-cd /expanse/lustre/projects/$EXPANSEPROJECT/$USERNAME
+cd ~
 git clone https://github.com/hovo1990/nf-core-hpcdockbench.git
 ```
 
@@ -81,7 +81,7 @@ git clone https://github.com/hovo1990/nf-core-hpcdockbench.git
 
 
 ```bash
-export HPCDOCKBENCH=$MAINPATH/nf-core-hpcdockbench
+export HPCDOCKBENCH=~/nf-core-hpcdockbench
 export PATH=$HPCDOCKBENCH:$PATH
 ```
 
