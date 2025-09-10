@@ -26,6 +26,7 @@
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 },
                 "workDir": {
+                    "default": "work",
                     "type": "string",
                     "format": "directory-path",
                     "description": "The working directory of the nextflow pipeline. You have to use absolute paths to storage on Cloud infrastructure.",
