@@ -985,7 +985,7 @@ def start_program(input, paperdata):
 
 
         # df_ridgeRTCNN= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNN_Ridge')
-        logger.debug(" Debug df> {}".format(df_ridgeRTCNN))
+        # logger.debug(" Debug df> {}".format(df_ridgeRTCNN))
 
 
         # df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage, df_ridgeRTCNN])
