@@ -984,11 +984,12 @@ def start_program(input, paperdata):
         df_corrScoreAverage= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_corrScoreAverage')
 
 
-        df_ridgeRTCNN= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNN_Ridge')
+        # df_ridgeRTCNN= posebusted_results_custom_rank(df_posebusted_rmsd_fix , rank=1 ,rank_type = 'RANK_RTCNN_Ridge')
         logger.debug(" Debug df> {}".format(df_ridgeRTCNN))
 
 
-        df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage, df_ridgeRTCNN])
+        # df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage, df_ridgeRTCNN])
+        df = pd.concat([df_Score,df_RTCNNscore,df_corrScoreAverage])
         logger.debug( " Debug> df is {}".format(df))
 
         logger.debug (" Debug> writing debug table")
