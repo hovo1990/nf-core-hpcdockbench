@@ -188,6 +188,29 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
             count_data.columns = ["ICM_less_than_two", "count"]
             logger.debug(" Debug count_data> {}".format(count_data))
 
+
+
+# 2025-09-12 15:14:10.421 | DEBUG    | __main__:posebusted_results_custom_rank:76 -  Index(['file', 'molecule', 'mol_pred_loaded', 'mol_true_loaded',
+#        'mol_cond_loaded', 'sanitization', 'inchi_convertible',
+#        'all_atoms_connected', 'molecular_formula', 'molecular_bonds',
+#        'double_bond_stereochemistry', 'tetrahedral_chirality', 'bond_lengths',
+#        'bond_angles', 'internal_steric_clash', 'aromatic_ring_flatness',
+#        'double_bond_flatness', 'internal_energy',
+#        'protein-ligand_maximum_distance', 'minimum_distance_to_protein',
+#        'minimum_distance_to_organic_cofactors',
+#        'minimum_distance_to_inorganic_cofactors', 'minimum_distance_to_waters',
+#        'volume_overlap_with_protein', 'volume_overlap_with_organic_cofactors',
+#        'volume_overlap_with_inorganic_cofactors', 'volume_overlap_with_waters',
+#        'rmsd_≤_2å', '_DATASET_', '_PROTFILE_', '_LIGFILE_', '_DOCKFILE_',
+#        '_CODE_', '_PROJ_', '_METHOD_', '_CATEGORY_', 'RANK_Score',
+#        'RANK_RTCNNscore', 'RANK_AverageScore', 'RANK_CombinedScore',
+#        'RANK_corrScoreAverage', 'RANK_RTCNN_Ridge', 'Score', 'RTCNN_SCORE',
+#        'AverageScore', 'CombinedScore', 'corrScoreAverage', 'RTCNN_RIDGE',
+#        'ICM_RMSD_IN_PLACE_', 'ICM_RMSD_SUPERIMPOSED_',
+#        'ICM_MATCHING_FRACTION_', 'ICM_less_than_two'],
+
+
+
             # Check if all values in the specified columns are True for each row
             columns_of_interest = [
                 "mol_true_loaded",
@@ -203,7 +226,6 @@ def posebusted_results_custom_rank(df, rank=3, rank_type ='RANK_corrScoreAverage
                 "bond_angles",
                 "internal_steric_clash",
                 "aromatic_ring_flatness",
-                "non-aromatic_ring_non-flatness",
                 "double_bond_flatness",
                 "internal_energy",
                 "protein-ligand_maximum_distance",
